@@ -4,3 +4,9 @@
 Homestead.yaml
 Homestead.json
 .env
+
+# Ignore OS generated files #
+.DS_Store*
+ehthumbs.db
+
+Thumbs.db
