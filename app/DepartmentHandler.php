@@ -425,6 +425,9 @@ class DepartmentHandler {
 	// Primary function to parse pages:
 	public function parse() {
 
+		$startDate = date('Y-m-d H:i:s');
+		echo "Starting to parse " . $this->ownerAcronym . " at ". $startDate . " \n";
+
 	    $sourceDirectory = self::getSourceDirectory($this->ownerAcronym);
 
 	    // Output directory:
@@ -454,7 +457,7 @@ class DepartmentHandler {
 	            break;
 	        }
 
-	        echo "$file\n";
+	        // echo "$file\n";
 
 	        $filehash = explode('.', $file)[0];
 
@@ -493,7 +496,7 @@ class DepartmentHandler {
 	            $fileValues['uuid'] = $this->ownerAcronym . '-' . $fileValues['referenceNumber'];
 
 	            if(file_put_contents($directoryPath . '/' . $filehash . '.json', json_encode($fileValues, JSON_PRETTY_PRINT))) {
-	                echo "...saved.\n";
+	                // echo "...saved.\n";
 	            }
 	            else {
 
@@ -512,6 +515,9 @@ class DepartmentHandler {
 
 	    }
 	    // var_dump($validFiles);
+
+	    echo "...started " . $this->ownerAcronym . " at " . $startDate . "\n";
+	    echo "Finished parsing $filesParsed files at ". date('Y-m-d H:i:s') . " \n\n";
 
 	}
 
@@ -620,16 +626,9 @@ class DepartmentHandler {
 	            break;
 	        }
 
-	        $startDate = date('Y-m-d H:i:s');
-	        echo "Starting " . $acronym . " at ". $startDate . " \n";
-
 	        $department = new DepartmentParser($acronym);
 
 	        $department->parse();
-
-
-	        echo "Started " . $acronym . " at " . $startDate . "\n";
-	        echo "Finished at ". date('Y-m-d H:i:s') . " \n\n";
 
 	        $departmentsParsed++;
 
