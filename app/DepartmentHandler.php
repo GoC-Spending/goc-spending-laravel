@@ -334,7 +334,7 @@ class DepartmentHandler {
 		}
 
 		$filename = self::urlToFilename($url, '.json');
-		$directoryPath = storage_path() . '/' . env('FETCH_METADATA_FOLDER', 'metadata');
+		$directoryPath = storage_path() . '/' . env('FETCH_METADATA_FOLDER', 'metadata') . '/' . $this->ownerAcronym;
 
 
 		// If the folder doesn't exist yet, create it:
