@@ -1,6 +1,8 @@
 <?php
 namespace App;
 
+use XPathSelector\Selector;
+
 class Helpers {
 
 	public static function cleanupDate($dateInput, $printErrors = 1) {
@@ -443,7 +445,7 @@ class Helpers {
 
 			$keyNode = Helpers::cleanLabelText($keyNode);
 
-			if($labelToKey[$keyNode]) {
+			if(isset($labelToKey[$keyNode]) && $labelToKey[$keyNode]) {
 				$values[$labelToKey[$keyNode]] = Helpers::cleanHtmlValue($valueNodes[$index]);
 			}
 			
@@ -459,7 +461,7 @@ class Helpers {
 			$values['contractPeriodEnd'] = trim($split[1]);
 		}
 
-		var_dump($values);
+		// var_dump($values);
 		return $values;
 
 	}

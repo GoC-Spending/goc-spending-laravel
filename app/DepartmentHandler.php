@@ -58,6 +58,11 @@ class DepartmentHandler {
 
 	public function __construct($detailsArray = []) {
 
+		// Suppress Xpath-Selector warnings (based on HTML5 rather than XML input).
+		// Thanks to
+		// https://stackoverflow.com/a/9149241/756641
+		libxml_use_internal_errors(true);
+
 		if($this->baseUrl) {
 			$this->guzzleClient = new Client(['base_uri' => $this->baseUrl]);
 		}
@@ -87,7 +92,9 @@ class DepartmentHandler {
 		return $quarterUrls;
 	}
 
-	public function run() {
+
+	// Primary function to fetch pages
+	public function fetch() {
 
 		// Run the operation!
 		$startDate = date('Y-m-d H:i:s');
@@ -327,8 +334,6 @@ class DepartmentHandler {
 		}
 
 		$filename = self::urlToFilename($url, '.json');
-		$directoryPath = dirname(__FILE__) . '/' . Configuration::$metadataOutputFolder . '/' . $this->ownerAcronym;
-
 		$directoryPath = storage_path() . '/' . env('FETCH_METADATA_FOLDER', 'metadata');
 
 
@@ -416,9 +421,21 @@ class DepartmentHandler {
 
 	}
 
-	public function parseDepartment() {
 
-	    $sourceDirectory = self::getSourceDirectory($this->acronym);
+	// Primary function to parse pages:
+	public function parse() {
+
+	    $sourceDirectory = self::getSourceDirectory($this->ownerAcronym);
+
+	    // Output directory:
+	    $directoryPath = storage_path() . '/' . env('PARSE_JSON_OUTPUT_FOLDER', 'generated-data') . '/' . $this->ownerAcronym;
+
+	    // If the folder doesn't exist yet, create it:
+	    // Thanks to http://stackoverflow.com/a/15075269/756641
+	    if(! is_dir($directoryPath)) {
+	        mkdir($directoryPath, 0755, true);
+	    }
+
 
 	    $validFiles = [];
 	    $files = array_diff(scandir($sourceDirectory), ['..', '.']);
@@ -437,6 +454,10 @@ class DepartmentHandler {
 	            break;
 	        }
 
+	        echo "$file\n";
+
+	        $filehash = explode('.', $file)[0];
+
 	        // Retrieve the values from the department-specific file parser
 	        // And merge these with the default values
 	        // Just to guarantee that all the array keys are around:
@@ -453,53 +474,31 @@ class DepartmentHandler {
 
 	            self::generateAdditionalMetadata($fileValues);
 
-	            $fileValues['ownerAcronym'] = $this->acronym;
+	            $fileValues['ownerAcronym'] = $this->ownerAcronym;
 
 	            $fileValues['objectCode'] = self::getObjectCodeFromDescription($fileValues['description']);
 
 	            // Useful for troubleshooting:
-	            $fileValues['sourceFilename'] = $this->acronym . '/' . $file;
+	            $fileValues['sourceFilename'] = $this->ownerAcronym . '/' . $file;
 
 	            // A lot of DND's entries are missing reference numbers:
 	            if(! $fileValues['referenceNumber']) {
 	                echo "Warning: no reference number.\n";
-	                $filehash = explode('.', $file)[0];
 
 	                $fileValues['referenceNumber'] = $filehash;
 
 	            }
 
 	            // TODO - update this to match the schema discussed at 2017-03-28's Civic Tech!
-	            $fileValues['uuid'] = $this->acronym . '-' . $fileValues['referenceNumber'];
+	            $fileValues['uuid'] = $this->ownerAcronym . '-' . $fileValues['referenceNumber'];
 
-	            $referenceNumber = $fileValues['referenceNumber'];
+	            if(file_put_contents($directoryPath . '/' . $filehash . '.json', json_encode($fileValues, JSON_PRETTY_PRINT))) {
+	                echo "...saved.\n";
+	            }
+	            else {
 
-	            // If the row already exists, update it
-	            // Otherwise, add it
-	            if(isset($this->contracts[$referenceNumber])) {
-	                echo "Updating $referenceNumber\n";
+	            	echo "...failed to save JSON output for $file.\n";
 
-	                // Because we don't have a year/quarter for all organizations, let's use the largest contractValue for now:
-	                $existingContract = $this->contracts[$referenceNumber];
-	                if($fileValues['contractValue'] > $existingContract['contractValue']) {
-	                    $this->contracts[$referenceNumber] = $fileValues;
-	                }
-
-	                // Add entries to the amendedValues array
-	                // If it's the first time, add the original too
-	                if($existingContract['amendedValues']) {
-	                    $this->contracts[$referenceNumber]['amendedValues'] = array_merge($existingContract['amendedValues'], [$fileValues['contractValue']]);
-	                }
-	                else {
-	                    $this->contracts[$referenceNumber]['amendedValues'] = [
-	                        $existingContract['contractValue'],
-	                        $fileValues['contractValue'],
-	                    ];
-	                }
-
-	            } else {
-	                // Add to the contracts array:
-	                $this->contracts[$referenceNumber] = $fileValues;
 	            }
 
 	        }
@@ -520,7 +519,7 @@ class DepartmentHandler {
 
 	    $filename = str_replace('.html', '.json', $htmlFilename);
 
-	    $filepath = self::getMetadataDirectory($this->acronym) . '/' . $filename;
+	    $filepath = self::getMetadataDirectory($this->ownerAcronym) . '/' . $filename;
 
 	    if(file_exists($filepath)) {
 
@@ -540,18 +539,15 @@ class DepartmentHandler {
 
 	public function parseFile($filename) {
 
-	    $acronym = $this->acronym;
+	    $acronym = $this->ownerAcronym;
 
-	    if ( ! class_exists('App\\DepartmentHandlers\\' . ucfirst($acronym) . 'Handler' ) ) {
-	        echo 'Cannot find matching DepartmentHandler for ' . $acronym . "; skipping parsing it.\n";
-	        return false;
-	    }
-
-	    $source = file_get_contents(self::getSourceDirectory($this->acronym) . '/' . $filename);
+	    $source = file_get_contents(self::getSourceDirectory($this->ownerAcronym) . '/' . $filename);
 
 	    $source = Helpers::initialSourceTransform($source, $acronym);
 
-	    return call_user_func( array( 'App\\DepartmentHandlers\\' . ucfirst($acronym) . 'Handler', 'parse' ), $source );
+	    // return call_user_func( array( 'App\\DepartmentHandlers\\' . ucfirst($acronym) . 'Handler', 'parseHtml' ), $source );
+
+	    return $this->parseHtml($source);
 
 	}
 
@@ -629,65 +625,8 @@ class DepartmentHandler {
 
 	        $department = new DepartmentParser($acronym);
 
-	        $department->parseDepartment();
+	        $department->parse();
 
-	        // Rather than storing the whole works in memory,
-	        // let's just save one department at a time in individual
-	        // JSON files:
-
-	        $directoryPath = env('PARSE_JSON_OUTPUT_FOLDER', 'generated-data') . '/' . $acronym;
-
-	        // If the folder doesn't exist yet, create it:
-	        // Thanks to http://stackoverflow.com/a/15075269/756641
-	        if(! is_dir($directoryPath)) {
-	            mkdir($directoryPath, 0755, true);
-	        }
-
-
-	        // Iterative check of json_encode
-	        // Trying to catch encoding issues
-	        if(file_put_contents($directoryPath . '/contracts.json', json_encode($department->contracts, JSON_PRETTY_PRINT))) {
-	            echo "...saved.\n";
-	        }
-	        else {
-	            // echo "STARTHERE: \n";
-	            // var_export($departmentArray);
-
-	            // echo "ENDHERE. \n";
-	            echo "...failed.\n";
-
-	            $newOutput = [];
-
-	            $index = 0;
-	            $limit = 1000000;
-
-	            foreach($department->contracts as $key => $data) {
-	                $index++;
-	                if($index > $limit) {
-	                    break;
-	                }
-	                $newOutput[$key] = $data;
-
-	                echo $index;
-
-	                if(json_encode($data, JSON_PRETTY_PRINT)) {
-	                    echo " P\n";
-	                }
-	                else {
-	                    echo " F\n";
-	                    var_dump($key);
-	                    var_dump($data);
-	                    exit();
-	                }
-
-	            }
-
-	        }
-
-
-	        // var_dump($department->contracts);
-	        // var_dump(json_encode($department->contracts, JSON_PRETTY_PRINT));
-	        // $output[$acronym] = $department->contracts;
 
 	        echo "Started " . $acronym . " at " . $startDate . "\n";
 	        echo "Finished at ". date('Y-m-d H:i:s') . " \n\n";
