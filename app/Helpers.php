@@ -404,6 +404,7 @@ class Helpers {
 			'referenceNumber' => 'Reference Number:',
 			'contractDate' => 'Contract Date:',
 			'description' => 'Description of work:',
+			'extraDescription' => 'Description (more details):',
 			'contractPeriodStart' => '',
 			'contractPeriodEnd' => '',
 			'contractPeriodRange' => 'Contract Period:',

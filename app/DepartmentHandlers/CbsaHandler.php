@@ -74,6 +74,7 @@ class CbsaHandler extends DepartmentHandler {
 			'referenceNumber' => 'Reference Number:',
 			'contractDate' => 'Contract Date:',
 			'description' => 'Description of work:',
+			'extraDescription' => 'Additional description:',
 			'contractPeriodStart' => '',
 			'contractPeriodEnd' => '',
 			'contractPeriodRange' => 'Contract Period:',

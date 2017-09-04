@@ -37,6 +37,7 @@ class DepartmentHandler {
 	    'referenceNumber' => '',
 	    'contractDate' => '',
 	    'description' => '',
+	    'extraDescription' => '',
 	    'objectCode' => '',
 	    'contractPeriodStart' => '',
 	    'contractPeriodEnd' => '',
@@ -157,6 +158,12 @@ class DepartmentHandler {
 
 				$contractUrls = $this->getContractUrls($quarterPage);
 
+
+				if(env('DEV_TEST_QUARTER', 0) == 1) {
+					echo "DEV_TEST_QUARTER\n";
+					dd($contractUrls);
+				}
+
 				foreach($contractUrls as $contractUrl) {
 
 					if(env('FETCH_LIMIT_CONTRACTS_PER_QUARTER', 2) && $contractsFetched >= env('FETCH_LIMIT_CONTRACTS_PER_QUARTER', 2)) {
@@ -203,6 +210,11 @@ class DepartmentHandler {
 		// var_dump($urls);
 
 		$urls = array_unique($urls);
+
+		if(env('DEV_TEST_INDEX', 0) == 1) {
+			echo "DEV_TEST_INDEX\n";
+			dd($urls);
+		}
 
 		return $urls;
 
@@ -406,6 +418,7 @@ class DepartmentHandler {
 	    $values['vendorName'] = Helpers::cleanText($values['vendorName']);
 	    $values['comments'] = Helpers::cleanText($values['comments']);
 	    $values['description'] = Helpers::cleanText($values['description']);
+	    $values['extraDescription'] = Helpers::cleanText($values['extraDescription']);
 
 
 	}
