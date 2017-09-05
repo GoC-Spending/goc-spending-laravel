@@ -161,7 +161,7 @@ class Helpers {
 
 	public static function cleanupContractValue($input) {
 
-		$output = str_replace(['$', ','], '', $input);
+		$output = str_replace(['$', ',', ' '], '', $input);
 		return floatval($output);
 
 	}
