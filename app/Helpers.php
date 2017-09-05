@@ -499,4 +499,62 @@ class Helpers {
 		return $html;
 	}
 
+
+	// Contract clean-up of missing values etc.:
+	public static function checkContractValues(&$contract, $vendorData = []) {
+
+		// In some cases, entries are missing a contract period start, but do have a contract date. If so, use that instead:
+		if(! $contract['startYear']) {
+			// if($contract['deliveryDate']) {
+			// 	$contract['startYear'] = Helpers::yearFromDate($contract['deliveryDate']);
+			// }
+			// else {
+			// 	$contract['startYear'] = Helpers::yearFromDate($contract['contractDate']);
+			// }
+
+			$contract['startYear'] = Helpers::yearFromDate($contract['contractDate']);
+		}
+
+		// If there's no end year, assume that it's the same as the start year:
+		if(! $contract['endYear']) {
+			if($contract['deliveryDate']) {
+				$contract['endYear'] = Helpers::yearFromDate($contract['deliveryDate']);
+			}
+			else {
+				$contract['endYear'] = $contract['startYear'];
+			}
+			
+		}
+
+		// If there's no original contract value, use the current value:
+		if(! $contract['originalValue']) {
+			$contract['originalValue'] = $contract['contractValue'];
+		}
+
+
+		$contract['yearsDuration'] = abs($contract['endYear'] - $contract['startYear']) + 1;
+		$contract['valuePerYear'] = $contract['contractValue'] / $contract['yearsDuration'];
+
+		// Find the consolidated vendor name:
+		if($vendorData) {
+			$contract['vendorClean'] = $vendorData->consolidateVendorNames($contract['vendorName']);
+		}
+		
+
+
+		// Remove any linebreaks etc.
+		// vendorName
+		// referenceNumber
+		// description
+		// comments
+		foreach(['vendorName', 'referenceNumber', 'description', 'comments', 'extraDescription'] as $textField) {
+			if(isset($contract[$textField]) && $contract[$textField]) {
+				$contract[$textField] = self::removeLinebreaks($contract[$textField]);
+			}
+
+		}
+
+
+	}
+
 }

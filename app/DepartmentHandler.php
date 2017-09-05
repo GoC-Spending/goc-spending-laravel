@@ -443,6 +443,13 @@ class DepartmentHandler {
 
 	    $sourceDirectory = self::getSourceDirectory($this->ownerAcronym);
 
+	    if(env('PARSE_CLEAN_VENDOR_NAMES', 1) == 1) {
+	    	$vendorData = new VendorData;
+	    }
+	    else {
+	    	$vendorData = null;
+	    }
+
 	    // Output directory:
 	    $directoryPath = storage_path() . '/' . env('PARSE_JSON_OUTPUT_FOLDER', 'generated-data') . '/' . $this->ownerAcronym;
 
@@ -504,6 +511,17 @@ class DepartmentHandler {
 	                $fileValues['referenceNumber'] = $filehash;
 
 	            }
+
+	            // Final check for missing values, etc.
+	            if(env('PARSE_CLEAN_CONTRACT_VALUES', 1) == 1) {
+	            	if(env('PARSE_CLEAN_VENDOR_NAMES', 1) == 1) {
+	            		Helpers::checkContractValues($fileValues, $vendorData);
+	            	}
+	            	else {
+	            		Helpers::checkContractValues($fileValues);
+	            	}
+	            }
+	            
 
 	            // TODO - update this to match the schema discussed at 2017-03-28's Civic Tech!
 	            $fileValues['uuid'] = $this->ownerAcronym . '-' . $fileValues['referenceNumber'];
