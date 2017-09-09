@@ -49,6 +49,7 @@ class IrccHandler extends DepartmentHandler {
 		foreach($quarterIndex as $quarterLabel => $quarterKey) {
 			if(strpos($title, $quarterLabel) !== false) {
 				$fiscalQuarter = $quarterKey;
+				break;
 			}
 		}
 
