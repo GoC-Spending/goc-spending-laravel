@@ -149,10 +149,10 @@ class DepartmentHandler {
 				$this->activeFiscalQuarter = '';
 
 				if(method_exists($this, 'fiscalYearFromQuarterPage')) {
-					$this->activeFiscalYear = $this->fiscalYearFromQuarterPage($quarterPage);
+					$this->activeFiscalYear = $this->fiscalYearFromQuarterPage($quarterPage, $url);
 				}
 				if(method_exists($this, 'fiscalQuarterFromQuarterPage')) {
-					$this->activeFiscalQuarter = $this->fiscalQuarterFromQuarterPage($quarterPage);
+					$this->activeFiscalQuarter = $this->fiscalQuarterFromQuarterPage($quarterPage, $url);
 				}
 
 
