@@ -109,6 +109,11 @@ class DepartmentHandler {
 
 		$quarterUrls = $this->filterQuarterUrls($quarterUrls);
 
+		if(env('DEV_TEST_INDEX', 0) == 1) {
+			echo "DEV_TEST_INDEX\n";
+			dd($quarterUrls);
+		}
+
 		$quartersFetched = 0;
 		foreach ($quarterUrls as $url) {
 
@@ -210,11 +215,6 @@ class DepartmentHandler {
 		// var_dump($urls);
 
 		$urls = array_unique($urls);
-
-		if(env('DEV_TEST_INDEX', 0) == 1) {
-			echo "DEV_TEST_INDEX\n";
-			dd($urls);
-		}
 
 		return $urls;
 
