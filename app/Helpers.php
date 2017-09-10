@@ -412,7 +412,7 @@ class Helpers {
 			'contractPeriodEnd' => '',
 			'contractPeriodRange' => 'Contract Period:',
 			'deliveryDate' => 'Delivery Date:',
-			'originalValue' => '',
+			'originalValue' => 'Original Contract Value:',
 			'contractValue' => 'Contract Value:',
 			'comments' => 'Comments:',
 		];
