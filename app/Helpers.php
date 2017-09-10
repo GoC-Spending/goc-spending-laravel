@@ -182,7 +182,10 @@ class Helpers {
 
 	public static function cleanLabelText($label) {
 
-		$label = str_replace([':', ' '], '', strtolower($label));
+		// Thanks to
+		// https://stackoverflow.com/a/11321058/756641
+		$label = preg_replace('/[^\da-z]/i', '', strtolower($label));
+
 		return trim($label);
 
 	}
@@ -446,7 +449,7 @@ class Helpers {
 
 			$keyNode = Helpers::cleanLabelText($keyNode);
 
-			if(isset($labelToKey[$keyNode]) && $labelToKey[$keyNode]) {
+			if(isset($labelToKey[$keyNode]) && $labelToKey[$keyNode] && isset($valueNodes[$index])) {
 				$values[$labelToKey[$keyNode]] = Helpers::cleanHtmlValue($valueNodes[$index]);
 			}
 			
