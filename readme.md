@@ -9,7 +9,7 @@ Requires an environment [that can run the latest version](https://laravel.com/do
 ## First-run setup
 
 1. Clone the repository
-2. Go to the new folder, and run `composer update`. This will download any Laravel and project-specific dependencies.
+2. Go to the new folder, and run `composer install`. This will download any Laravel and project-specific dependencies.
 3. Create a copy of `.env.example` and name it `.env`. This will allow you to customize any settings on a per-installation basis.
 4. ???
 5. Profit!
