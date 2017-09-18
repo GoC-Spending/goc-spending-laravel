@@ -73,13 +73,6 @@ class CfiaHandler extends DepartmentHandler {
 			}
 		}
 
-		// Correction to keep these aligned with fiscal-year based entries.
-		// For example, when IRCC has "January 1 - March 31, 2016", other departments would have "2015-2016 Q4" and so the operative year would actually be 2015.
-		// TODO - ask someone to doublecheck this logic.
-		if($fiscalQuarter == 4) {
-			$fiscalYear -= 1;
-		}
-
 		if($output == 'year') {
 			return $fiscalYear;
 		}
