@@ -461,8 +461,11 @@ class Helpers {
 		// Change the "to" range into start and end values:
 		if(isset($values['contractPeriodRange']) && $values['contractPeriodRange']) {
 			$split = explode($periodSplitString, $values['contractPeriodRange']);
-			$values['contractPeriodStart'] = trim($split[0]);
-			$values['contractPeriodEnd'] = trim($split[1]);
+
+			if(isset($split[0]) && isset($split[1])) {
+				$values['contractPeriodStart'] = trim($split[0]);
+				$values['contractPeriodEnd'] = trim($split[1]);
+			}
 		}
 
 		// var_dump($values);
