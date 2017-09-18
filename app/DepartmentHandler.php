@@ -252,7 +252,14 @@ class DepartmentHandler {
 		return $response->getBody();
 	}
 
-	public static function urlToFilename($url, $extension = '.html') {
+	public function removeSessionIdsFromUrl($url) {
+		// Can be overridden on a per-department basis:
+		return $url;
+	}
+
+	public function urlToFilename($url, $extension = '.html') {
+
+		$url = $this->removeSessionIdsFromUrl($url);
 
 		return md5($url) . $extension;
 
@@ -267,7 +274,7 @@ class DepartmentHandler {
 
 		$url = self::cleanupIncomingUrl($url);
 
-		$filename = self::urlToFilename($url);
+		$filename = $this->urlToFilename($url);
 
 		$directoryPath = storage_path() . '/' . env('FETCH_RAW_HTML_FOLDER', 'raw-data');
 
@@ -345,7 +352,7 @@ class DepartmentHandler {
 			return false;
 		}
 
-		$filename = self::urlToFilename($url, '.json');
+		$filename = $this->urlToFilename($url, '.json');
 		$directoryPath = storage_path() . '/' . env('FETCH_METADATA_FOLDER', 'metadata') . '/' . $this->ownerAcronym;
 
 
@@ -356,7 +363,7 @@ class DepartmentHandler {
 		}
 
 		$output = [
-			'sourceURL' => $url,
+			'sourceURL' => $this->removeSessionIdsFromUrl($url),
 			'sourceYear' => intval($this->activeFiscalYear),
 			'sourceQuarter' => intval($this->activeFiscalQuarter),
 		];
