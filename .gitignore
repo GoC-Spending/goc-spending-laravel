@@ -10,3 +10,8 @@ Homestead.json
 ehthumbs.db
 
 Thumbs.db
+
+# Ignore data
+storage/generated-data/
+storage/metadata/
+storage/raw-data/
