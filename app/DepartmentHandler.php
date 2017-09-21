@@ -3,7 +3,7 @@ namespace App;
 
 use GuzzleHttp\Client;
 use XPathSelector\Selector;
-use App\Helpers;
+use App\Helpers\Helpers;
 
 // Includes both fetching and parsing functions
 // now combined into one class.

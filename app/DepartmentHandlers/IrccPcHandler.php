@@ -2,7 +2,7 @@
 namespace App\DepartmentHandlers;
 
 use App\DepartmentHandler;
-use App\Helpers;
+use App\Helpers\Helpers;
 
 // Passport Canada (now part of IRCC)
 class IrccPcHandler extends DepartmentHandler
