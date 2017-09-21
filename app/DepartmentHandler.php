@@ -111,7 +111,7 @@ abstract class DepartmentHandler {
 
 		$indexPage = $this->getPage($this->indexUrl);
 
-		$quarterUrls = $this->getQuarterUrls($indexPage);
+		$quarterUrls = self::arrayFromHtml($indexPage, $this->indexToQuarterXpath);
 
 		$quarterUrls = $this->filterQuarterUrls($quarterUrls);
 
@@ -138,7 +138,7 @@ abstract class DepartmentHandler {
 				$quarterPage = $this->getPage($url);
 
 				// If there aren't multipages, this just returns the original quarter URL back as a single item array:
-				$quarterMultiPages = $this->getMultiPageQuarterUrls($quarterPage);
+				$quarterMultiPages = self::arrayFromHtml($quarterPage, $this->quarterMultiPageXpath);
 
 			}
 			else {
@@ -167,7 +167,7 @@ abstract class DepartmentHandler {
 				}
 
 
-				$contractUrls = $this->getContractUrls($quarterPage);
+				$contractUrls = self::arrayFromHtml($quarterPage, $this->quarterToContractXpath);
 
 
 				if(env('DEV_TEST_QUARTER', 0) == 1) {
@@ -202,50 +202,26 @@ abstract class DepartmentHandler {
 
 	}
 
+    /**
+     * Pull an array of items, selected via an XPath selector, from an
+     * HTML page.
+     *
+     * @param $htmlSource string  The HTML to run the XPath selector on.
+     * @param $xpath      string  The XPath selector to extract the items.
+     *
+     * @return string[]  The items converted to strings, stored in an array, and deduped.
+     */
 	public static function arrayFromHtml($htmlSource, $xpath) {
 
 		$xs = Selector::loadHTML($htmlSource);
 
-		$urls = $xs->findAll($xpath)->map(function ($node, $index) {
+		$items = $xs->findAll($xpath)->map(function ($node, $index) {
 			return (string)$node;
 		});
 
-		return $urls;
+		return array_unique( $items );
 
 	}
-
-	public function getQuarterUrls($indexPage) {
-
-		$urls = self::arrayFromHtml($indexPage, $this->indexToQuarterXpath);
-
-		// var_dump($urls);
-
-		$urls = array_unique($urls);
-
-		return $urls;
-
-	}
-
-	public function getMultiPageQuarterUrls($quarterPage) {
-
-		$urls = self::arrayFromHtml($quarterPage, $this->quarterMultiPageXpath);
-
-		$urls = array_unique($urls);
-
-		return $urls;
-
-	}
-
-	public function getContractUrls($quarterPage) {
-
-		$urls = self::arrayFromHtml($quarterPage, $this->quarterToContractXpath);
-
-		$urls = array_unique($urls);
-
-		return $urls;
-
-	}
-
 
 	// Get a page using the Guzzle library
 	// No longer a static function since we're reusing the client object between requests.
