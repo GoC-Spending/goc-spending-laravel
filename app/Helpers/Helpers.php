@@ -6,45 +6,6 @@ use XPathSelector\Selector;
 class Helpers
 {
 
-    public static function cleanupDate($dateInput, $printErrors = 1)
-    {
-
-        // 11/1/2013
-        $time = strtotime($dateInput);
-        if ($time) {
-            return $time;
-        } else {
-            // Try doing the month switch and see if that helps:
-            if ($dateInput) {
-                $time = strtotime(self::switchMonthsAndDays($dateInput, $printErrors));
-                if ($time) {
-                    if ($printErrors) {
-                        echo "Switched months and days for: '$dateInput'\n";
-                    }
-                    return $time;
-                } else {
-                    if ($printErrors) {
-                        echo "Date cleanup error: '$dateInput'\n";
-                    }
-                }
-            }
-            // If there's no $dateInput at all, don't print an error:
-            return false;
-        }
-    }
-
-    // Should transition to yearFromDate (below) which is more reliable:
-    public static function dateToYear($dateInput)
-    {
-
-        $time = self::cleanupDate($dateInput);
-        if ($time) {
-            return date('Y', $time);
-        } else {
-            return false;
-        }
-    }
-
     // Use a regex for the same thing as above, but more reliably:
     public static function yearFromDate($dateInput)
     {
