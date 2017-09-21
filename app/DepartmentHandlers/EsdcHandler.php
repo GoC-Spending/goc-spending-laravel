@@ -4,68 +4,70 @@ namespace App\DepartmentHandlers;
 use App\DepartmentHandler;
 use App\Helpers;
 
-class EsdcHandler extends DepartmentHandler {
+class EsdcHandler extends DepartmentHandler
+{
 
-	public $indexUrl = 'http://disclosure.esdc.gc.ca/dp-pd/prdlstcdn-eng.jsp?site=1&section=2';
-	public $baseUrl = 'http://disclosure.esdc.gc.ca/';
-	public $ownerAcronym = 'esdc';
+    public $indexUrl = 'http://disclosure.esdc.gc.ca/dp-pd/prdlstcdn-eng.jsp?site=1&section=2';
+    public $baseUrl = 'http://disclosure.esdc.gc.ca/';
+    public $ownerAcronym = 'esdc';
 
-	// From the index page, list all the "quarter" URLs
-	public $indexToQuarterXpath = "//main//ul/li/a/@href";
+    // From the index page, list all the "quarter" URLs
+    public $indexToQuarterXpath = "//main//ul/li/a/@href";
 
-	public $multiPage = 0;
+    public $multiPage = 0;
 
-	public $quarterToContractXpath = "//main//table//td//a/@href";
+    public $quarterToContractXpath = "//main//table//td//a/@href";
 
-	public function quarterToContractUrlTransform($contractUrl) {
-		return "http://disclosure.esdc.gc.ca/dp-pd/" . $contractUrl;
-	}
+    public function quarterToContractUrlTransform($contractUrl)
+    {
+        return "http://disclosure.esdc.gc.ca/dp-pd/" . $contractUrl;
+    }
 
-	public function indexToQuarterUrlTransform($url) {
-		return "http://disclosure.esdc.gc.ca/dp-pd/" . $url;
-	}
+    public function indexToQuarterUrlTransform($url)
+    {
+        return "http://disclosure.esdc.gc.ca/dp-pd/" . $url;
+    }
 
-	public $contractContentSubsetXpath = "//main";
+    public $contractContentSubsetXpath = "//main";
 
-	public function fiscalYearFromQuarterPage($quarterHtml) {
+    public function fiscalYearFromQuarterPage($quarterHtml)
+    {
 
-		// <h1 id="wb-cont" property="name" class="page-header mrgn-tp-md">2016-2017, 3rd quarter (1 October - 31 December 2016)</h1>
+        // <h1 id="wb-cont" property="name" class="page-header mrgn-tp-md">2016-2017, 3rd quarter (1 October - 31 December 2016)</h1>
 
-		return Helpers::xpathRegexComboSearch($quarterHtml, "//h2", '/([0-9]{4})/');
+        return Helpers::xpathRegexComboSearch($quarterHtml, "//h2", '/([0-9]{4})/');
+    }
 
-	}
+    public function fiscalQuarterFromQuarterPage($quarterHtml)
+    {
 
-	public function fiscalQuarterFromQuarterPage($quarterHtml) {
+        return Helpers::xpathRegexComboSearch($quarterHtml, "//h2", '/\s([0-9])</');
+    }
 
-		return Helpers::xpathRegexComboSearch($quarterHtml, "//h2", '/\s([0-9])</');
+    public function parseHtml($html)
+    {
 
-	}
+        // Service Canada doesn't include an "original contract value" on their entries. Only the current contract value is listed.
 
-	public function parseHtml($html) {
+        $keyArray = [
+            'vendorName' => 'Vendor Name:',
+            'referenceNumber' => 'Reference Number:',
+            'contractDate' => 'Contract Date:',
+            'description' => 'Description of work:',
+            'extraDescription' => 'Description (more details):',
+            'contractPeriodStart' => '',
+            'contractPeriodEnd' => '',
+            'contractPeriodRange' => 'Contract Period:',
+            'deliveryDate' => 'Delivery Date:',
+            'originalValue' => '',
+            'contractValue' => 'Current Contract Value:',
+            'comments' => 'Comments:',
+        ];
 
-		// Service Canada doesn't include an "original contract value" on their entries. Only the current contract value is listed.
+        $values = Helpers::genericXpathParser($html, "//table//th", "//table//td", 'to', $keyArray);
 
-		$keyArray = [
-			'vendorName' => 'Vendor Name:',
-			'referenceNumber' => 'Reference Number:',
-			'contractDate' => 'Contract Date:',
-			'description' => 'Description of work:',
-			'extraDescription' => 'Description (more details):',
-			'contractPeriodStart' => '',
-			'contractPeriodEnd' => '',
-			'contractPeriodRange' => 'Contract Period:',
-			'deliveryDate' => 'Delivery Date:',
-			'originalValue' => '',
-			'contractValue' => 'Current Contract Value:',
-			'comments' => 'Comments:',
-		];
+        
 
-	    $values = Helpers::genericXpathParser($html, "//table//th", "//table//td", 'to', $keyArray);
-
-	    
-
-	    return $values;
-
-	}
-
+        return $values;
+    }
 }
