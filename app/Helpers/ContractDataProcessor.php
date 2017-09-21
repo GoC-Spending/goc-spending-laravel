@@ -23,11 +23,11 @@ class ContractDataProcessor
         }
 
         // Check for error-y non-unicode characters
-        $values['referenceNumber'] = \App\Helpers\Helpers::cleanText($values['referenceNumber']);
-        $values['vendorName'] = \App\Helpers\Helpers::cleanText($values['vendorName']);
-        $values['comments'] = \App\Helpers\Helpers::cleanText($values['comments']);
-        $values['description'] = \App\Helpers\Helpers::cleanText($values['description']);
-        $values['extraDescription'] = \App\Helpers\Helpers::cleanText($values['extraDescription']);
+        $values['referenceNumber'] = \App\Helpers\Helpers::convertToUtf8($values['referenceNumber']);
+        $values['vendorName'] = \App\Helpers\Helpers::convertToUtf8($values['vendorName']);
+        $values['comments'] = \App\Helpers\Helpers::convertToUtf8($values['comments']);
+        $values['description'] = \App\Helpers\Helpers::convertToUtf8($values['description']);
+        $values['extraDescription'] = \App\Helpers\Helpers::convertToUtf8($values['extraDescription']);
     }
 
     public static function generateAdditionalMetadata(&$values)

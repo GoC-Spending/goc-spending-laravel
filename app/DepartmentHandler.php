@@ -126,7 +126,7 @@ abstract class DepartmentHandler
 
         $indexPage = $this->getPage($this->indexUrl);
 
-        $quarterUrls = Helpers::arrayFromHtmlViaXpath($indexPage, $this->indexToQuarterXpath);
+        $quarterUrls = Helpers::getArrayFromHtmlViaXpath($indexPage, $this->indexToQuarterXpath);
 
         $quarterUrls = $this->filterQuarterUrls($quarterUrls);
 
@@ -151,7 +151,7 @@ abstract class DepartmentHandler
                 $quarterPage = $this->getPage($url);
 
                 // If there aren't multipages, this just returns the original quarter URL back as a single item array:
-                $quarterMultiPages = Helpers::arrayFromHtmlViaXpath($quarterPage, $this->quarterMultiPageXpath);
+                $quarterMultiPages = Helpers::getArrayFromHtmlViaXpath($quarterPage, $this->quarterMultiPageXpath);
             } else {
                 $quarterMultiPages = [ $url ];
             }
@@ -178,7 +178,7 @@ abstract class DepartmentHandler
                 }
 
 
-                $contractUrls = Helpers::arrayFromHtmlViaXpath($quarterPage, $this->quarterToContractXpath);
+                $contractUrls = Helpers::getArrayFromHtmlViaXpath($quarterPage, $this->quarterToContractXpath);
 
 
                 if (env('DEV_TEST_QUARTER', 0) == 1) {
@@ -240,7 +240,7 @@ abstract class DepartmentHandler
     public function downloadPage($url, $subdirectory = '')
     {
 
-        $url = Helpers::cleanupIncomingUrl($url);
+        $url = Helpers::cleanIncomingUrl($url);
 
         $filename = Helpers::generateUrlFromFilename($this->removeSessionIdsFromUrl($url));
 
@@ -411,9 +411,9 @@ abstract class DepartmentHandler
                 // Final check for missing values, etc.
                 if (env('PARSE_CLEAN_CONTRACT_VALUES', 1) == 1) {
                     if (env('PARSE_CLEAN_VENDOR_NAMES', 1) == 1) {
-                        Helpers::checkContractValues($fileValues, $vendorData);
+                        Helpers::assureRequiredContractValues($fileValues, $vendorData);
                     } else {
-                        Helpers::checkContractValues($fileValues);
+                        Helpers::assureRequiredContractValues($fileValues);
                     }
                 }
                 
@@ -466,7 +466,7 @@ abstract class DepartmentHandler
 
         $source = file_get_contents(Helpers::getSourceDirectoryForDepartment($this->ownerAcronym) . '/' . $filename);
 
-        $source = Helpers::initialSourceTransform($source, $acronym);
+        $source = Helpers::applyInitialSourceHtmlTransformations($source);
 
         // return call_user_func( array( 'App\\DepartmentHandlers\\' . ucfirst($acronym) . 'Handler', 'parseHtml' ), $source );
 
