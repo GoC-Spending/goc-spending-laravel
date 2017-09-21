@@ -529,37 +529,7 @@ abstract class DepartmentHandler
 
         return $output;
     }
-
-    public static function parseAllDepartments()
-    {
-
-        // Run the operation!
-        $startTime = microtime(true);
-
-        // Question of the day is... how big can PHP arrays get?
-        $output = [];
-
-        $departments = DepartmentParser::getDepartments();
-
-        $departmentsParsed = 0;
-        foreach ($departments as $acronym) {
-            // if(in_array($acronym, $configuration['departmentsToSkip'])) {
-            //     echo "Skipping " . $acronym . "\n";
-            //     continue;
-            // }
-
-            if (env('PARSE_LIMIT_DEPARTMENTS', 0) && $departmentsParsed >= env('PARSE_LIMIT_DEPARTMENTS', 0)) {
-                break;
-            }
-
-            $department = new DepartmentParser($acronym);
-
-            $department->parse();
-
-            $departmentsParsed++;
-        }
-    }
-
+    
     /**
      * Parse the HTML of a given contract, converting the data to
      * an associative array.
