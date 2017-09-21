@@ -11,8 +11,8 @@ class ContractDataProcessor
         $values['startYear'] = \App\Helpers\Helpers::extractYearFromDate($values['contractPeriodStart']);
         $values['endYear'] = \App\Helpers\Helpers::extractYearFromDate($values['contractPeriodEnd']);
 
-        $values['originalValue'] = \App\Helpers\Helpers::cleanupContractValue($values['originalValue']);
-        $values['contractValue'] = \App\Helpers\Helpers::cleanupContractValue($values['contractValue']);
+        $values['originalValue'] = \App\Helpers\Helpers::cleanContractValue($values['originalValue']);
+        $values['contractValue'] = \App\Helpers\Helpers::cleanContractValue($values['contractValue']);
 
         if (!$values['contractValue']) {
             $values['contractValue'] = $values['originalValue'];

@@ -6,26 +6,6 @@ use XPathSelector\Selector;
 class Helpers
 {
 
-    /**
-     * Extract a year from a date string.
-     *
-     * @param string $dateInput  The date.
-     * @return bool|string
-     */
-    public static function extractYearFromDate($dateInput)
-    {
-        $matches = [];
-        $pattern = '/([1-2][0-9][0-9][0-9])/';
-
-        preg_match($pattern, $dateInput, $matches);
-
-        if (! empty($matches)) {
-            return $matches[1];
-        }
-
-        return false;
-    }
-
     // Thanks to
     // https://stackoverflow.com/a/6059008/756641
     // Usage
@@ -40,7 +20,7 @@ class Helpers
         }, $str);
     }
 
-    public static function cleanupContractValue($input)
+    public static function cleanContractValue($input)
     {
 
         $output = str_replace(['$', ',', ' '], '', $input);
@@ -243,7 +223,42 @@ class Helpers
         }
     }
 
-    public static function getObjectCodeFromDescription($description)
+    /**
+     * Extract a year from a date string.
+     *
+     * @param string $dateInput  The date.
+     * @return bool|string
+     */
+    public static function extractYearFromDate($dateInput)
+    {
+        $matches = [];
+        $pattern = '/([1-2][0-9][0-9][0-9])/';
+
+        preg_match($pattern, $dateInput, $matches);
+
+        if (! empty($matches)) {
+            return $matches[1];
+        }
+
+        return false;
+    }
+
+    /**
+     * Extract a Chart of Accounts Object Code from a contract description.
+     *
+     * For example:
+     *   "514- Rental of other buildings" -> 0514
+     *   "1228 - Computer software"       -> 1228
+     *
+     * The full list of Chart of Accounts Object Codes is available here,
+     * https://www.tpsgc-pwgsc.gc.ca/recgen/pceaf-gwcoa/1718/ressource-resource-eng.html
+     * as the last link on the page.
+     *
+     * @param string $description  The contract description.
+     *
+     * @return string  The object code.
+     */
+    public static function extractObjectCodeFromDescription($description)
     {
 
         // For example,
@@ -303,9 +318,8 @@ class Helpers
      *
      * @return string  The filename based on the contract information.
      */
-    public static function urlToFilename($url, $extension = '.html')
+    public static function generateUrlFromFilename($url, $extension = '.html')
     {
-
         return md5($url) . $extension;
     }
 

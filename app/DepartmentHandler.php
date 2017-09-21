@@ -242,7 +242,7 @@ abstract class DepartmentHandler
 
         $url = Helpers::cleanupIncomingUrl($url);
 
-        $filename = Helpers::urlToFilename($this->removeSessionIdsFromUrl($url));
+        $filename = Helpers::generateUrlFromFilename($this->removeSessionIdsFromUrl($url));
 
         $directoryPath = storage_path() . '/' . env('FETCH_RAW_HTML_FOLDER', 'raw-data');
 
@@ -310,7 +310,7 @@ abstract class DepartmentHandler
             return false;
         }
 
-        $filename = Helpers::urlToFilename($this->removeSessionIdsFromUrl($url), '.json');
+        $filename = Helpers::generateUrlFromFilename($this->removeSessionIdsFromUrl($url), '.json');
         $directoryPath = storage_path() . '/' . env('FETCH_METADATA_FOLDER', 'metadata') . '/' . $this->ownerAcronym;
 
 
@@ -396,7 +396,7 @@ abstract class DepartmentHandler
 
                 $fileValues['ownerAcronym'] = $this->ownerAcronym;
 
-                $fileValues['objectCode'] = Helpers::getObjectCodeFromDescription($fileValues['description']);
+                $fileValues['objectCode'] = Helpers::extractObjectCodeFromDescription($fileValues['description']);
 
                 // Useful for troubleshooting:
                 $fileValues['sourceFilename'] = $this->ownerAcronym . '/' . $file;
