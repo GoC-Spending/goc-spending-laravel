@@ -220,16 +220,7 @@ abstract class DepartmentHandler {
 		return $url;
 	}
 
-	public function urlToFilename($url, $extension = '.html') {
-
-		$url = $this->removeSessionIdsFromUrl($url);
-
-		return md5($url) . $extension;
-
-	}
-
-
-	// Generic page download function
+    // Generic page download function
 	// Downloads the requested URL and saves it to the specified directory
 	// If the same URL has already been downloaded, it avoids re-downloading it again.
 	// This makes it easier to stop and re-start the script without having to go from the very beginning again.
@@ -237,7 +228,7 @@ abstract class DepartmentHandler {
 
 		$url = self::cleanupIncomingUrl($url);
 
-		$filename = $this->urlToFilename($url);
+		$filename = Helpers::urlToFilename($this->removeSessionIdsFromUrl($url));
 
 		$directoryPath = storage_path() . '/' . env('FETCH_RAW_HTML_FOLDER', 'raw-data');
 
@@ -315,7 +306,7 @@ abstract class DepartmentHandler {
 			return false;
 		}
 
-		$filename = $this->urlToFilename($url, '.json');
+		$filename = Helpers::urlToFilename($this->removeSessionIdsFromUrl($url), '.json');
 		$directoryPath = storage_path() . '/' . env('FETCH_METADATA_FOLDER', 'metadata') . '/' . $this->ownerAcronym;
 
 

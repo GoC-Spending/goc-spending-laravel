@@ -613,4 +613,23 @@ class Helpers {
 
     }
 
+    /**
+     * Generate a unique filename based on a contract URL.
+     *
+     * Note: The contract URL should be a "permalink" version. Usually
+     *       this means you’ll need to remove any session information
+     *       or other data that isn’t directly related to that contract.
+     *
+     * @param string $url        The URL for the contract.
+     * @param string $extension  The extension to use for the filename.
+     *
+     * @return string  The filename based on the contract information.
+     */
+    public static function urlToFilename($url, $extension = '.html')
+    {
+
+        return md5($url) . $extension;
+
+    }
+
 }
