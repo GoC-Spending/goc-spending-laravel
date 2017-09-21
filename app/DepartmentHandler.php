@@ -510,26 +510,6 @@ abstract class DepartmentHandler
         return $this->parseHtml($source);
     }
 
-    public static function getDepartments()
-    {
-
-        $output = [];
-        $sourceDirectory = storage_path() . '/' . env('FETCH_RAW_HTML_FOLDER', 'raw-data');
-
-
-        $departments = array_diff(scandir($sourceDirectory), ['..', '.']);
-
-        // Make sure that these are really directories
-        // This could probably done with some more elegant array map function
-        foreach ($departments as $department) {
-            if (is_dir($sourceDirectory . $department)) {
-                $output[] = $department;
-            }
-        }
-
-        return $output;
-    }
-    
     /**
      * Parse the HTML of a given contract, converting the data to
      * an associative array.
