@@ -1,6 +1,7 @@
 <?xml version="1.0"?>
 <!-- Thanks to: https://matthewdaly.co.uk/blog/2017/03/15/enforcing-a-coding-standard-with-php-codesniffer/ -->
-<!-- If you want to automatically run this on commit, check out WP-Enforcer's pre-commit hook: https://github.com/stevegrunwell/wp-enforcer -->
+<!-- If you want to automatically run this on commit, check out WP-Enforcer's pre-commit hook:
+     https://github.com/stevegrunwell/wp-enforcer (make sure to make it executable!) -->
 <ruleset name="PHP_CodeSniffer">
     <description>The coding standard for our project.</description>
 
