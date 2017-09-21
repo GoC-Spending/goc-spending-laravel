@@ -22,33 +22,7 @@ class Helpers
 
         return false;
     }
-
-    public static function fixDndDate($dateInput)
-    {
-
-        $year = self::yearFromDate($dateInput);
-
-        // Default backup values
-        $month = '01';
-        $day = '01';
-
-        $matches = [];
-        $pattern = '/([0-9]+)-/';
-
-        preg_match_all($pattern, $dateInput, $matches, PREG_SET_ORDER);
-
-        if ($matches) {
-            if (isset($matches[0][1])) {
-                $day = str_pad($matches[0][1], 2, '0', STR_PAD_LEFT);
-            }
-            if (isset($matches[1][1])) {
-                $month = str_pad($matches[1][1], 2, '0', STR_PAD_LEFT);
-            }
-        }
-
-        return $year . '-' . $month . '-' . $day;
-    }
-
+    
     // Uses a series of regular expressions to cleanup bad date data
     // This often probably gets months and days mixed-up, but that's okay.
     // We're going for nearest year in this case.
