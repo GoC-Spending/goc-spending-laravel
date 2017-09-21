@@ -25,7 +25,7 @@ class Helpers
 
         return false;
     }
-    
+
     // Thanks to
     // https://stackoverflow.com/a/6059008/756641
     // Usage
@@ -77,24 +77,7 @@ class Helpers
         $output = str_replace(["\n", "\r", "\t"], ' ', $input);
         return trim($output);
     }
-
-    public static function switchMonthsAndDays($dateString, $printErrors = 1)
-    {
-        // Takes a YYYY-DD-MM (whyyyy, CSA?)
-        // and changes it to YYYY-MM-DD
-
-        $split = explode('-', $dateString);
-        if (count($split) == 3) {
-            return $split[0] . '-' . $split[2] . '-' . $split[1];
-        } else {
-            if ($printErrors) {
-                echo "Error: could not switchMonthsAndDays for '$dateString'\n";
-            }
-            
-            return false;
-        }
-    }
-
+    
     public static function stringBetween($start, $end, $string)
     {
 
