@@ -111,7 +111,7 @@ abstract class DepartmentHandler {
 
 		$indexPage = $this->getPage($this->indexUrl);
 
-		$quarterUrls = self::arrayFromHtml($indexPage, $this->indexToQuarterXpath);
+		$quarterUrls = Helpers::arrayFromHtmlViaXpath($indexPage, $this->indexToQuarterXpath);
 
 		$quarterUrls = $this->filterQuarterUrls($quarterUrls);
 
@@ -138,7 +138,7 @@ abstract class DepartmentHandler {
 				$quarterPage = $this->getPage($url);
 
 				// If there aren't multipages, this just returns the original quarter URL back as a single item array:
-				$quarterMultiPages = self::arrayFromHtml($quarterPage, $this->quarterMultiPageXpath);
+				$quarterMultiPages = Helpers::arrayFromHtmlViaXpath($quarterPage, $this->quarterMultiPageXpath);
 
 			}
 			else {
@@ -167,7 +167,7 @@ abstract class DepartmentHandler {
 				}
 
 
-				$contractUrls = self::arrayFromHtml($quarterPage, $this->quarterToContractXpath);
+				$contractUrls = Helpers::arrayFromHtmlViaXpath($quarterPage, $this->quarterToContractXpath);
 
 
 				if(env('DEV_TEST_QUARTER', 0) == 1) {
@@ -202,28 +202,9 @@ abstract class DepartmentHandler {
 
 	}
 
-    /**
-     * Pull an array of items, selected via an XPath selector, from an
-     * HTML page.
-     *
-     * @param $htmlSource string  The HTML to run the XPath selector on.
-     * @param $xpath      string  The XPath selector to extract the items.
-     *
-     * @return string[]  The items converted to strings, stored in an array, and deduped.
-     */
-	public static function arrayFromHtml($htmlSource, $xpath) {
 
-		$xs = Selector::loadHTML($htmlSource);
 
-		$items = $xs->findAll($xpath)->map(function ($node, $index) {
-			return (string)$node;
-		});
-
-		return array_unique( $items );
-
-	}
-
-	// Get a page using the Guzzle library
+    // Get a page using the Guzzle library
 	// No longer a static function since we're reusing the client object between requests.
 	// Ignores SSL verification per http://stackoverflow.com/a/32707976/756641
 	public function getPage($url) {

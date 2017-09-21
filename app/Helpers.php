@@ -591,4 +591,26 @@ class Helpers {
 
     }
 
+    /**
+     * Pull an array of items, selected via an XPath selector, from an
+     * HTML page.
+     *
+     * @param $htmlSource string  The HTML to run the XPath selector on.
+     * @param $xpath      string  The XPath selector to extract the items.
+     *
+     * @return string[]  The items converted to strings, stored in an array, and deduped.
+     */
+    public static function arrayFromHtmlViaXpath($htmlSource, $xpath)
+    {
+
+        $xs = Selector::loadHTML($htmlSource);
+
+        $items = $xs->findAll($xpath)->map(function ($node, $index) {
+            return (string)$node;
+        });
+
+        return array_unique($items);
+
+    }
+
 }
