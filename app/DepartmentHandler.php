@@ -682,6 +682,6 @@ abstract class DepartmentHandler {
      *
      * @return array  The extracted contract data.
      */
-	abstract public static function parseHtml( $source );
+	abstract public function parseHtml( $source );
 
 }

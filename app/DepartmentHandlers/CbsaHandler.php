@@ -66,7 +66,7 @@ class CbsaHandler extends DepartmentHandler {
 
 	
 
-	public static function parseHtml($html) {
+	public function parseHtml($html) {
 
 		$values = [];
 		$keyToLabel = [

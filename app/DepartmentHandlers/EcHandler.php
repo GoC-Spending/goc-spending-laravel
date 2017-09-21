@@ -41,7 +41,7 @@ class EcHandler extends DepartmentHandler {
 
 	}
 
-	public static function parseHtml($html) {
+	public function parseHtml($html) {
 
 		return Helpers::genericXpathParser($html, "//table//td[@scope='row']", "//table//td[@class='alignTopLeft']", ' to ');
 

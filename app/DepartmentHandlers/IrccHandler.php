@@ -81,7 +81,7 @@ class IrccHandler extends DepartmentHandler {
 
 	}
 
-	public static function parseHtml($html) {
+	public function parseHtml($html) {
 
 		return Helpers::genericXpathParser($html, "//table//th[@scope='row']", "//table//td", ' to ');
 

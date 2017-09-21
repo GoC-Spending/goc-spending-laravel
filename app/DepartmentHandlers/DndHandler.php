@@ -41,7 +41,7 @@ class DndHandler extends DepartmentHandler {
 
 	}
 
-	public static function parseHtml($html) {
+	public function parseHtml($html) {
 
 		// DND doesn't include a contract period range, or an original value.
 		// They also have wild date formats (eg. "9-2-2017")

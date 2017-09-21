@@ -41,7 +41,7 @@ class RcmpHandler extends DepartmentHandler {
 
 	}
 
-	public static function parseHtml($html) {
+	public function parseHtml($html) {
 
 	    $values = Helpers::genericXpathParser($html, "//table//th", "//table//td", 'to');
 

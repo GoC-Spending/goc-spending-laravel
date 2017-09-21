@@ -75,7 +75,7 @@ class IrccPcHandler extends DepartmentHandler {
 
 	}
 
-	public static function parseHtml($html) {
+	public function parseHtml($html) {
 
 		// Passport Canada has a typo in "Vender name"
 		$keyArray = [

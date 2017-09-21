@@ -41,7 +41,7 @@ class EsdcHandler extends DepartmentHandler {
 
 	}
 
-	public static function parseHtml($html) {
+	public function parseHtml($html) {
 
 		// Service Canada doesn't include an "original contract value" on their entries. Only the current contract value is listed.
 

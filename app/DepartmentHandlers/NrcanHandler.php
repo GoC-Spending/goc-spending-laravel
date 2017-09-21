@@ -45,7 +45,7 @@ class NrcanHandler extends DepartmentHandler {
 
 	}
 
-	public static function parseHtml($html) {
+	public function parseHtml($html) {
 
 		$keyArray = [
 			'vendorName' => 'Vendor Name:',
