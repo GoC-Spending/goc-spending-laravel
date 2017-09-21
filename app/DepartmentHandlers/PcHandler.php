@@ -66,6 +66,6 @@ class PcHandler extends DepartmentHandler
             'comments' => 'Comments:',
         ];
 
-        return Helpers::genericXpathParser($html, "//form//label", "//form//p", ' to ', $keyArray);
+        return Helpers::extractContractDataViaGenericXpathParser($html, "//form//label", "//form//p", ' to ', $keyArray);
     }
 }

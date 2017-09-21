@@ -109,6 +109,6 @@ class StatsHandler extends DepartmentHandler
             'comments' => 'Comments',
         ];
 
-        return Helpers::genericXpathParser($html, "//table//th[@scope='row']", "//table//td", ' to ', $keyArray);
+        return Helpers::extractContractDataViaGenericXpathParser($html, "//table//th[@scope='row']", "//table//td", ' to ', $keyArray);
     }
 }

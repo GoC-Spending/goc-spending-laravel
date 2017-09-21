@@ -117,6 +117,6 @@ class CfiaHandler extends DepartmentHandler
         // http://www.inspection.gc.ca/active/scripts/agen/proactive/contra/contrarport.asp?lang=e&yr=2016-2017&q=2&contraID=17443&yid=13
         // In these cases the data isn't properly returned from the server, so the parsed data will be missing entries.
 
-        return Helpers::genericXpathParser($html, "//table//th[@scope='row']", "//table//td", ' to ', $keyArray);
+        return Helpers::extractContractDataViaGenericXpathParser($html, "//table//th[@scope='row']", "//table//td", ' to ', $keyArray);
     }
 }

@@ -47,6 +47,6 @@ class EcHandler extends DepartmentHandler
     public function parseHtml($html)
     {
 
-        return Helpers::genericXpathParser($html, "//table//td[@scope='row']", "//table//td[@class='alignTopLeft']", ' to ');
+        return Helpers::extractContractDataViaGenericXpathParser($html, "//table//td[@scope='row']", "//table//td[@class='alignTopLeft']", ' to ');
     }
 }

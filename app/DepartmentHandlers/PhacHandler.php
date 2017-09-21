@@ -64,7 +64,7 @@ class PhacHandler extends DepartmentHandler
             'comments' => 'Comments',
         ];
 
-        $values = Helpers::genericXpathParser($html, "//h2", "//p", 'to', $keyArray);
+        $values = Helpers::extractContractDataViaGenericXpathParser($html, "//h2", "//p", 'to', $keyArray);
 
         
 

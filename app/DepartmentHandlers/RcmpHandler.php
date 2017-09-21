@@ -47,7 +47,7 @@ class RcmpHandler extends DepartmentHandler
     public function parseHtml($html)
     {
 
-        $values = Helpers::genericXpathParser($html, "//table//th", "//table//td", 'to');
+        $values = Helpers::extractContractDataViaGenericXpathParser($html, "//table//th", "//table//td", 'to');
 
         // The RCMP includes both original and amended values in the same cell, but only displays the amended value when there is one (seemingly, most of the time). This tries to re-split these into separate fields.
 

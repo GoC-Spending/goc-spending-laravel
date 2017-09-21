@@ -113,6 +113,6 @@ class IcHandler extends DepartmentHandler
             'comments' => 'Comment',
         ];
 
-        return Helpers::genericXpathParser($html, "//div[@class='formTable']//div[@class='ic2col1 formLeftCol']", "//div[@class='formTable']//div[@class='ic2col2 formRightCol']", ' - ', $keyArray);
+        return Helpers::extractContractDataViaGenericXpathParser($html, "//div[@class='formTable']//div[@class='ic2col1 formLeftCol']", "//div[@class='formTable']//div[@class='ic2col2 formRightCol']", ' - ', $keyArray);
     }
 }

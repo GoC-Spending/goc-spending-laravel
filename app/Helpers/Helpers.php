@@ -112,10 +112,19 @@ class Helpers
         return iconv('UTF-8', 'ASCII//TRANSLIT//IGNORE', $inputText);
     }
 
-    // $periodSplitString = " to "
-    public static function genericXpathParser($html, $keyXpath, $valueXpath, $periodSplitString, $keyArray = [])
+    /**
+     * Extract contract data sorted in standard key/value pairs in an HTML <table>, using XPath.
+     *
+     * @param string $html               The contract HTML to search through.
+     * @param string $keyXpath           The XPath selector for keys from contract key/value pairs.
+     * @param string $valueXpath         The XPath selector for values from contract key/value pairs.
+     * @param string $periodSplitString  The string that marks a contract date range. (Often has "to" in it.)
+     * @param array  $keyArray           The list of keys (from contract key/value pairs) to collect values for.
+     *
+     * @return array  The contract data, sorted into key/value pairs.
+     */
+    public static function extractContractDataViaGenericXpathParser($html, $keyXpath, $valueXpath, $periodSplitString, $keyArray = [])
     {
-
         $values = [];
         $defaultKeyArray = [
             'vendorName' => 'Vendor Name:',
@@ -155,11 +164,6 @@ class Helpers
             return (string)$node;
         });
 
-        $keys = [];
-
-        // var_dump($keyNodes);
-        // var_dump($valueNodes);
-
         foreach ($keyNodes as $index => $keyNode) {
             $keyNode = Helpers::cleanLabelText($keyNode);
 
@@ -167,9 +171,6 @@ class Helpers
                 $values[$labelToKey[$keyNode]] = Helpers::cleanHtmlValue($valueNodes[$index]);
             }
         }
-
-        // var_dump($values);
-        // exit();
 
         // Change the "to" range into start and end values:
         if (isset($values['contractPeriodRange']) && $values['contractPeriodRange']) {
@@ -181,7 +182,6 @@ class Helpers
             }
         }
 
-        // var_dump($values);
         return $values;
     }
 

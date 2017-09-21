@@ -62,7 +62,7 @@ class PspcHandler extends DepartmentHandler
             'comments' => 'Comments:',
         ];
 
-        $values = Helpers::genericXpathParser($html, "//table//th", "//table//td", 'to', $keyArray);
+        $values = Helpers::extractContractDataViaGenericXpathParser($html, "//table//th", "//table//td", 'to', $keyArray);
 
         
 

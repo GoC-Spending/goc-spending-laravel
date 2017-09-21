@@ -37,6 +37,6 @@ class InacHandler extends DepartmentHandler
     public function parseHtml($html)
     {
 
-        return Helpers::genericXpathParser($html, "//table[@class='widthFull TableBorderBasic']//th", "//table[@class='widthFull TableBorderBasic']//td", ' - ');
+        return Helpers::extractContractDataViaGenericXpathParser($html, "//table[@class='widthFull TableBorderBasic']//th", "//table[@class='widthFull TableBorderBasic']//td", ' - ');
     }
 }

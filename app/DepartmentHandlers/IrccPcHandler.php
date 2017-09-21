@@ -96,6 +96,6 @@ class IrccPcHandler extends DepartmentHandler
             'comments' => 'Comments:',
         ];
 
-        return Helpers::genericXpathParser($html, "//table//th", "//table//td", ' to ', $keyArray);
+        return Helpers::extractContractDataViaGenericXpathParser($html, "//table//th", "//table//td", ' to ', $keyArray);
     }
 }

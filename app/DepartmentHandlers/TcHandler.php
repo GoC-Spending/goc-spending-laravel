@@ -51,6 +51,6 @@ class TcHandler extends DepartmentHandler
     public function parseHtml($html)
     {
 
-        return Helpers::genericXpathParser($html, "//table//th[@scope='row']", "//table//td", ' to ');
+        return Helpers::extractContractDataViaGenericXpathParser($html, "//table//th[@scope='row']", "//table//td", ' to ');
     }
 }
