@@ -22,13 +22,25 @@ abstract class DepartmentHandler {
 
 	public $totalContractsFetched = 0;
 
-    // XPath selector to, from the index page, get the quarter URLs
+    /**
+     * XPath selector to, from the index page, get the quarter URLs.
+     *
+     * @var string
+     */
     public $indexToQuarterXpath;
 
-    // XPath selector to, from the quarter page, get the contract URLs
+    /**
+     * XPath selector to, from the quarter page, get the contract URLs.
+     *
+     * @var string
+     */
     public $quarterToContractXpath;
 
-    // XPath selector to, in the case of paginated quarter pages, get all quarter page URLs
+    /**
+     * XPath selector to, in the case of paginated quarter pages, get all quarter page URLs.
+     *
+     * @var string
+     */
     public $quarterMultiPageXpath;
 
 	public $contractContentSubsetXpath;
