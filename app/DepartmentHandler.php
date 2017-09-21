@@ -28,6 +28,8 @@ abstract class DepartmentHandler {
     // XPath selector to, from the quarter page, get the contract URLs
     public $quarterToContractXpath;
 
+    // XPath selector to, in the case of paginated quarter pages, get all quarter page URLs
+    public $quarterMultiPageXpath;
 
 	public $contractContentSubsetXpath;
 	public $contentSplitParameters = [];
