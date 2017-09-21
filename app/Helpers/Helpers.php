@@ -185,15 +185,24 @@ class Helpers
         return $values;
     }
 
-    public static function xpathRegexComboSearch($html, $xpathQuery, $regexPattern = '')
+    /**
+     * Run an XPath query on a chunk of HTML, optionally filtering the result
+     * via a RegEx pattern.
+     *
+     * @param string $html          The HTML to search.
+     * @param string $xpathQuery    The XPath query to search with.
+     * @param string $regexPattern  The (optional) RegEx pattern to filter the result with.
+     *
+     * @return string
+     */
+    public static function xpathRegexComboSearch($html, $xpathQuery, $regexPattern = null)
     {
-
         $output = '';
 
         $xs = Selector::loadHTML($html);
         $text = $xs->find($xpathQuery)->innerHTML();
 
-        if (! $regexPattern) {
+        if (null === $regexPattern) {
             return $text;
         }
 
