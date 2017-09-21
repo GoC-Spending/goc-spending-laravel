@@ -240,7 +240,7 @@ abstract class DepartmentHandler {
 	// This makes it easier to stop and re-start the script without having to go from the very beginning again.
 	public function downloadPage($url, $subdirectory = '') {
 
-		$url = self::cleanupIncomingUrl($url);
+		$url = Helpers::cleanupIncomingUrl($url);
 
 		$filename = Helpers::urlToFilename($this->removeSessionIdsFromUrl($url));
 
@@ -344,35 +344,10 @@ abstract class DepartmentHandler {
 
 	}
 
-	// For departments that use ampersands in link URLs, this seems to be necessary before retrieving the pages:
-	public static function cleanupIncomingUrl($url) {
 
-		$url = str_replace('&amp;', '&', $url);
-		return $url;
+    // Parsing functions:
 
-	}
-
-
-
-
-
-	// Parsing functions:
-
-	public static function getSourceDirectory($acronym) {
-
-	    return storage_path() . '/' . env('FETCH_RAW_HTML_FOLDER', 'raw-data') . '/' . $acronym;
-
-	}
-
-	public static function getMetadataDirectory($acronym) {
-
-	    return storage_path() . '/' . env('FETCH_METADATA_FOLDER', 'metadata') . '/' . $acronym;
-
-	}
-
-
-
-	public static function cleanParsedArray(&$values) {
+    public static function cleanParsedArray(&$values) {
 
 	    $values['startYear'] = Helpers::yearFromDate($values['contractPeriodStart']);
 	    $values['endYear'] = Helpers::yearFromDate($values['contractPeriodEnd']);
@@ -416,7 +391,7 @@ abstract class DepartmentHandler {
 		$startDate = date('Y-m-d H:i:s');
 		echo "Starting to parse " . $this->ownerAcronym . " at ". $startDate . " \n";
 
-	    $sourceDirectory = self::getSourceDirectory($this->ownerAcronym);
+	    $sourceDirectory = Helpers::getSourceDirectory($this->ownerAcronym);
 
 	    if(env('PARSE_CLEAN_VENDOR_NAMES', 1) == 1) {
 	    	$vendorData = new VendorData;
@@ -531,7 +506,7 @@ abstract class DepartmentHandler {
 
 	    $filename = str_replace('.html', '.json', $htmlFilename);
 
-	    $filepath = self::getMetadataDirectory($this->ownerAcronym) . '/' . $filename;
+	    $filepath = Helpers::getMetadataDirectory($this->ownerAcronym) . '/' . $filename;
 
 	    if(file_exists($filepath)) {
 
@@ -553,7 +528,7 @@ abstract class DepartmentHandler {
 
 	    $acronym = $this->ownerAcronym;
 
-	    $source = file_get_contents(self::getSourceDirectory($this->ownerAcronym) . '/' . $filename);
+	    $source = file_get_contents(Helpers::getSourceDirectory($this->ownerAcronym) . '/' . $filename);
 
 	    $source = Helpers::initialSourceTransform($source, $acronym);
 

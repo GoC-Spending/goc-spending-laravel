@@ -632,4 +632,40 @@ class Helpers {
 
     }
 
+    /**
+     * For departments that use ampersands in link URLs, this converts them to enable retrieving the pages.
+     *
+     * @param $url string  The URL to clean.
+     *
+     * @return string  The URL, with encoded ampersands properly converted.
+     */
+    public static function cleanupIncomingUrl($url)
+    {
+        return str_replace('&amp;', '&', $url);
+    }
+
+    /**
+     * Get the path to the raw data folder for a given department.
+     *
+     * @param $acronym string  The department's acronym.
+     *
+     * @return string  The path to the department's raw data folder.
+     */
+    public static function getSourceDirectory($acronym)
+    {
+        return storage_path() . '/' . env('FETCH_RAW_HTML_FOLDER', 'raw-data') . '/' . $acronym;
+    }
+
+    /**
+     * Get the path to the metadata folder for a given department.
+     *
+     * @param $acronym string  The department's acronym.
+     *
+     * @return string  The path to the department's metadata folder.
+     */
+    public static function getMetadataDirectory($acronym)
+    {
+        return storage_path() . '/' . env('FETCH_METADATA_FOLDER', 'metadata') . '/' . $acronym;
+    }
+
 }
