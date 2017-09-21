@@ -8,8 +8,8 @@ class ContractDataProcessor
     public static function cleanParsedArray(&$values)
     {
 
-        $values['startYear'] = \App\Helpers\Helpers::yearFromDate($values['contractPeriodStart']);
-        $values['endYear'] = \App\Helpers\Helpers::yearFromDate($values['contractPeriodEnd']);
+        $values['startYear'] = \App\Helpers\Helpers::extractYearFromDate($values['contractPeriodStart']);
+        $values['endYear'] = \App\Helpers\Helpers::extractYearFromDate($values['contractPeriodEnd']);
 
         $values['originalValue'] = \App\Helpers\Helpers::cleanupContractValue($values['originalValue']);
         $values['contractValue'] = \App\Helpers\Helpers::cleanupContractValue($values['contractValue']);

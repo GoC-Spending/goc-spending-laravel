@@ -6,23 +6,26 @@ use XPathSelector\Selector;
 class Helpers
 {
 
-    // Use a regex for the same thing as above, but more reliably:
-    public static function yearFromDate($dateInput)
+    /**
+     * Extract a year from a date string.
+     *
+     * @param string $dateInput  The date.
+     * @return bool|string
+     */
+    public static function extractYearFromDate($dateInput)
     {
-
-        // ([1-2][0-9][0-9][0-9])
-
         $matches = [];
         $pattern = '/([1-2][0-9][0-9][0-9])/';
 
-        $year = preg_match($pattern, $dateInput, $matches);
-        if ($matches) {
+        preg_match($pattern, $dateInput, $matches);
+
+        if (! empty($matches)) {
             return $matches[1];
         }
 
         return false;
     }
-    
+
     // Uses a series of regular expressions to cleanup bad date data
     // This often probably gets months and days mixed-up, but that's okay.
     // We're going for nearest year in this case.
@@ -447,13 +450,13 @@ class Helpers
             // 	$contract['startYear'] = Helpers::yearFromDate($contract['contractDate']);
             // }
 
-            $contract['startYear'] = Helpers::yearFromDate($contract['contractDate']);
+            $contract['startYear'] = Helpers::extractYearFromDate($contract['contractDate']);
         }
 
         // If there's no end year, assume that it's the same as the start year:
         if (! $contract['endYear']) {
             if ($contract['deliveryDate']) {
-                $contract['endYear'] = Helpers::yearFromDate($contract['deliveryDate']);
+                $contract['endYear'] = Helpers::extractYearFromDate($contract['deliveryDate']);
             } else {
                 $contract['endYear'] = $contract['startYear'];
             }
