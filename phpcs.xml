@@ -1,0 +1,14 @@
+<?xml version="1.0"?>
+<!-- Thanks to: https://matthewdaly.co.uk/blog/2017/03/15/enforcing-a-coding-standard-with-php-codesniffer/ -->
+<!-- If you want to automatically run this on commit, check out WP-Enforcer's pre-commit hook: https://github.com/stevegrunwell/wp-enforcer -->
+<ruleset name="PHP_CodeSniffer">
+    <description>The coding standard for our project.</description>
+
+    <file>app</file>
+
+    <exclude-pattern>*/migrations/*</exclude-pattern>
+
+    <arg value="np"/>
+
+    <rule ref="PSR2"/>
+</ruleset>
