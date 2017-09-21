@@ -22,6 +22,12 @@ abstract class DepartmentHandler {
 
 	public $totalContractsFetched = 0;
 
+    // XPath selector to, from the index page, get the quarter URLs
+    public $indexToQuarterXpath;
+
+    // XPath selector to, from the quarter page, get the contract URLs
+    public $quarterToContractXpath;
+
 
 	public $contractContentSubsetXpath;
 	public $contentSplitParameters = [];
@@ -506,7 +512,7 @@ abstract class DepartmentHandler {
 
 	            $fileValues['ownerAcronym'] = $this->ownerAcronym;
 
-	            $fileValues['objectCode'] = self::getObjectCodeFromDescription($fileValues['description']);
+	            $fileValues['objectCode'] = Helpers::getObjectCodeFromDescription($fileValues['description']);
 
 	            // Useful for troubleshooting:
 	            $fileValues['sourceFilename'] = $this->ownerAcronym . '/' . $file;
@@ -595,34 +601,7 @@ abstract class DepartmentHandler {
 
 	}
 
-	public static function getObjectCodeFromDescription($description) {
-
-	    // For example,
-	    // 514- Rental of other buildings
-	    // 1228 - Computer software
-
-	    // The full list of Chart of Accounts Object Codes is available here,
-	    // https://www.tpsgc-pwgsc.gc.ca/recgen/pceaf-gwcoa/1718/ressource-resource-eng.html
-	    // as the last link on the page.
-
-	    $objectCode = '';
-
-	    $matches = [];
-	    $pattern = '/([0-9]{3,4})/';
-
-	    preg_match($pattern, $description, $matches);
-
-	    if($matches) {
-	        // Get the matching pattern, and left-pad it with zeroes
-	        // Sometimes these show up as eg. 514 and sometimes 0514
-	        $objectCode = str_pad($matches[1], 4, '0', STR_PAD_LEFT);
-	    }
-
-	    return $objectCode;
-
-	}
-
-	public static function getDepartments() {
+    public static function getDepartments() {
 
 	    $output = [];
 	    $sourceDirectory = storage_path() . '/' . env('FETCH_RAW_HTML_FOLDER', 'raw-data');
