@@ -77,17 +77,6 @@ class Helpers
         $output = str_replace(["\n", "\r", "\t"], ' ', $input);
         return trim($output);
     }
-    
-    public static function stringBetween($start, $end, $string)
-    {
-
-        if (! $string) {
-            return '';
-        }
-
-        $split = explode($start, $string);
-        return explode($end, $split[1])[0];
-    }
 
     public static function cleanText($inputText)
     {
