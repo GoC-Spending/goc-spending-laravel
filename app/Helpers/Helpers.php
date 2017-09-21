@@ -260,15 +260,6 @@ class Helpers
      */
     public static function extractObjectCodeFromDescription($description)
     {
-
-        // For example,
-        // 514- Rental of other buildings
-        // 1228 - Computer software
-
-        // The full list of Chart of Accounts Object Codes is available here,
-        // https://www.tpsgc-pwgsc.gc.ca/recgen/pceaf-gwcoa/1718/ressource-resource-eng.html
-        // as the last link on the page.
-
         $objectCode = '';
 
         $matches = [];
