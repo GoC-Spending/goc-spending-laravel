@@ -377,7 +377,7 @@ abstract class DepartmentHandler
         $startDate = date('Y-m-d H:i:s');
         echo "Starting to parse " . $this->ownerAcronym . " at ". $startDate . " \n";
 
-        $sourceDirectory = Helpers::getSourceDirectory($this->ownerAcronym);
+        $sourceDirectory = Helpers::getSourceDirectoryForDepartment($this->ownerAcronym);
 
         if (env('PARSE_CLEAN_VENDOR_NAMES', 1) == 1) {
             $vendorData = new VendorData;
@@ -482,7 +482,7 @@ abstract class DepartmentHandler
 
         $filename = str_replace('.html', '.json', $htmlFilename);
 
-        $filepath = Helpers::getMetadataDirectory($this->ownerAcronym) . '/' . $filename;
+        $filepath = Helpers::getMetadataDirectoryForDepartment($this->ownerAcronym) . '/' . $filename;
 
         if (file_exists($filepath)) {
             $source = file_get_contents($filepath);
@@ -501,7 +501,7 @@ abstract class DepartmentHandler
 
         $acronym = $this->ownerAcronym;
 
-        $source = file_get_contents(Helpers::getSourceDirectory($this->ownerAcronym) . '/' . $filename);
+        $source = file_get_contents(Helpers::getSourceDirectoryForDepartment($this->ownerAcronym) . '/' . $filename);
 
         $source = Helpers::initialSourceTransform($source, $acronym);
 

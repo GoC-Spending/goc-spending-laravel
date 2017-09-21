@@ -631,15 +631,35 @@ class Helpers
     }
 
     /**
+     * Get the path to the raw data folder.
+     *
+     * @return string  The path to the raw data folder, with a trailing slash.
+     */
+    public static function getSourceDirectory()
+    {
+        return storage_path() . '/' . env('FETCH_RAW_HTML_FOLDER', 'raw-data') . '/';
+    }
+
+    /**
      * Get the path to the raw data folder for a given department.
      *
      * @param $acronym string  The department's acronym.
      *
      * @return string  The path to the department's raw data folder.
      */
-    public static function getSourceDirectory($acronym)
+    public static function getSourceDirectoryForDepartment($acronym)
     {
-        return storage_path() . '/' . env('FETCH_RAW_HTML_FOLDER', 'raw-data') . '/' . $acronym;
+        return Helpers::getSourceDirectory() . $acronym;
+    }
+
+    /**
+     * Get the path to the metadata folder.
+     *
+     * @return string  The path to the metadata folder, with a trailing slash.
+     */
+    public static function getMetadataDirectory()
+    {
+        return storage_path() . '/' . env('FETCH_METADATA_FOLDER', 'metadata') . '/';
     }
 
     /**
@@ -649,17 +669,15 @@ class Helpers
      *
      * @return string  The path to the department's metadata folder.
      */
-    public static function getMetadataDirectory($acronym)
+    public static function getMetadataDirectoryForDepartment($acronym)
     {
-        return storage_path() . '/' . env('FETCH_METADATA_FOLDER', 'metadata') . '/' . $acronym;
+        return Helpers::getMetadataDirectory() . $acronym;
     }
 
     public static function getDepartments()
     {
-
         $output = [];
-        $sourceDirectory = storage_path() . '/' . env('FETCH_RAW_HTML_FOLDER', 'raw-data');
-
+        $sourceDirectory = Helpers::getSourceDirectory();
 
         $departments = array_diff(scandir($sourceDirectory), ['..', '.']);
 
