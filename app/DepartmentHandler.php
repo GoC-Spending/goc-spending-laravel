@@ -14,8 +14,26 @@ abstract class DepartmentHandler
     // Fetching-related variables:
     public $guzzleClient;
 
+    /**
+     * The department acronym.
+     *
+     * @var string
+     */
     public $ownerAcronym;
+
+    /**
+     * The URL for the page containing links to the quarters.
+     *
+     * @var string
+     */
     public $indexUrl;
+
+    /**
+     * The base URL for the department. This is sometimes necessary, depending on its structure.
+     *
+     * @var string
+     */
+    public $baseUrl;
 
     public $activeQuarterPage;
     public $activeFiscalYear;
