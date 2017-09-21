@@ -1,6 +1,7 @@
 <?php
 namespace App;
 
+use App\Helpers\ContractDataProcessor;
 use GuzzleHttp\Client;
 use XPathSelector\Selector;
 use App\Helpers\Helpers;
@@ -332,44 +333,6 @@ abstract class DepartmentHandler
         return false;
     }
 
-
-    // Parsing functions:
-
-    public static function cleanParsedArray(&$values)
-    {
-
-        $values['startYear'] = Helpers::yearFromDate($values['contractPeriodStart']);
-        $values['endYear'] = Helpers::yearFromDate($values['contractPeriodEnd']);
-
-        $values['originalValue'] = Helpers::cleanupContractValue($values['originalValue']);
-        $values['contractValue'] = Helpers::cleanupContractValue($values['contractValue']);
-
-        if (! $values['contractValue']) {
-            $values['contractValue'] = $values['originalValue'];
-        }
-
-        if ($values['originalValue'] == 0) {
-            $values['originalValue'] = $values['contractValue'];
-        }
-
-        // Check for error-y non-unicode characters
-        $values['referenceNumber'] = Helpers::cleanText($values['referenceNumber']);
-        $values['vendorName'] = Helpers::cleanText($values['vendorName']);
-        $values['comments'] = Helpers::cleanText($values['comments']);
-        $values['description'] = Helpers::cleanText($values['description']);
-        $values['extraDescription'] = Helpers::cleanText($values['extraDescription']);
-    }
-
-    public static function generateAdditionalMetadata(&$values)
-    {
-
-        if ($values['sourceYear'] && $values['sourceQuarter']) {
-            // Generate a more traditional "20162017-Q3"
-            $values['sourceFiscal'] = $values['sourceYear'] . (substr($values['sourceYear'], 2, 2) + 1) . '-Q' . $values['sourceQuarter'];
-        }
-    }
-
-
     // Primary function to parse pages:
     public function parse()
     {
@@ -424,12 +387,12 @@ abstract class DepartmentHandler
             $metadata = $this->getMetadata($file);
 
             if ($fileValues) {
-                self::cleanParsedArray($fileValues);
+                ContractDataProcessor::cleanParsedArray($fileValues);
                 // var_dump($fileValues);
 
                 $fileValues = array_merge($fileValues, $metadata);
 
-                self::generateAdditionalMetadata($fileValues);
+                ContractDataProcessor::generateAdditionalMetadata($fileValues);
 
                 $fileValues['ownerAcronym'] = $this->ownerAcronym;
 
