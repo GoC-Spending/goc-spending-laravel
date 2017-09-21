@@ -674,6 +674,11 @@ class Helpers
         return Helpers::getMetadataDirectory() . $acronym;
     }
 
+    /**
+     * Get a list of the department acronyms stored in the raw data folder.
+     *
+     * @return array  List of department acronyms.
+     */
     public static function getDepartments()
     {
         $output = [];
