@@ -25,60 +25,7 @@ class Helpers
 
         return false;
     }
-
-    // Uses a series of regular expressions to cleanup bad date data
-    // This often probably gets months and days mixed-up, but that's okay.
-    // We're going for nearest year in this case.
-    public static function regDateCleanup($dateInput)
-    {
-
-        if (! $dateInput) {
-            return false;
-        }
-
-        $year = null;
-        $month = null;
-        $day = null;
-
-        $yearMatches = [];
-        $pattern = '/([1-2][0-9][0-9][0-9])/';
-        preg_match($pattern, $dateInput, $yearMatches);
-
-        if ($yearMatches) {
-            $year = $yearMatches[1];
-        }
-
-        $monthMatches = [];
-        $pattern = '/([0-1][0-2])/';
-        preg_match($pattern, str_replace($year, '', $dateInput), $monthMatches);
-
-        if ($monthMatches) {
-            $month = $monthMatches[1];
-        }
-
-        $dayMatches = [];
-        $pattern = '/([0-3][0-9])/';
-        preg_match($pattern, str_replace([$year, $month], '', $dateInput), $dayMatches);
-
-        if ($dayMatches) {
-            $day = $dayMatches[1];
-        }
-
-        if (! $month) {
-            $month = '01';
-        }
-        if (! $day) {
-            $day = '01';
-        }
-
-        if ($year) {
-            return $year . '-' . $month . '-' . $day;
-        } else {
-            echo "Could not parse '$dateInput'\n";
-            return false;
-        }
-    }
-
+    
     // Thanks to
     // https://stackoverflow.com/a/6059008/756641
     // Usage
