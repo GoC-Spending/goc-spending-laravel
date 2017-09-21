@@ -6,7 +6,7 @@ class VendorData
 
     public $vendorTable;
 
-    function __construct()
+    public function __construct()
     {
 
         $this->vendorTable = self::reindexVendorData(self::$vendors);
