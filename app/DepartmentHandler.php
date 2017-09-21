@@ -8,7 +8,7 @@ use App\Helpers;
 
 // Includes both fetching and parsing functions
 // now combined into one class.
-class DepartmentHandler {
+abstract class DepartmentHandler {
 
 	// Fetching-related variables:
 	public $guzzleClient;
@@ -674,6 +674,14 @@ class DepartmentHandler {
 
 	}
 
-
+    /**
+     * Parse the HTML of a given contract, converting the data to
+     * an associative array.
+     *
+     * @param string $source  The contract content HTML.
+     *
+     * @return array  The extracted contract data.
+     */
+	abstract public static function parseHtml( $source );
 
 }
