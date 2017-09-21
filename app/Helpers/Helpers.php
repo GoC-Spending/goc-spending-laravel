@@ -318,18 +318,6 @@ class Helpers
         return $text;
     }
 
-
-    public static function dateIsWithinYearRange($startYear, $endYear, $targetYear)
-    {
-
-        if ($startYear <= $targetYear && $targetYear <= $endYear) {
-            return true;
-        } else {
-            return false;
-        }
-    }
-
-
     // $periodSplitString = " to "
     public static function genericXpathParser($html, $keyXpath, $valueXpath, $periodSplitString, $keyArray = [])
     {
