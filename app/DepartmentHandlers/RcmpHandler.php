@@ -3,6 +3,7 @@ namespace App\DepartmentHandlers;
 
 use App\DepartmentHandler;
 use App\Helpers\Helpers;
+use App\Helpers\Parsers;
 
 class RcmpHandler extends DepartmentHandler
 {
@@ -35,19 +36,19 @@ class RcmpHandler extends DepartmentHandler
 
         // <h1 id="wb-cont" property="name" class="page-header mrgn-tp-md">2016-2017, 3rd quarter (1 October - 31 December 2016)</h1>
 
-        return Helpers::xpathRegexComboSearch($quarterHtml, "//h1[@id='wb-cont']", '/([0-9]{4})/');
+        return Parsers::xpathRegexComboSearch($quarterHtml, "//h1[@id='wb-cont']", '/([0-9]{4})/');
     }
 
     public function fiscalQuarterFromQuarterPage($quarterHtml)
     {
 
-        return Helpers::xpathRegexComboSearch($quarterHtml, "//h1[@id='wb-cont']", '/,\s([0-9])/');
+        return Parsers::xpathRegexComboSearch($quarterHtml, "//h1[@id='wb-cont']", '/,\s([0-9])/');
     }
 
     public function parseHtml($html)
     {
 
-        $values = Helpers::extractContractDataViaGenericXpathParser($html, "//table//th", "//table//td", 'to');
+        $values = Parsers::extractContractDataViaGenericXpathParser($html, "//table//th", "//table//td", 'to');
 
         // The RCMP includes both original and amended values in the same cell, but only displays the amended value when there is one (seemingly, most of the time). This tries to re-split these into separate fields.
 

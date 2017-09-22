@@ -3,6 +3,7 @@ namespace App\DepartmentHandlers;
 
 use App\DepartmentHandler;
 use App\Helpers\Helpers;
+use App\Helpers\Parsers;
 
 class CfiaHandler extends DepartmentHandler
 {
@@ -61,12 +62,12 @@ class CfiaHandler extends DepartmentHandler
             'October 1 - December 31' => 3,
         ];
 
-        $fiscalYear = Helpers::xpathRegexComboSearch($quarterHtml, "//main/h1", '/([0-9]{4})/');
+        $fiscalYear = Parsers::xpathRegexComboSearch($quarterHtml, "//main/h1", '/([0-9]{4})/');
         $fiscalQuarter = '';
 
 
 // \w
-        $title = Helpers::xpathRegexComboSearch($quarterHtml, "//main/h1", '/(.*)/');
+        $title = Parsers::xpathRegexComboSearch($quarterHtml, "//main/h1", '/(.*)/');
 
         // Try to find one of the text labels in the title element, and match the Q1, Q2, etc. value:
         foreach ($quarterIndex as $quarterLabel => $quarterKey) {
@@ -117,6 +118,6 @@ class CfiaHandler extends DepartmentHandler
         // http://www.inspection.gc.ca/active/scripts/agen/proactive/contra/contrarport.asp?lang=e&yr=2016-2017&q=2&contraID=17443&yid=13
         // In these cases the data isn't properly returned from the server, so the parsed data will be missing entries.
 
-        return Helpers::extractContractDataViaGenericXpathParser($html, "//table//th[@scope='row']", "//table//td", ' to ', $keyArray);
+        return Parsers::extractContractDataViaGenericXpathParser($html, "//table//th[@scope='row']", "//table//td", ' to ', $keyArray);
     }
 }

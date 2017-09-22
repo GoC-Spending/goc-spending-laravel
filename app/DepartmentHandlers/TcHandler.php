@@ -3,6 +3,7 @@ namespace App\DepartmentHandlers;
 
 use App\DepartmentHandler;
 use App\Helpers\Helpers;
+use App\Helpers\Parsers;
 
 class TcHandler extends DepartmentHandler
 {
@@ -39,18 +40,18 @@ class TcHandler extends DepartmentHandler
 
         // //*[@id="pageForm"]/p[2]/strong
 
-        return Helpers::xpathRegexComboSearch($quarterHtml, "//form[@id='pageForm']/p[2]/strong", '/([0-9]{4})/');
+        return Parsers::xpathRegexComboSearch($quarterHtml, "//form[@id='pageForm']/p[2]/strong", '/([0-9]{4})/');
     }
 
     public function fiscalQuarterFromQuarterPage($quarterHtml)
     {
 
-        return Helpers::xpathRegexComboSearch($quarterHtml, "//form[@id='pageForm']/p[2]/strong", '/([0-9])</');
+        return Parsers::xpathRegexComboSearch($quarterHtml, "//form[@id='pageForm']/p[2]/strong", '/([0-9])</');
     }
 
     public function parseHtml($html)
     {
 
-        return Helpers::extractContractDataViaGenericXpathParser($html, "//table//th[@scope='row']", "//table//td", ' to ');
+        return Parsers::extractContractDataViaGenericXpathParser($html, "//table//th[@scope='row']", "//table//td", ' to ');
     }
 }

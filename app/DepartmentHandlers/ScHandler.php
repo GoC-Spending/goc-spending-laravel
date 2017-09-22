@@ -3,6 +3,7 @@ namespace App\DepartmentHandlers;
 
 use App\DepartmentHandler;
 use App\Helpers\Helpers;
+use App\Helpers\Parsers;
 
 class ScHandler extends DepartmentHandler
 {
@@ -35,13 +36,13 @@ class ScHandler extends DepartmentHandler
 
         // <h1 id="wb-cont" property="name" class="page-header mrgn-tp-md">2016-2017, 3rd quarter (1 October - 31 December 2016)</h1>
 
-        return Helpers::xpathRegexComboSearch($quarterHtml, "//h2", '/([0-9]{4})/');
+        return Parsers::xpathRegexComboSearch($quarterHtml, "//h2", '/([0-9]{4})/');
     }
 
     public function fiscalQuarterFromQuarterPage($quarterHtml)
     {
 
-        return Helpers::xpathRegexComboSearch($quarterHtml, "//h2", '/\s([0-9])</');
+        return Parsers::xpathRegexComboSearch($quarterHtml, "//h2", '/\s([0-9])</');
     }
 
     public function parseHtml($html)
@@ -64,7 +65,7 @@ class ScHandler extends DepartmentHandler
             'comments' => 'Comments:',
         ];
 
-        $values = Helpers::extractContractDataViaGenericXpathParser($html, "//table//th", "//table//td", 'to', $keyArray);
+        $values = Parsers::extractContractDataViaGenericXpathParser($html, "//table//th", "//table//td", 'to', $keyArray);
 
         
 

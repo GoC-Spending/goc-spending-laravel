@@ -3,6 +3,7 @@ namespace App\DepartmentHandlers;
 
 use App\DepartmentHandler;
 use App\Helpers\Helpers;
+use App\Helpers\Parsers;
 
 class InacHandler extends DepartmentHandler
 {
@@ -25,18 +26,18 @@ class InacHandler extends DepartmentHandler
     {
 
         // <title>Disclosure of Contracts - 2016-2017 - 3rd Quarter - Indigenous and Northern Affairs Canada</title>
-        return Helpers::xpathRegexComboSearch($quarterHtml, "//title", '/([0-9]{4})/');
+        return Parsers::xpathRegexComboSearch($quarterHtml, "//title", '/([0-9]{4})/');
     }
 
     public function fiscalQuarterFromQuarterPage($quarterHtml)
     {
 
-        return Helpers::xpathRegexComboSearch($quarterHtml, "//title", '/-\s([0-9])[a-z]/');
+        return Parsers::xpathRegexComboSearch($quarterHtml, "//title", '/-\s([0-9])[a-z]/');
     }
 
     public function parseHtml($html)
     {
 
-        return Helpers::extractContractDataViaGenericXpathParser($html, "//table[@class='widthFull TableBorderBasic']//th", "//table[@class='widthFull TableBorderBasic']//td", ' - ');
+        return Parsers::extractContractDataViaGenericXpathParser($html, "//table[@class='widthFull TableBorderBasic']//th", "//table[@class='widthFull TableBorderBasic']//td", ' - ');
     }
 }

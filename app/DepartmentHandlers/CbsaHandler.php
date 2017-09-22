@@ -3,6 +3,7 @@ namespace App\DepartmentHandlers;
 
 use App\DepartmentHandler;
 use App\Helpers\Helpers;
+use App\Helpers\Parsers;
 use XPathSelector\Selector;
 
 class CbsaHandler extends DepartmentHandler
@@ -56,13 +57,13 @@ class CbsaHandler extends DepartmentHandler
     {
 
         // <h1 id="wb-cont">ARCHIVED - 2015-2016, Q3 (October - December 2015)</h1>
-        return Helpers::xpathRegexComboSearch($quarterHtml, "//h1[@id='wb-cont']", '/([0-9]{4})/');
+        return Parsers::xpathRegexComboSearch($quarterHtml, "//h1[@id='wb-cont']", '/([0-9]{4})/');
     }
 
     public function fiscalQuarterFromQuarterPage($quarterHtml)
     {
 
-        return Helpers::xpathRegexComboSearch($quarterHtml, "//h1[@id='wb-cont']", '/Q([0-9])/');
+        return Parsers::xpathRegexComboSearch($quarterHtml, "//h1[@id='wb-cont']", '/Q([0-9])/');
     }
 
 

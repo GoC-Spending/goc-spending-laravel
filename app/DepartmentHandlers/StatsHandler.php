@@ -3,6 +3,7 @@ namespace App\DepartmentHandlers;
 
 use App\DepartmentHandler;
 use App\Helpers\Helpers;
+use App\Helpers\Parsers;
 
 class StatsHandler extends DepartmentHandler
 {
@@ -57,12 +58,12 @@ class StatsHandler extends DepartmentHandler
             'Third quarter' => 3,
         ];
 
-        $fiscalYear = Helpers::xpathRegexComboSearch($quarterHtml, "//h1[@id='wb-cont']", '/([0-9]{4})/');
+        $fiscalYear = Parsers::xpathRegexComboSearch($quarterHtml, "//h1[@id='wb-cont']", '/([0-9]{4})/');
         $fiscalQuarter = '';
 
 
 // \w
-        $title = Helpers::xpathRegexComboSearch($quarterHtml, "//h1[@id='wb-cont']", '/(.*)/');
+        $title = Parsers::xpathRegexComboSearch($quarterHtml, "//h1[@id='wb-cont']", '/(.*)/');
 
         // Try to find one of the text labels in the title element, and match the Q1, Q2, etc. value:
         foreach ($quarterIndex as $quarterLabel => $quarterKey) {
@@ -109,6 +110,6 @@ class StatsHandler extends DepartmentHandler
             'comments' => 'Comments',
         ];
 
-        return Helpers::extractContractDataViaGenericXpathParser($html, "//table//th[@scope='row']", "//table//td", ' to ', $keyArray);
+        return Parsers::extractContractDataViaGenericXpathParser($html, "//table//th[@scope='row']", "//table//td", ' to ', $keyArray);
     }
 }

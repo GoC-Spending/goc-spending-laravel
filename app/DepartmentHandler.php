@@ -2,6 +2,7 @@
 namespace App;
 
 use App\Helpers\ContractDataProcessor;
+use App\Helpers\Parsers;
 use App\Helpers\Paths;
 use GuzzleHttp\Client;
 use XPathSelector\Selector;
@@ -145,7 +146,7 @@ abstract class DepartmentHandler
 
         $indexPage = $this->getPage($this->indexUrl);
 
-        $quarterUrls = Helpers::getArrayFromHtmlViaXpath($indexPage, $this->indexToQuarterXpath);
+        $quarterUrls = Parsers::getArrayFromHtmlViaXpath($indexPage, $this->indexToQuarterXpath);
 
         $quarterUrls = $this->filterQuarterUrls($quarterUrls);
 
@@ -170,7 +171,7 @@ abstract class DepartmentHandler
                 $quarterPage = $this->getPage($url);
 
                 // If there aren't multipages, this just returns the original quarter URL back as a single item array:
-                $quarterMultiPages = Helpers::getArrayFromHtmlViaXpath($quarterPage, $this->quarterMultiPageXpath);
+                $quarterMultiPages = Parsers::getArrayFromHtmlViaXpath($quarterPage, $this->quarterMultiPageXpath);
             } else {
                 $quarterMultiPages = [ $url ];
             }
@@ -197,7 +198,7 @@ abstract class DepartmentHandler
                 }
 
 
-                $contractUrls = Helpers::getArrayFromHtmlViaXpath($quarterPage, $this->quarterToContractXpath);
+                $contractUrls = Parsers::getArrayFromHtmlViaXpath($quarterPage, $this->quarterToContractXpath);
 
 
                 if (env('DEV_TEST_QUARTER', 0) == 1) {

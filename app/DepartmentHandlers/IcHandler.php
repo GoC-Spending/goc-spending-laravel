@@ -3,6 +3,7 @@ namespace App\DepartmentHandlers;
 
 use App\DepartmentHandler;
 use App\Helpers\Helpers;
+use App\Helpers\Parsers;
 
 class IcHandler extends DepartmentHandler
 {
@@ -52,12 +53,12 @@ class IcHandler extends DepartmentHandler
             'October 1 to December 31' => 3,
         ];
 
-        $fiscalYear = Helpers::xpathRegexComboSearch($quarterHtml, "//h1[@class='printHeader']", '/([0-9]{4})/');
+        $fiscalYear = Parsers::xpathRegexComboSearch($quarterHtml, "//h1[@class='printHeader']", '/([0-9]{4})/');
         $fiscalQuarter = '';
 
 
 // \w
-        $title = Helpers::xpathRegexComboSearch($quarterHtml, "//h1[@class='printHeader']");
+        $title = Parsers::xpathRegexComboSearch($quarterHtml, "//h1[@class='printHeader']");
 
         $title = str_replace(["\n", "\r", "\t"], ' ', $title);
         $title = str_replace(["   ", "  "], ' ', $title);
@@ -113,6 +114,6 @@ class IcHandler extends DepartmentHandler
             'comments' => 'Comment',
         ];
 
-        return Helpers::extractContractDataViaGenericXpathParser($html, "//div[@class='formTable']//div[@class='ic2col1 formLeftCol']", "//div[@class='formTable']//div[@class='ic2col2 formRightCol']", ' - ', $keyArray);
+        return Parsers::extractContractDataViaGenericXpathParser($html, "//div[@class='formTable']//div[@class='ic2col1 formLeftCol']", "//div[@class='formTable']//div[@class='ic2col2 formRightCol']", ' - ', $keyArray);
     }
 }

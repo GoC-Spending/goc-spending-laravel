@@ -3,6 +3,7 @@ namespace App\DepartmentHandlers;
 
 use App\DepartmentHandler;
 use App\Helpers\Helpers;
+use App\Helpers\Parsers;
 
 // Passport Canada (now part of IRCC)
 class IrccPcHandler extends DepartmentHandler
@@ -43,12 +44,12 @@ class IrccPcHandler extends DepartmentHandler
             'October 1 - December 31' => 3,
         ];
 
-        $fiscalYear = Helpers::xpathRegexComboSearch($quarterHtml, "//h1[@id='wb-cont']", '/([0-9]{4})/');
+        $fiscalYear = Parsers::xpathRegexComboSearch($quarterHtml, "//h1[@id='wb-cont']", '/([0-9]{4})/');
         $fiscalQuarter = '';
 
 
 // \w
-        $title = Helpers::xpathRegexComboSearch($quarterHtml, "//h1[@id='wb-cont']", '/(.*)/');
+        $title = Parsers::xpathRegexComboSearch($quarterHtml, "//h1[@id='wb-cont']", '/(.*)/');
 
         // Try to find one of the text labels in the title element, and match the Q1, Q2, etc. value:
         foreach ($quarterIndex as $quarterLabel => $quarterKey) {
@@ -96,6 +97,6 @@ class IrccPcHandler extends DepartmentHandler
             'comments' => 'Comments:',
         ];
 
-        return Helpers::extractContractDataViaGenericXpathParser($html, "//table//th", "//table//td", ' to ', $keyArray);
+        return Parsers::extractContractDataViaGenericXpathParser($html, "//table//th", "//table//td", ' to ', $keyArray);
     }
 }
