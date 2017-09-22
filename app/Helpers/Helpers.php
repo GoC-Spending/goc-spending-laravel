@@ -355,23 +355,6 @@ class Helpers
     }
 
     /**
-     * Generate a unique filename based on a contract URL.
-     *
-     * Note: The contract URL should be a "permalink" version. Usually
-     *       this means you’ll need to remove any session information
-     *       or other data that isn’t directly related to that contract.
-     *
-     * @param string $url        The URL for the contract.
-     * @param string $extension  The extension to use for the filename.
-     *
-     * @return string  The filename based on the contract information.
-     */
-    public static function generateUrlFromFilename($url, $extension = '.html')
-    {
-        return md5($url) . $extension;
-    }
-
-    /**
      * For departments that use ampersands in link URLs, this converts them to enable retrieving the pages.
      *
      * @param $url string  The URL to clean.
@@ -384,50 +367,6 @@ class Helpers
     }
 
     /**
-     * Get the path to the raw data folder.
-     *
-     * @return string  The path to the raw data folder, with a trailing slash.
-     */
-    public static function getSourceDirectory()
-    {
-        return storage_path() . '/' . env('FETCH_RAW_HTML_FOLDER', 'raw-data') . '/';
-    }
-
-    /**
-     * Get the path to the raw data folder for a given department.
-     *
-     * @param $acronym string  The department's acronym.
-     *
-     * @return string  The path to the department's raw data folder.
-     */
-    public static function getSourceDirectoryForDepartment($acronym)
-    {
-        return Helpers::getSourceDirectory() . $acronym;
-    }
-
-    /**
-     * Get the path to the metadata folder.
-     *
-     * @return string  The path to the metadata folder, with a trailing slash.
-     */
-    public static function getMetadataDirectory()
-    {
-        return storage_path() . '/' . env('FETCH_METADATA_FOLDER', 'metadata') . '/';
-    }
-
-    /**
-     * Get the path to the metadata folder for a given department.
-     *
-     * @param $acronym string  The department's acronym.
-     *
-     * @return string  The path to the department's metadata folder.
-     */
-    public static function getMetadataDirectoryForDepartment($acronym)
-    {
-        return Helpers::getMetadataDirectory() . $acronym;
-    }
-
-    /**
      * Get a list of the department acronyms stored in the raw data folder.
      *
      * @return string[]  List of department acronyms.
@@ -435,7 +374,7 @@ class Helpers
     public static function getDepartments()
     {
         $output = [];
-        $sourceDirectory = Helpers::getSourceDirectory();
+        $sourceDirectory = Paths::getSourceDirectory();
 
         $departments = array_diff(scandir($sourceDirectory), ['..', '.']);
 

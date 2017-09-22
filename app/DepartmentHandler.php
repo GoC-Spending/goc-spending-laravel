@@ -2,6 +2,7 @@
 namespace App;
 
 use App\Helpers\ContractDataProcessor;
+use App\Helpers\Paths;
 use GuzzleHttp\Client;
 use XPathSelector\Selector;
 use App\Helpers\Helpers;
@@ -260,7 +261,7 @@ abstract class DepartmentHandler
 
         $url = Helpers::cleanIncomingUrl($url);
 
-        $filename = Helpers::generateUrlFromFilename($this->removeSessionIdsFromUrl($url));
+        $filename = Paths::generateFilenameFromUrl($this->removeSessionIdsFromUrl($url));
 
         $directoryPath = storage_path() . '/' . env('FETCH_RAW_HTML_FOLDER', 'raw-data');
 
@@ -328,7 +329,7 @@ abstract class DepartmentHandler
             return false;
         }
 
-        $filename = Helpers::generateUrlFromFilename($this->removeSessionIdsFromUrl($url), '.json');
+        $filename = Paths::generateFilenameFromUrl($this->removeSessionIdsFromUrl($url), '.json');
         $directoryPath = storage_path() . '/' . env('FETCH_METADATA_FOLDER', 'metadata') . '/' . $this->ownerAcronym;
 
 
@@ -358,7 +359,7 @@ abstract class DepartmentHandler
         $startDate = date('Y-m-d H:i:s');
         echo "Starting to parse " . $this->ownerAcronym . " at ". $startDate . " \n";
 
-        $sourceDirectory = Helpers::getSourceDirectoryForDepartment($this->ownerAcronym);
+        $sourceDirectory = Paths::getSourceDirectoryForDepartment($this->ownerAcronym);
 
         if (env('PARSE_CLEAN_VENDOR_NAMES', 1) == 1) {
             $vendorData = new VendorData;
@@ -463,7 +464,7 @@ abstract class DepartmentHandler
 
         $filename = str_replace('.html', '.json', $htmlFilename);
 
-        $filepath = Helpers::getMetadataDirectoryForDepartment($this->ownerAcronym) . '/' . $filename;
+        $filepath = Paths::getMetadataDirectoryForDepartment($this->ownerAcronym) . '/' . $filename;
 
         if (file_exists($filepath)) {
             $source = file_get_contents($filepath);
@@ -482,7 +483,7 @@ abstract class DepartmentHandler
 
         $acronym = $this->ownerAcronym;
 
-        $source = file_get_contents(Helpers::getSourceDirectoryForDepartment($this->ownerAcronym) . '/' . $filename);
+        $source = file_get_contents(Paths::getSourceDirectoryForDepartment($this->ownerAcronym) . '/' . $filename);
 
         $source = Helpers::applyInitialSourceHtmlTransformations($source);
 
