@@ -37,7 +37,6 @@ class ParseDepartment extends Command
      */
     public function handle()
     {
-        g
         $department = $this->argument('acronym');
 
         $departmentClass = 'App\\DepartmentHandlers\\' . ucfirst(strtolower($department)) . 'Handler';
