@@ -3,7 +3,6 @@
 namespace App\Console\Commands;
 
 use Illuminate\Console\Command;
-use Symfony\Component\Debug\Exception\FatalThrowableError;
 
 class FetchDepartment extends Command
 {
