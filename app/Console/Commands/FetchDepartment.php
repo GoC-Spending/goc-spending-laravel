@@ -41,6 +41,12 @@ class FetchDepartment extends Command
 
         $departmentClass = 'App\\DepartmentHandlers\\' . ucfirst(strtolower($department)) . 'Handler';
 
+        // Check to see if the DepartmentHandler exists. If not, bail gracefully!
+        if (! class_exists($departmentClass)) {
+            $this->error('No department handler for that department. Check if you’ve typo’ed the department acronym.');
+            return;
+        }
+
         $departmentHandler = new $departmentClass;
         $departmentHandler->fetch();
     }
