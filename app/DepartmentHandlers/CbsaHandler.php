@@ -2,6 +2,7 @@
 namespace App\DepartmentHandlers;
 
 use App\DepartmentHandler;
+use App\Helpers\Cleaners;
 use App\Helpers\Helpers;
 use App\Helpers\Parsers;
 use XPathSelector\Selector;
@@ -90,7 +91,7 @@ class CbsaHandler extends DepartmentHandler
 
         $cleanKeys = [];
         foreach ($keyToLabel as $key => $label) {
-            $cleanKeys[$key] = Helpers::cleanLabelText($label);
+            $cleanKeys[$key] = Cleaners::cleanLabelText($label);
         }
 
         $labelToKey = array_flip($cleanKeys);
@@ -115,10 +116,10 @@ class CbsaHandler extends DepartmentHandler
         // var_dump($valueNodes);
 
         foreach ($keyNodes as $index => $keyNode) {
-            $keyNode = Helpers::cleanLabelText($keyNode);
+            $keyNode = Cleaners::cleanLabelText($keyNode);
 
             if (isset($labelToKey[$keyNode]) && $labelToKey[$keyNode]) {
-                $values[$labelToKey[$keyNode]] = Helpers::cleanHtmlValue($valueNodes[$index]);
+                $values[$labelToKey[$keyNode]] = Cleaners::cleanHtmlValue($valueNodes[$index]);
             }
         }
 

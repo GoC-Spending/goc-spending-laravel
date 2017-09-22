@@ -1,6 +1,7 @@
 <?php
 namespace App;
 
+use App\Helpers\Cleaners;
 use App\Helpers\ContractDataProcessor;
 use App\Helpers\Parsers;
 use App\Helpers\Paths;
@@ -260,7 +261,7 @@ abstract class DepartmentHandler
     public function downloadPage($url, $subdirectory = '')
     {
 
-        $url = Helpers::cleanIncomingUrl($url);
+        $url = Cleaners::cleanIncomingUrl($url);
 
         $filename = Paths::generateFilenameFromUrl($this->removeSessionIdsFromUrl($url));
 
@@ -486,7 +487,7 @@ abstract class DepartmentHandler
 
         $source = file_get_contents(Paths::getSourceDirectoryForDepartment($this->ownerAcronym) . '/' . $filename);
 
-        $source = Helpers::applyInitialSourceHtmlTransformations($source);
+        $source = Cleaners::applyInitialSourceHtmlTransformations($source);
 
         // return call_user_func( array( 'App\\DepartmentHandlers\\' . ucfirst($acronym) . 'Handler', 'parseHtml' ), $source );
 

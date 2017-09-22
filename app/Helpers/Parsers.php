@@ -43,7 +43,7 @@ class Parsers
 
         $cleanKeys = [];
         foreach ($keyArray as $key => $label) {
-            $cleanKeys[$key] = Helpers::cleanLabelText($label);
+            $cleanKeys[$key] = Cleaners::cleanLabelText($label);
         }
 
         $labelToKey = array_flip($cleanKeys);
@@ -61,10 +61,10 @@ class Parsers
         });
 
         foreach ($keyNodes as $index => $keyNode) {
-            $keyNode = Helpers::cleanLabelText($keyNode);
+            $keyNode = Cleaners::cleanLabelText($keyNode);
 
             if (isset($labelToKey[$keyNode]) && $labelToKey[$keyNode] && isset($valueNodes[$index])) {
-                $values[$labelToKey[$keyNode]] = Helpers::cleanHtmlValue($valueNodes[$index]);
+                $values[$labelToKey[$keyNode]] = Cleaners::cleanHtmlValue($valueNodes[$index]);
             }
         }
 

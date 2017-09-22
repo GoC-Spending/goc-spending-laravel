@@ -15,8 +15,8 @@ class ContractDataProcessor
         $values['startYear'] = \App\Helpers\Helpers::extractYearFromDate($values['contractPeriodStart']);
         $values['endYear'] = \App\Helpers\Helpers::extractYearFromDate($values['contractPeriodEnd']);
 
-        $values['originalValue'] = \App\Helpers\Helpers::cleanContractValue($values['originalValue']);
-        $values['contractValue'] = \App\Helpers\Helpers::cleanContractValue($values['contractValue']);
+        $values['originalValue'] = Cleaners::cleanContractValue($values['originalValue']);
+        $values['contractValue'] = Cleaners::cleanContractValue($values['contractValue']);
 
         if (!$values['contractValue']) {
             $values['contractValue'] = $values['originalValue'];
@@ -27,11 +27,11 @@ class ContractDataProcessor
         }
 
         // Check for error-y non-unicode characters
-        $values['referenceNumber'] = \App\Helpers\Helpers::convertToUtf8($values['referenceNumber']);
-        $values['vendorName'] = \App\Helpers\Helpers::convertToUtf8($values['vendorName']);
-        $values['comments'] = \App\Helpers\Helpers::convertToUtf8($values['comments']);
-        $values['description'] = \App\Helpers\Helpers::convertToUtf8($values['description']);
-        $values['extraDescription'] = \App\Helpers\Helpers::convertToUtf8($values['extraDescription']);
+        $values['referenceNumber'] = Cleaners::convertToUtf8($values['referenceNumber']);
+        $values['vendorName'] = Cleaners::convertToUtf8($values['vendorName']);
+        $values['comments'] = Cleaners::convertToUtf8($values['comments']);
+        $values['description'] = Cleaners::convertToUtf8($values['description']);
+        $values['extraDescription'] = Cleaners::convertToUtf8($values['extraDescription']);
     }
 
     /**
