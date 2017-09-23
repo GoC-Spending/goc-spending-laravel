@@ -142,7 +142,6 @@ abstract class DepartmentHandler
         // Run the operation!
         $startDate = date('Y-m-d H:i:s');
         echo "Starting " . $this->ownerAcronym . " at ". $startDate . " \n\n";
-        $startTime = microtime(true);
 
 
         $indexPage = $this->getPage($this->indexUrl);
@@ -211,7 +210,6 @@ abstract class DepartmentHandler
         echo $url . "\n";
 
         // If the quarter pages have server-side pagination, then we need to get the multiple pages that represent that quarter. If there's only one page, then we'll put that as a single item in an array below, to simplify any later steps:
-        $quarterMultiPages = [];
         if ($this->multiPage == 1) {
             $quarterPage = $this->getPage($url);
 
@@ -520,9 +518,6 @@ abstract class DepartmentHandler
 
     public function parseFile($filename)
     {
-
-        $acronym = $this->ownerAcronym;
-
         $source = file_get_contents(Paths::getSourceDirectoryForDepartment($this->ownerAcronym) . '/' . $filename);
 
         $source = Cleaners::applyInitialSourceHtmlTransformations($source);
