@@ -157,80 +157,84 @@ abstract class DepartmentHandler
         }
 
         $quartersFetched = 0;
-        foreach ($quarterUrls as $url) {
+
+        foreach ($quarterUrls as $quarterUrl) {
             if (env('FETCH_LIMIT_QUARTERS', 2) && $quartersFetched >= env('FETCH_LIMIT_QUARTERS', 2)) {
                 break;
             }
 
-            $url = $this->indexToQuarterUrlTransform($url);
+            $pagesForQuarter = $this->fetchPagesForQuarter($quarterUrl);
 
-            echo $url . "\n";
-
-            // If the quarter pages have server-side pagination, then we need to get the multiple pages that represent that quarter. If there's only one page, then we'll put that as a single item in an array below, to simplify any later steps:
-            $quarterMultiPages = [];
-            if ($this->multiPage == 1) {
-                $quarterPage = $this->getPage($url);
-
-                // If there aren't multipages, this just returns the original quarter URL back as a single item array:
-                $quarterMultiPages = Parsers::getArrayFromHtmlViaXpath($quarterPage, $this->quarterMultiPageXpath);
-            } else {
-                $quarterMultiPages = [ $url ];
-            }
-
-
-            $contractsFetched = 0;
-            // Retrive all the (potentially multiple) pages from the given quarter:
-            foreach ($quarterMultiPages as $url) {
-                echo "D: " . $url . "\n";
-
-                $this->activeQuarterPage = $url;
-
-                $quarterPage = $this->getPage($url);
-
-                // Clear it first just in case
-                $this->activeFiscalYear = '';
-                $this->activeFiscalQuarter = '';
-
-                if (method_exists($this, 'fiscalYearFromQuarterPage')) {
-                    $this->activeFiscalYear = $this->fiscalYearFromQuarterPage($quarterPage, $url);
-                }
-                if (method_exists($this, 'fiscalQuarterFromQuarterPage')) {
-                    $this->activeFiscalQuarter = $this->fiscalQuarterFromQuarterPage($quarterPage, $url);
-                }
-
-
-                $contractUrls = Parsers::getArrayFromHtmlViaXpath($quarterPage, $this->quarterToContractXpath);
-
-
-                if (env('DEV_TEST_QUARTER', 0) == 1) {
-                    echo "DEV_TEST_QUARTER\n";
-                    dd($contractUrls);
-                }
-
-                foreach ($contractUrls as $contractUrl) {
-                    if (env('FETCH_LIMIT_CONTRACTS_PER_QUARTER', 2) && $contractsFetched >= env('FETCH_LIMIT_CONTRACTS_PER_QUARTER', 2)) {
-                        break;
-                    }
-
-                    $contractUrl = $this->quarterToContractUrlTransform($contractUrl);
-
-                    echo "   " . $contractUrl . "\n";
-
-                    $this->downloadPage($contractUrl, $this->ownerAcronym);
-                    $this->saveMetadata($contractUrl);
-
-                    $this->totalContractsFetched++;
-                    $contractsFetched++;
-                }
-            }
-
-            echo "$contractsFetched pages downloaded for this quarter.\n\n";
-
-            $quartersFetched++;
+            $quartersFetched += 1;
         }
         // echo $indexPage;
     }
 
+    public function fetchPagesForQuarter($quarterUrl)
+    {
+        $url = $this->indexToQuarterUrlTransform($quarterUrl);
+
+        echo $url . "\n";
+
+        // If the quarter pages have server-side pagination, then we need to get the multiple pages that represent that quarter. If there's only one page, then we'll put that as a single item in an array below, to simplify any later steps:
+        $quarterMultiPages = [];
+        if ($this->multiPage == 1) {
+            $quarterPage = $this->getPage($url);
+
+            // If there aren't multipages, this just returns the original quarter URL back as a single item array:
+            $quarterMultiPages = Parsers::getArrayFromHtmlViaXpath($quarterPage, $this->quarterMultiPageXpath);
+        } else {
+            $quarterMultiPages = [ $url ];
+        }
+
+        $contractsFetched = 0;
+        // Retrive all the (potentially multiple) pages from the given quarter:
+        foreach ($quarterMultiPages as $url) {
+            echo "D: " . $url . "\n";
+
+            $this->activeQuarterPage = $url;
+
+            $quarterPage = $this->getPage($url);
+
+            // Clear it first just in case
+            $this->activeFiscalYear = '';
+            $this->activeFiscalQuarter = '';
+
+            if (method_exists($this, 'fiscalYearFromQuarterPage')) {
+                $this->activeFiscalYear = $this->fiscalYearFromQuarterPage($quarterPage, $url);
+            }
+            if (method_exists($this, 'fiscalQuarterFromQuarterPage')) {
+                $this->activeFiscalQuarter = $this->fiscalQuarterFromQuarterPage($quarterPage, $url);
+            }
+
+
+            $contractUrls = Parsers::getArrayFromHtmlViaXpath($quarterPage, $this->quarterToContractXpath);
+
+
+            if (env('DEV_TEST_QUARTER', 0) == 1) {
+                echo "DEV_TEST_QUARTER\n";
+                dd($contractUrls);
+            }
+
+            foreach ($contractUrls as $contractUrl) {
+                if (env('FETCH_LIMIT_CONTRACTS_PER_QUARTER', 2) && $contractsFetched >= env('FETCH_LIMIT_CONTRACTS_PER_QUARTER', 2)) {
+                    break;
+                }
+
+                $contractUrl = $this->quarterToContractUrlTransform($contractUrl);
+
+                echo "   " . $contractUrl . "\n";
+
+                $this->downloadPage($contractUrl, $this->ownerAcronym);
+                $this->saveMetadata($contractUrl);
+
+                $this->totalContractsFetched++;
+                $contractsFetched++;
+            }
+        }
+
+        echo "$contractsFetched pages downloaded for this quarter.\n\n";
+    }
 
 
     // Get a page using the Guzzle library
