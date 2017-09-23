@@ -2,7 +2,7 @@
 namespace App;
 
 use App\Helpers\Cleaners;
-use App\Helpers\ContractDataProcessor;
+use App\Helpers\ContractDataProcessors;
 use App\Helpers\Parsers;
 use App\Helpers\Paths;
 use GuzzleHttp\Client;
@@ -408,16 +408,16 @@ abstract class DepartmentHandler
             $metadata = $this->getMetadata($file);
 
             if ($fileValues) {
-                ContractDataProcessor::cleanParsedArray($fileValues);
+                ContractDataProcessors::cleanParsedArray($fileValues);
                 // var_dump($fileValues);
 
                 $fileValues = array_merge($fileValues, $metadata);
 
-                ContractDataProcessor::generateAdditionalMetadata($fileValues);
+                ContractDataProcessors::generateAdditionalMetadata($fileValues);
 
                 $fileValues['ownerAcronym'] = $this->ownerAcronym;
 
-                $fileValues['objectCode'] = Helpers::extractObjectCodeFromDescription($fileValues['description']);
+                $fileValues['objectCode'] = Parsers::extractObjectCodeFromDescription($fileValues['description']);
 
                 // Useful for troubleshooting:
                 $fileValues['sourceFilename'] = $this->ownerAcronym . '/' . $file;
@@ -432,9 +432,9 @@ abstract class DepartmentHandler
                 // Final check for missing values, etc.
                 if (env('PARSE_CLEAN_CONTRACT_VALUES', 1) == 1) {
                     if (env('PARSE_CLEAN_VENDOR_NAMES', 1) == 1) {
-                        Helpers::assureRequiredContractValues($fileValues, $vendorData);
+                        ContractDataProcessors::assureRequiredContractValues($fileValues, $vendorData);
                     } else {
-                        Helpers::assureRequiredContractValues($fileValues);
+                        ContractDataProcessors::assureRequiredContractValues($fileValues);
                     }
                 }
                 

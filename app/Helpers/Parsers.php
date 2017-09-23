@@ -132,4 +132,58 @@ class Parsers
 
         return array_unique($items);
     }
+
+    /**
+     * Extract a year from a date string.
+     *
+     * @param string $dateInput  The date.
+     *
+     * @return bool|string
+     */
+    public static function extractYearFromDate($dateInput)
+    {
+        $matches = [];
+        $pattern = '/([1-2][0-9][0-9][0-9])/';
+
+        preg_match($pattern, $dateInput, $matches);
+
+        if (!empty($matches)) {
+            return $matches[1];
+        }
+
+        return false;
+    }
+
+    /**
+     * Extract a Chart of Accounts Object Code from a contract description.
+     *
+     * For example:
+     *   "514- Rental of other buildings" -> 0514
+     *   "1228 - Computer software"       -> 1228
+     *
+     * The full list of Chart of Accounts Object Codes is available here,
+     * https://www.tpsgc-pwgsc.gc.ca/recgen/pceaf-gwcoa/1718/ressource-resource-eng.html
+     * as the last link on the page.
+     *
+     * @param string $description  The contract description.
+     *
+     * @return string  The object code.
+     */
+    public static function extractObjectCodeFromDescription($description)
+    {
+        $objectCode = '';
+
+        $matches = [];
+        $pattern = '/([0-9]{3,4})/';
+
+        preg_match($pattern, $description, $matches);
+
+        if ($matches) {
+            // Get the matching pattern, and left-pad it with zeroes
+            // Sometimes these show up as eg. 514 and sometimes 0514
+            $objectCode = str_pad($matches[1], 4, '0', STR_PAD_LEFT);
+        }
+
+        return $objectCode;
+    }
 }
