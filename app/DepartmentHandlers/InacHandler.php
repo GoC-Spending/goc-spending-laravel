@@ -1,8 +1,6 @@
 <?php
 namespace App\DepartmentHandlers;
 
-use App\DepartmentHandler;
-
 use App\Helpers\Parsers;
 
 class InacHandler extends DepartmentHandler

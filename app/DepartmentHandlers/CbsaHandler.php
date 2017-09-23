@@ -1,7 +1,6 @@
 <?php
 namespace App\DepartmentHandlers;
 
-use App\DepartmentHandler;
 use App\Helpers\Cleaners;
 
 use App\Helpers\Parsers;

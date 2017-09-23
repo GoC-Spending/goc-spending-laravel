@@ -1,10 +1,11 @@
 <?php
-namespace App;
+namespace App\DepartmentHandlers;
 
 use App\Helpers\Cleaners;
 use App\Helpers\ContractDataProcessors;
 use App\Helpers\Parsers;
 use App\Helpers\Paths;
+use App\VendorData;
 use GuzzleHttp\Client;
 use XPathSelector\Selector;
 use App\Helpers\Miscellaneous;
