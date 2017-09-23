@@ -163,14 +163,63 @@ abstract class DepartmentHandler
                 break;
             }
 
-            $pagesForQuarter = $this->fetchPagesForQuarter($quarterUrl);
+            $pageUrlsForQuarter = $this->getPageUrlsForQuarter($quarterUrl);
 
             $quartersFetched += 1;
+
+            $contractsFetched = 0;
+            // Retrieve all the (potentially multiple) pages from the given quarter:
+            foreach ($pageUrlsForQuarter as $url) {
+                echo "D: " . $url . "\n";
+
+                $this->activeQuarterPage = $url;
+
+                $quarterPage = $this->getPage($url);
+
+                // Clear it first just in case
+                $this->activeFiscalYear = '';
+                $this->activeFiscalQuarter = '';
+
+                if (method_exists($this, 'fiscalYearFromQuarterPage')) {
+                    $this->activeFiscalYear = $this->fiscalYearFromQuarterPage($quarterPage, $url);
+                }
+                if (method_exists($this, 'fiscalQuarterFromQuarterPage')) {
+                    $this->activeFiscalQuarter = $this->fiscalQuarterFromQuarterPage($quarterPage, $url);
+                }
+
+
+                $contractUrls = Parsers::getArrayFromHtmlViaXpath($quarterPage, $this->quarterToContractXpath);
+
+
+                if (env('DEV_TEST_QUARTER', 0) == 1) {
+                    echo "DEV_TEST_QUARTER\n";
+                    dd($contractUrls);
+                }
+
+                foreach ($contractUrls as $contractUrl) {
+                    if (env('FETCH_LIMIT_CONTRACTS_PER_QUARTER', 2) && $contractsFetched >= env('FETCH_LIMIT_CONTRACTS_PER_QUARTER', 2)) {
+                        break;
+                    }
+
+                    $this->fetchPageForContract($contractUrl);
+
+                    $contractsFetched++;
+                }
+            }
+
+            echo "$contractsFetched pages downloaded for this quarter.\n\n";
         }
-        // echo $indexPage;
     }
 
-    public function fetchPagesForQuarter($quarterUrl)
+    /**
+     * Get the URLs for the index pages for a given quarter. (Some departments
+     * paginate their quarter index pages; this method accounts for that.)
+     *
+     * @param string $quarterUrl  The URL to the quarter index page to fetch.
+     *
+     * @return string[]
+     */
+    public function getPageUrlsForQuarter($quarterUrl)
     {
         $url = $this->indexToQuarterUrlTransform($quarterUrl);
 
@@ -187,55 +236,20 @@ abstract class DepartmentHandler
             $quarterMultiPages = [ $url ];
         }
 
-        $contractsFetched = 0;
-        // Retrive all the (potentially multiple) pages from the given quarter:
-        foreach ($quarterMultiPages as $url) {
-            echo "D: " . $url . "\n";
-
-            $this->activeQuarterPage = $url;
-
-            $quarterPage = $this->getPage($url);
-
-            // Clear it first just in case
-            $this->activeFiscalYear = '';
-            $this->activeFiscalQuarter = '';
-
-            if (method_exists($this, 'fiscalYearFromQuarterPage')) {
-                $this->activeFiscalYear = $this->fiscalYearFromQuarterPage($quarterPage, $url);
-            }
-            if (method_exists($this, 'fiscalQuarterFromQuarterPage')) {
-                $this->activeFiscalQuarter = $this->fiscalQuarterFromQuarterPage($quarterPage, $url);
-            }
-
-
-            $contractUrls = Parsers::getArrayFromHtmlViaXpath($quarterPage, $this->quarterToContractXpath);
-
-
-            if (env('DEV_TEST_QUARTER', 0) == 1) {
-                echo "DEV_TEST_QUARTER\n";
-                dd($contractUrls);
-            }
-
-            foreach ($contractUrls as $contractUrl) {
-                if (env('FETCH_LIMIT_CONTRACTS_PER_QUARTER', 2) && $contractsFetched >= env('FETCH_LIMIT_CONTRACTS_PER_QUARTER', 2)) {
-                    break;
-                }
-
-                $contractUrl = $this->quarterToContractUrlTransform($contractUrl);
-
-                echo "   " . $contractUrl . "\n";
-
-                $this->downloadPage($contractUrl, $this->ownerAcronym);
-                $this->saveMetadata($contractUrl);
-
-                $this->totalContractsFetched++;
-                $contractsFetched++;
-            }
-        }
-
-        echo "$contractsFetched pages downloaded for this quarter.\n\n";
+        return $quarterMultiPages;
     }
 
+    public function fetchPageForContract($contractUrl)
+    {
+        $contractUrl = $this->quarterToContractUrlTransform($contractUrl);
+
+        echo "   " . $contractUrl . "\n";
+
+        $this->downloadPage($contractUrl, $this->ownerAcronym);
+        $this->saveMetadata($contractUrl);
+
+        $this->totalContractsFetched++;
+    }
 
     // Get a page using the Guzzle library
     // No longer a static function since we're reusing the client object between requests.
