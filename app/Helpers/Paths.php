@@ -51,6 +51,28 @@ class Paths
     }
 
     /**
+     * Get the path to the generated data folder.
+     *
+     * @return string  The path to the generated data folder, with a trailing slash.
+     */
+    public static function getOutputDirectory()
+    {
+        return storage_path() . '/' . env('PARSE_JSON_OUTPUT_FOLDER', 'generated-data') . '/';
+    }
+
+    /**
+     * Get the path to the generated data folder for a given department.
+     *
+     * @param $acronym string  The department's acronym.
+     *
+     * @return string  The path to the department's generated data folder.
+     */
+    public static function getOutputDirectoryForDepartment($acronym)
+    {
+        return Paths::getOutputDirectory() . $acronym;
+    }
+
+    /**
      * Generate a unique filename based on a contract URL.
      *
      * Note: The contract URL should be a "permalink" version. Usually

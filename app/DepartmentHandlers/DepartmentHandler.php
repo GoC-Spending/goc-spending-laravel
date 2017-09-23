@@ -401,14 +401,13 @@ abstract class DepartmentHandler
         $sourceDirectory = Paths::getSourceDirectoryForDepartment($this->ownerAcronym);
 
         // Output directory:
-        $directoryPath = storage_path() . '/' . env('PARSE_JSON_OUTPUT_FOLDER', 'generated-data') . '/' . $this->ownerAcronym;
+        $outputDirectory = Paths::getOutputDirectoryForDepartment($this->ownerAcronym);
 
-        // If the folder doesn't exist yet, create it:
+        // If the output directory doesn't exist yet, create it:
         // Thanks to http://stackoverflow.com/a/15075269/756641
-        if (! is_dir($directoryPath)) {
-            mkdir($directoryPath, 0755, true);
+        if (! is_dir($outputDirectory)) {
+            mkdir($outputDirectory, 0755, true);
         }
-
 
         $validFiles = [];
         $files = array_diff(scandir($sourceDirectory), ['..', '.']);
@@ -427,7 +426,7 @@ abstract class DepartmentHandler
                 break;
             }
 
-            $this->parseSingle($file);
+            $this->parseSingle($file, $outputDirectory);
 
             $filesParsed++;
         }
@@ -440,9 +439,10 @@ abstract class DepartmentHandler
     /**
      * Parse a single contract file.
      *
-     * @param string $file  The filename of the contract.
+     * @param string $file             The filename of the contract.
+     * @param string $outputDirectory  The directory to save the generated data to.
      */
-    public function parseSingle($file)
+    public function parseSingle($file, $outputDirectory)
     {
         // echo "$file\n";
 
@@ -489,7 +489,7 @@ abstract class DepartmentHandler
             // TODO - update this to match the schema discussed at 2017-03-28's Civic Tech!
             $fileValues['uuid'] = $this->ownerAcronym . '-' . $fileValues['referenceNumber'];
 
-            if (file_put_contents($directoryPath . '/' . $filehash . '.json', json_encode($fileValues, JSON_PRETTY_PRINT))) {
+            if (file_put_contents($outputDirectory . '/' . $filehash . '.json', json_encode($fileValues, JSON_PRETTY_PRINT))) {
                 // echo "...saved.\n";
             } else {
                 echo "...failed to save JSON output for $file.\n";
