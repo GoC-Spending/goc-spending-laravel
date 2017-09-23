@@ -91,10 +91,6 @@ abstract class DepartmentHandler
      */
     public $contractContentSubsetXpath;
 
-
-    public $contentSplitParameters = [];
-
-
     public $multiPage = 0;
     public $sleepBetweenDownloads = 0;
 
@@ -349,11 +345,6 @@ abstract class DepartmentHandler
             // echo $encoding . "\n";
 
             if ($pageSource) {
-                if ($this->contentSplitParameters) {
-                    $split = explode($this->contentSplitParameters['startSplit'], $pageSource);
-                    $pageSource = explode($this->contentSplitParameters['endSplit'], $split[1])[0];
-                }
-
                 if ($this->contractContentSubsetXpath) {
                     $xs = Selector::loadHTML($pageSource);
                     $pageSource = $xs->find($this->contractContentSubsetXpath)->innerHTML();
