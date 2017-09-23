@@ -333,7 +333,7 @@ abstract class DepartmentHandler
 
         $filename = Paths::generateFilenameFromUrl($this->removeSessionIdsFromUrl($url));
 
-        $directoryPath = storage_path() . '/' . env('FETCH_RAW_HTML_FOLDER', 'raw-data');
+        $directoryPath = Paths::getSourceDirectory();
 
         if ($subdirectory) {
             $directoryPath .= '/' . $subdirectory;
@@ -395,7 +395,7 @@ abstract class DepartmentHandler
         }
 
         $filename = Paths::generateFilenameFromUrl($this->removeSessionIdsFromUrl($url), '.json');
-        $directoryPath = storage_path() . '/' . env('FETCH_METADATA_FOLDER', 'metadata') . '/' . $this->ownerAcronym;
+        $directoryPath = Paths::getMetadataDirectoryForDepartment($this->ownerAcronym);
 
 
         // If the folder doesn't exist yet, create it:
