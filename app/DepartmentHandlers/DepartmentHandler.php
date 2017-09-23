@@ -354,8 +354,10 @@ abstract class DepartmentHandler
         return false;
     }
 
-    // Primary function to parse pages:
-    public function parse()
+    /**
+     * Parse all contract files downloaded for the department.
+     */
+    public function parseAll()
     {
 
         $startDate = date('Y-m-d H:i:s');
@@ -396,61 +398,7 @@ abstract class DepartmentHandler
                 break;
             }
 
-            // echo "$file\n";
-
-            $filehash = explode('.', $file)[0];
-
-            // Retrieve the values from the department-specific file parser
-            // And merge these with the default values
-            // Just to guarantee that all the array keys are around:
-            $fileValues = array_merge(self::$rowParams, $this->parseFile($file));
-
-            $metadata = $this->getMetadata($file);
-
-            if ($fileValues) {
-                $fileValues = ContractDataProcessors::cleanParsedArray($fileValues);
-
-                $fileValues = array_merge($fileValues, $metadata);
-
-                $fileValues = ContractDataProcessors::generateAdditionalMetadata($fileValues);
-
-                $fileValues['ownerAcronym'] = $this->ownerAcronym;
-
-                $fileValues['objectCode'] = Parsers::extractObjectCodeFromDescription($fileValues['description']);
-
-                // Useful for troubleshooting:
-                $fileValues['sourceFilename'] = $this->ownerAcronym . '/' . $file;
-
-                // A lot of DND's entries are missing reference numbers:
-                if (! $fileValues['referenceNumber']) {
-                    echo "Warning: no reference number.\n";
-
-                    $fileValues['referenceNumber'] = $filehash;
-                }
-
-                // Final check for missing values, etc.
-                if (env('PARSE_CLEAN_CONTRACT_VALUES', 1) == 1) {
-                    if (env('PARSE_CLEAN_VENDOR_NAMES', 1) == 1) {
-                        $fileValues = ContractDataProcessors::assureRequiredContractValues($fileValues, $vendorData);
-                    } else {
-                        $fileValues = ContractDataProcessors::assureRequiredContractValues($fileValues);
-                    }
-                }
-                
-
-                // TODO - update this to match the schema discussed at 2017-03-28's Civic Tech!
-                $fileValues['uuid'] = $this->ownerAcronym . '-' . $fileValues['referenceNumber'];
-
-                if (file_put_contents($directoryPath . '/' . $filehash . '.json', json_encode($fileValues, JSON_PRETTY_PRINT))) {
-                    // echo "...saved.\n";
-                } else {
-                    echo "...failed to save JSON output for $file.\n";
-                }
-            } else {
-                echo "Error: could not parse data for $file\n";
-            }
-
-
+            $this->parseSingle($file);
 
             $filesParsed++;
         }
@@ -458,6 +406,68 @@ abstract class DepartmentHandler
 
         echo "...started " . $this->ownerAcronym . " at " . $startDate . "\n";
         echo "Finished parsing $filesParsed files at ". date('Y-m-d H:i:s') . " \n\n";
+    }
+
+    /**
+     * Parse a single contract file.
+     *
+     * @param string $file  The filename of the contract.
+     */
+    public function parseSingle($file)
+    {
+        // echo "$file\n";
+
+        $filehash = explode('.', $file)[0];
+
+        // Retrieve the values from the department-specific file parser
+        // And merge these with the default values
+        // Just to guarantee that all the array keys are around:
+        $fileValues = array_merge(self::$rowParams, $this->parseFile($file));
+
+        $metadata = $this->getMetadata($file);
+
+        if ($fileValues) {
+            $fileValues = ContractDataProcessors::cleanParsedArray($fileValues);
+
+            $fileValues = array_merge($fileValues, $metadata);
+
+            $fileValues = ContractDataProcessors::generateAdditionalMetadata($fileValues);
+
+            $fileValues['ownerAcronym'] = $this->ownerAcronym;
+
+            $fileValues['objectCode'] = Parsers::extractObjectCodeFromDescription($fileValues['description']);
+
+            // Useful for troubleshooting:
+            $fileValues['sourceFilename'] = $this->ownerAcronym . '/' . $file;
+
+            // A lot of DND's entries are missing reference numbers:
+            if (! $fileValues['referenceNumber']) {
+                echo "Warning: no reference number.\n";
+
+                $fileValues['referenceNumber'] = $filehash;
+            }
+
+            // Final check for missing values, etc.
+            if (env('PARSE_CLEAN_CONTRACT_VALUES', 1) == 1) {
+                if (env('PARSE_CLEAN_VENDOR_NAMES', 1) == 1) {
+                    $fileValues = ContractDataProcessors::assureRequiredContractValues($fileValues, $vendorData);
+                } else {
+                    $fileValues = ContractDataProcessors::assureRequiredContractValues($fileValues);
+                }
+            }
+
+
+            // TODO - update this to match the schema discussed at 2017-03-28's Civic Tech!
+            $fileValues['uuid'] = $this->ownerAcronym . '-' . $fileValues['referenceNumber'];
+
+            if (file_put_contents($directoryPath . '/' . $filehash . '.json', json_encode($fileValues, JSON_PRETTY_PRINT))) {
+                // echo "...saved.\n";
+            } else {
+                echo "...failed to save JSON output for $file.\n";
+            }
+        } else {
+            echo "Error: could not parse data for $file\n";
+        }
     }
 
     public function getMetadata($htmlFilename)
