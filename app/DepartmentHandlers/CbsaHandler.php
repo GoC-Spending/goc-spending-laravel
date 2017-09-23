@@ -108,8 +108,6 @@ class CbsaHandler extends DepartmentHandler
             return (string)$node;
         });
 
-        $keys = [];
-
         // var_dump($keyNodes);
         // var_dump($valueNodes);
 
