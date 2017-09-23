@@ -13,7 +13,7 @@ class TcHandler extends DepartmentHandler
     // From the index page, list all the "quarter" URLs
     public $indexToQuarterXpath = "//form[@id='pageForm']//ul/li/a/@href";
 
-    public $multiPage = 0;
+    public $areQuartersPaginated = false;
 
     public $quarterToContractXpath = "//form[@id='pageForm']//table//td//a/@href";
 

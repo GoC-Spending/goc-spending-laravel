@@ -13,7 +13,7 @@ class PspcHandler extends DepartmentHandler
     // From the index page, list all the "quarter" URLs
     public $indexToQuarterXpath = "//div[@id='wb-main-in']//ul/li/a/@href";
 
-    public $multiPage = 0;
+    public $areQuartersPaginated = false;
 
     public $quarterToContractXpath = "//div[@id='wb-main-in']//table//td//a/@href";
 

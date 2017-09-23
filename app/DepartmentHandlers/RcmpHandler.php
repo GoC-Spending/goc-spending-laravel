@@ -13,7 +13,7 @@ class RcmpHandler extends DepartmentHandler
     // From the index page, list all the "quarter" URLs
     public $indexToQuarterXpath = "//main//ul/li/a/@href";
 
-    public $multiPage = 0;
+    public $areQuartersPaginated = false;
 
     public $quarterToContractXpath = "//table[@class='wb-tables table table-striped']//td//a/@href";
 

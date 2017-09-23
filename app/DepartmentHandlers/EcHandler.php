@@ -13,7 +13,7 @@ class EcHandler extends DepartmentHandler
     // From the index page, list all the "quarter" URLs
     public $indexToQuarterXpath = "//div[@id='wb-main']//ul/li/a/@href";
 
-    public $multiPage = 0;
+    public $areQuartersPaginated = false;
 
     public $quarterToContractXpath = "//div[@id='cn-centre-col-inner']//table//td//a/@href";
 

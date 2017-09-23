@@ -16,7 +16,7 @@ class CbsaHandler extends DepartmentHandler
     // From the index page, list all the "quarter" URLs
     public $indexToQuarterXpath = "//main[@class='container']//ul/li/a/@href";
 
-    public $multiPage = 0;
+    public $areQuartersPaginated = false;
 
     public $quarterToContractXpath = "//table[@id='pdcon-table']//td//a/@href";
 

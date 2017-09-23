@@ -13,7 +13,7 @@ class InacHandler extends DepartmentHandler
     // From the index page, list all the "quarter" URLs
     public $indexToQuarterXpath = "//div[@class='center']//ul/li/a/@href";
 
-    public $multiPage = 1;
+    public $areQuartersPaginated = true;
     public $quarterMultiPageXpath = "//div[@class='align-right size-small']/a/@href";
 
     public $quarterToContractXpath = "//table[@class='widthFull TableBorderBasic']//td//a/@href";

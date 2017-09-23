@@ -91,7 +91,12 @@ abstract class DepartmentHandler
      */
     public $contractContentSubsetXpath;
 
-    public $multiPage = 0;
+    /**
+     * Whether or not the quarter indexes for this department are paginated.
+     *
+     * @var bool
+     */
+    public $areQuartersPaginated = false;
     public $sleepBetweenDownloads = 0;
 
 
@@ -232,8 +237,9 @@ abstract class DepartmentHandler
 
         echo $url . "\n";
 
-        // If the quarter pages have server-side pagination, then we need to get the multiple pages that represent that quarter. If there's only one page, then we'll put that as a single item in an array below, to simplify any later steps:
-        if ($this->multiPage == 1) {
+        // If the quarter pages have server-side pagination, then we need to get the multiple pages that represent that quarter.
+        // If there's only one page, then we'll put that as a single item in an array below, to simplify any later steps.
+        if ($this->areQuartersPaginated) {
             $quarterPage = $this->getPage($url);
 
             // If there aren't multipages, this just returns the original quarter URL back as a single item array:
