@@ -400,12 +400,6 @@ abstract class DepartmentHandler
 
         $sourceDirectory = Paths::getSourceDirectoryForDepartment($this->ownerAcronym);
 
-        if (env('PARSE_CLEAN_VENDOR_NAMES', 1) == 1) {
-            $vendorData = new VendorData;
-        } else {
-            $vendorData = null;
-        }
-
         // Output directory:
         $directoryPath = storage_path() . '/' . env('PARSE_JSON_OUTPUT_FOLDER', 'generated-data') . '/' . $this->ownerAcronym;
 
@@ -485,7 +479,7 @@ abstract class DepartmentHandler
             // Final check for missing values, etc.
             if (env('PARSE_CLEAN_CONTRACT_VALUES', 1) == 1) {
                 if (env('PARSE_CLEAN_VENDOR_NAMES', 1) == 1) {
-                    $fileValues = ContractDataProcessors::assureRequiredContractValues($fileValues, $vendorData);
+                    $fileValues = ContractDataProcessors::assureRequiredContractValues($fileValues, VendorData::getInstance());
                 } else {
                     $fileValues = ContractDataProcessors::assureRequiredContractValues($fileValues);
                 }

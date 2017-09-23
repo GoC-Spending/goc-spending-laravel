@@ -4,11 +4,30 @@ namespace App;
 class VendorData
 {
 
+    /**
+     * Unique object instance.
+     *
+     * @var VendorData
+     */
+    private static $instance;
+
     public $vendorTable;
 
-    public function __construct()
+    /**
+     * Return the unique plugin instance.
+     *
+     * @return VendorData
+     */
+    public static function getInstance()
     {
+        if (null === self::$instance) {
+            self::$instance = new self();
+        }
+        return self::$instance;
+    }
 
+    protected function __construct()
+    {
         $this->vendorTable = self::reindexVendorData(self::$vendors);
     }
 
