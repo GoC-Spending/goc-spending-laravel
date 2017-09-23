@@ -408,12 +408,11 @@ abstract class DepartmentHandler
             $metadata = $this->getMetadata($file);
 
             if ($fileValues) {
-                ContractDataProcessors::cleanParsedArray($fileValues);
-                // var_dump($fileValues);
+                $fileValues = ContractDataProcessors::cleanParsedArray($fileValues);
 
                 $fileValues = array_merge($fileValues, $metadata);
 
-                ContractDataProcessors::generateAdditionalMetadata($fileValues);
+                $fileValues = ContractDataProcessors::generateAdditionalMetadata($fileValues);
 
                 $fileValues['ownerAcronym'] = $this->ownerAcronym;
 
@@ -432,9 +431,9 @@ abstract class DepartmentHandler
                 // Final check for missing values, etc.
                 if (env('PARSE_CLEAN_CONTRACT_VALUES', 1) == 1) {
                     if (env('PARSE_CLEAN_VENDOR_NAMES', 1) == 1) {
-                        ContractDataProcessors::assureRequiredContractValues($fileValues, $vendorData);
+                        $fileValues = ContractDataProcessors::assureRequiredContractValues($fileValues, $vendorData);
                     } else {
-                        ContractDataProcessors::assureRequiredContractValues($fileValues);
+                        $fileValues = ContractDataProcessors::assureRequiredContractValues($fileValues);
                     }
                 }
                 

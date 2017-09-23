@@ -9,8 +9,10 @@ class ContractDataProcessors
      * Clean the contract data according to its fields.
      *
      * @param array $values
+     *
+     * @return array
      */
-    public static function cleanParsedArray(&$values)
+    public static function cleanParsedArray($values)
     {
         $values['startYear'] = Parsers::extractYearFromDate($values['contractPeriodStart']);
         $values['endYear'] = Parsers::extractYearFromDate($values['contractPeriodEnd']);
@@ -32,19 +34,25 @@ class ContractDataProcessors
         $values['comments'] = Cleaners::convertToUtf8($values['comments']);
         $values['description'] = Cleaners::convertToUtf8($values['description']);
         $values['extraDescription'] = Cleaners::convertToUtf8($values['extraDescription']);
+
+        return $values;
     }
 
     /**
      * Add additional metadata to the contract based on the already-set fields.
      *
      * @param array $values
+     *
+     * @return array
      */
-    public static function generateAdditionalMetadata(&$values)
+    public static function generateAdditionalMetadata($values)
     {
         if ($values['sourceYear'] && $values['sourceQuarter']) {
             // Generate a more traditional "20162017-Q3"
             $values['sourceFiscal'] = $values['sourceYear'] . (substr($values['sourceYear'], 2, 2) + 1) . '-Q' . $values['sourceQuarter'];
         }
+
+        return $values;
     }
 
     /**
@@ -52,8 +60,10 @@ class ContractDataProcessors
      *
      * @param array $contract    The contract to clean.
      * @param array $vendorData  The data for the contract vendor, if applicable.
+     *
+     * @return array
      */
-    public static function assureRequiredContractValues(&$contract, $vendorData = [])
+    public static function assureRequiredContractValues($contract, $vendorData = [])
     {
         // In some cases, entries are missing a contract period start, but do have a contract date. If so, use that instead:
         if (!$contract['startYear']) {
@@ -92,5 +102,7 @@ class ContractDataProcessors
                 $contract[$textField] = Cleaners::removeLinebreaks($contract[$textField]);
             }
         }
+
+        return $contract;
     }
 }
