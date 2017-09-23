@@ -97,7 +97,13 @@ abstract class DepartmentHandler
      * @var bool
      */
     public $areQuartersPaginated = false;
-    public $sleepBetweenDownloads = 0;
+
+    /**
+     * How long to sleep between downloads; 0 if no sleeping required (what a life that’d be!).
+     *
+     * @var int
+     */
+    public $sleepPeriodBetweenDownloads = 0;
 
 
     // Parsing variables:
@@ -366,8 +372,8 @@ abstract class DepartmentHandler
 
                 // This can now be configured per-department
                 // The two are cumulative (eg. you could have a system-wide sleep configuration, and a department-specific, and it'll sleep for both durations.)
-                if ($this->sleepBetweenDownloads) {
-                    sleep($this->sleepBetweenDownloads);
+                if ($this->sleepPeriodBetweenDownloads) {
+                    sleep($this->sleepPeriodBetweenDownloads);
                 }
             }
 
