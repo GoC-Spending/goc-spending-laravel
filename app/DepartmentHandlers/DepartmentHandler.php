@@ -14,7 +14,11 @@ use XPathSelector\Selector;
 abstract class DepartmentHandler
 {
 
-    // Fetching-related variables:
+    /**
+     * Guzzle client, stored as to maintain a persistent session.
+     *
+     * @var Client
+     */
     public $guzzleClient;
 
     /**
@@ -38,11 +42,26 @@ abstract class DepartmentHandler
      */
     public $baseUrl;
 
-    public $activeQuarterPage;
-    public $activeFiscalYear;
-    public $activeFiscalQuarter;
+    /**
+     * The URL of the quarter page currently being parsed.
+     *
+     * @var string
+     */
+    public $activeQuarterPageUrl;
 
-    public $totalContractsFetched = 0;
+    /**
+     * The fiscal year of the current quarter.
+     *
+     * @var string
+     */
+    public $activeFiscalYear;
+
+    /**
+     * The fiscal quarter of the current quarter.
+     *
+     * @var string
+     */
+    public $activeFiscalQuarter;
 
     /**
      * XPath selector to, from the index page, get the quarter URLs.
@@ -65,8 +84,16 @@ abstract class DepartmentHandler
      */
     public $quarterMultiPageXpath;
 
+    /**
+     * XPath selector to get the container containing the contract data.
+     *
+     * @var string
+     */
     public $contractContentSubsetXpath;
+
+
     public $contentSplitParameters = [];
+
 
     public $multiPage = 0;
     public $sleepBetweenDownloads = 0;
@@ -231,7 +258,7 @@ abstract class DepartmentHandler
      */
     public function fetchPageForQuarter($quarterPageUrl)
     {
-        $this->activeQuarterPage = $quarterPageUrl;
+        $this->activeQuarterPageUrl = $quarterPageUrl;
 
         $quarterPage = $this->getPage($quarterPageUrl);
 

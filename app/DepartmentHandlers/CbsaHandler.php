@@ -26,9 +26,9 @@ class CbsaHandler extends DepartmentHandler
     // Since the a href tags on the quarter pages just return a path-relative URL, use this to prepend the rest of the URL path
     public function quarterToContractUrlTransform($contractUrl)
     {
-        echo "Q: " . $this->activeQuarterPage . "\n";
+        echo "Q: " . $this->activeQuarterPageUrl . "\n";
 
-        $urlArray = explode('/', $this->activeQuarterPage);
+        $urlArray = explode('/', $this->activeQuarterPageUrl);
         array_pop($urlArray);
 
         $urlString = implode('/', $urlArray).'/';
