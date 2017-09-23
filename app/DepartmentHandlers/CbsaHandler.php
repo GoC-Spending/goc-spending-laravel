@@ -3,7 +3,7 @@ namespace App\DepartmentHandlers;
 
 use App\DepartmentHandler;
 use App\Helpers\Cleaners;
-use App\Helpers\Helpers;
+
 use App\Helpers\Parsers;
 use XPathSelector\Selector;
 

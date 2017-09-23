@@ -1,9 +1,7 @@
 <?php
 namespace App\Helpers;
 
-use XPathSelector\Selector;
-
-class Helpers
+class Miscellaneous
 {
 
     /**

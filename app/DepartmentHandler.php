@@ -7,7 +7,7 @@ use App\Helpers\Parsers;
 use App\Helpers\Paths;
 use GuzzleHttp\Client;
 use XPathSelector\Selector;
-use App\Helpers\Helpers;
+use App\Helpers\Miscellaneous;
 
 // Includes both fetching and parsing functions
 // now combined into one class.
