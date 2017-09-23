@@ -96,7 +96,7 @@ abstract class DepartmentHandler
      *
      * @var bool
      */
-    public $areQuartersPaginated = false;
+
 
     /**
      * How long to sleep between downloads; 0 if no sleeping required (what a life that’d be!).

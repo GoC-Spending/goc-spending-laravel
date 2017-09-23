@@ -13,8 +13,6 @@ class AgrHandler extends DepartmentHandler
     // From the index page, list all the "quarter" URLs
     public $indexToQuarterXpath = "//main//ul/li/a/@href";
 
-    public $areQuartersPaginated = false;
-
     public $quarterToContractXpath = "//main//table//td//a/@href";
 
     /*

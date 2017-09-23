@@ -13,7 +13,7 @@ class IrccHandler extends DepartmentHandler
     // From the index page, list all the "quarter" URLs
     public $indexToQuarterXpath = "//form[@id='aspnetForm']//ul/li/a/@href";
 
-    public $areQuartersPaginated = false;
+
 
     public $quarterToContractXpath = "//form[@id='aspnetForm']//table//td//a/@href";
 

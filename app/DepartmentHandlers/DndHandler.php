@@ -13,8 +13,6 @@ class DndHandler extends DepartmentHandler
     // From the index page, list all the "quarter" URLs
     public $indexToQuarterXpath = "//div[@id='main']//ul/li/a/@href";
 
-    public $areQuartersPaginated = false;
-
     public $quarterToContractXpath = "//div[@id='container']//table//td//a/@href";
 
     public function quarterToContractUrlTransform($contractUrl)

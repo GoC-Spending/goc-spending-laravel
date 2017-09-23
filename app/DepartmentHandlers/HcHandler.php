@@ -13,7 +13,7 @@ class HcHandler extends DepartmentHandler
     // From the index page, list all the "quarter" URLs
     public $indexToQuarterXpath = "//div[@class='center']//ul/li/a/@href";
 
-    public $areQuartersPaginated = false;
+
 
     public $quarterToContractXpath = "//div[@class='center']//table//td//a/@href";
 
