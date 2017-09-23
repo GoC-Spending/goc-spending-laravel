@@ -172,24 +172,9 @@ abstract class DepartmentHandler
             foreach ($pageUrlsForQuarter as $url) {
                 echo "D: " . $url . "\n";
 
-                $this->activeQuarterPage = $url;
-
-                $quarterPage = $this->getPage($url);
-
-                // Clear it first just in case
-                $this->activeFiscalYear = '';
-                $this->activeFiscalQuarter = '';
-
-                if (method_exists($this, 'fiscalYearFromQuarterPage')) {
-                    $this->activeFiscalYear = $this->fiscalYearFromQuarterPage($quarterPage, $url);
-                }
-                if (method_exists($this, 'fiscalQuarterFromQuarterPage')) {
-                    $this->activeFiscalQuarter = $this->fiscalQuarterFromQuarterPage($quarterPage, $url);
-                }
-
+                $quarterPage = $this->fetchPageForQuarter($url);
 
                 $contractUrls = Parsers::getArrayFromHtmlViaXpath($quarterPage, $this->quarterToContractXpath);
-
 
                 if (env('DEV_TEST_QUARTER', 0) == 1) {
                     echo "DEV_TEST_QUARTER\n";
@@ -215,7 +200,7 @@ abstract class DepartmentHandler
      * Get the URLs for the index pages for a given quarter. (Some departments
      * paginate their quarter index pages; this method accounts for that.)
      *
-     * @param string $quarterUrl  The URL to the quarter index page to fetch.
+     * @param string $quarterUrl  The URL of the quarter.
      *
      * @return string[]
      */
@@ -239,6 +224,38 @@ abstract class DepartmentHandler
         return $quarterMultiPages;
     }
 
+    /**
+     * Fetch a quarter page, containing a list of contracts.
+     *
+     * @param string $quarterPageUrl  The URL for the page to fetch.
+     *
+     * @return \Psr\Http\Message\StreamInterface
+     */
+    public function fetchPageForQuarter($quarterPageUrl)
+    {
+        $this->activeQuarterPage = $quarterPageUrl;
+
+        $quarterPage = $this->getPage($quarterPageUrl);
+
+        // Clear it first just in case
+        $this->activeFiscalYear = '';
+        $this->activeFiscalQuarter = '';
+
+        if (method_exists($this, 'fiscalYearFromQuarterPage')) {
+            $this->activeFiscalYear = $this->fiscalYearFromQuarterPage($quarterPage, $quarterPageUrl);
+        }
+        if (method_exists($this, 'fiscalQuarterFromQuarterPage')) {
+            $this->activeFiscalQuarter = $this->fiscalQuarterFromQuarterPage($quarterPage, $quarterPageUrl);
+        }
+
+        return $quarterPage;
+    }
+
+    /**
+     * Fetch and save a contract page.
+     *
+     * @param string $contractUrl  The URL of the contract to fetch.
+     */
     public function fetchPageForContract($contractUrl)
     {
         $contractUrl = $this->quarterToContractUrlTransform($contractUrl);
