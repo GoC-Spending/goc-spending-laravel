@@ -2,7 +2,6 @@
 namespace App\DepartmentHandlers;
 
 use App\Helpers\Cleaners;
-
 use App\Helpers\Parsers;
 use XPathSelector\Selector;
 

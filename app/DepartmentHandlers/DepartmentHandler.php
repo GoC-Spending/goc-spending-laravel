@@ -8,7 +8,6 @@ use App\Helpers\Paths;
 use App\VendorData;
 use GuzzleHttp\Client;
 use XPathSelector\Selector;
-use App\Helpers\Miscellaneous;
 
 // Includes both fetching and parsing functions
 // now combined into one class.
