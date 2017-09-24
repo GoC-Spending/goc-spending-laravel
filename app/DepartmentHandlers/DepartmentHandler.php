@@ -297,8 +297,6 @@ abstract class DepartmentHandler
 
         $this->downloadPage($contractUrl, $this->ownerAcronym);
         $this->saveMetadata($contractUrl);
-
-        $this->totalContractsFetched++;
     }
 
     // Get a page using the Guzzle library
