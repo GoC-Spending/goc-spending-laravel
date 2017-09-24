@@ -85,6 +85,8 @@ class IrccHandler extends DepartmentHandler
     public function parseHtml($html)
     {
 
+        $html = str_replace('Vender Name', 'Vendor name', $html);
+
         return Parsers::extractContractDataViaGenericXpathParser($html, "//table//th", "//table//td", ' to ');
     }
 }
