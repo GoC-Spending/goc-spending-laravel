@@ -503,7 +503,7 @@ abstract class DepartmentHandler
 
             // A lot of DND's entries are missing reference numbers:
             if (! $fileValues['referenceNumber']) {
-                echo "Warning: no reference number.\n";
+                echo "Warning: no reference number for $file.\n";
 
                 $fileValues['referenceNumber'] = $filehash;
             }
