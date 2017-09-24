@@ -25,7 +25,9 @@ php artisan department:parse ec
 
 Or, running the fetch and parse in one go:
 
-`php artisan department:run ec`
+```
+php artisan department:run ec
+```
 
 ## License
 
