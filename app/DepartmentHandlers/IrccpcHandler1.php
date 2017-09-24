@@ -4,12 +4,12 @@ namespace App\DepartmentHandlers;
 use App\Helpers\Parsers;
 
 // Passport Canada (now part of IRCC)
-class IrccPcHandler extends DepartmentHandler
+class IrccpcHandler extends DepartmentHandler
 {
 
     public $indexUrl = 'http://www.cic.gc.ca/disclosure-divulgation/cont-eng.aspx';
     public $baseUrl = 'http://www.cic.gc.ca/';
-    public $ownerAcronym = 'ircc-pc';
+    public $ownerAcronym = 'irccpc';
 
     // From the index page, list all the "quarter" URLs
     public $indexToQuarterXpath = "//main//ul/li/a/@href";
