@@ -18,8 +18,10 @@ We have a set of Artisan commands available, under the `department` namespace. (
 complete list.) To run them, you’ll need a department acronym—you can see the full list of supported departments by checking
 the `app/DepartmentHandlers/` folder. Example usage, for Environment Canada:
 
-`php artisan department:fetch ec`
-`php artisan department:parse ec`
+```
+php artisan department:fetch ec
+php artisan department:parse ec
+```
 
 Or, running the fetch and parse in one go:
 
