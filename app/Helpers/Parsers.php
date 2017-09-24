@@ -138,7 +138,7 @@ class Parsers
      *
      * @param string $dateInput  The date.
      *
-     * @return bool|string
+     * @return bool|integer
      */
     public static function extractYearFromDate($dateInput)
     {
@@ -148,7 +148,7 @@ class Parsers
         preg_match($pattern, $dateInput, $matches);
 
         if (!empty($matches)) {
-            return $matches[1];
+            return intval($matches[1]);
         }
 
         return false;
