@@ -105,4 +105,28 @@ class ContractDataProcessors
 
         return $contract;
     }
+
+    /**
+     * Cleanup contract values prior to exporting to JSON, removing un-used fields.
+     *
+     * @param array $contract    The contract to clean.
+     *
+     * @return array
+     */
+    public static function cleanupExportedContractValues($contract)
+    {
+
+        $keysToRemove = [
+            'contractPeriodRange',
+            'amendedValues',
+            'yearsDuration',
+            'valuePerYear',
+        ];
+
+        foreach ($keysToRemove as $key) {
+            unset($contract[$key]);
+        }
+
+        return $contract;
+    }
 }

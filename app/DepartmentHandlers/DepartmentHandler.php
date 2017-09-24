@@ -515,6 +515,8 @@ abstract class DepartmentHandler
             // TODO - update this to match the schema discussed at 2017-03-28's Civic Tech!
             $fileValues['uuid'] = $this->ownerAcronym . '-' . $fileValues['referenceNumber'];
 
+            $fileValues = ContractDataProcessors::cleanupExportedContractValues($fileValues);
+
             if (file_put_contents($outputDirectory . '/' . $filehash . '.json', json_encode($fileValues, JSON_PRETTY_PRINT))) {
                 // echo "...saved.\n";
             } else {
