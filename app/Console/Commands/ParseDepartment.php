@@ -2,7 +2,7 @@
 
 namespace App\Console\Commands;
 
-use App\Helpers\Helpers;
+use App\Helpers\Paths;
 use Illuminate\Console\Command;
 
 class ParseDepartment extends Command
@@ -49,12 +49,13 @@ class ParseDepartment extends Command
         }
 
         // Check to see if the data directory exists. If not, bail gracefully!
-        if (! is_dir(Helpers::getSourceDirectoryForDepartment($department))) {
+        if (! is_dir(Paths::getSourceDirectoryForDepartment($department))) {
             $this->error('No data folder for that department. Try running department:fetch for it first, or check if you’ve typo’ed the department acronym.');
             return;
         }
 
         $departmentHandler = new $departmentClass;
-        $departmentHandler->parse();
+
+        $departmentHandler->parseAll();
     }
 }
