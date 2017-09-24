@@ -105,6 +105,13 @@ abstract class DepartmentHandler
      */
     public $sleepPeriodBetweenDownloads = 0;
 
+    /**
+     * How many files were already downloaded in a previous run of the fetch command.
+     *
+     * @var int
+     */
+    public $totalAlreadyDownloaded = 0;
+
 
     // Parsing variables:
     public static $rowParams = [
@@ -232,6 +239,7 @@ abstract class DepartmentHandler
 
         echo "...started scraping " . $this->ownerAcronym . " at " . $startDate . "\n";
         echo "$totalContractsFetched contracts fetched over $quartersFetched quarters.\n";
+        echo "(" . $this->totalAlreadyDownloaded . " contracts previously downloaded.)\n";
         echo "Finished scraping " . $this->ownerAcronym . " at ". date('Y-m-d H:i:s') . " \n\n";
     }
 
