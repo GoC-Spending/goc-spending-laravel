@@ -13,7 +13,7 @@ class Paths
      */
     public static function getSourceDirectory()
     {
-        return storage_path() . '/' . env('FETCH_RAW_HTML_FOLDER', 'raw-data') . '/';
+        return storage_path() . '/' . env('STORAGE_RELATIVE_BASE_FOLDER') . env('FETCH_RAW_HTML_FOLDER', 'raw-data') . '/';
     }
 
     /**
@@ -35,7 +35,7 @@ class Paths
      */
     public static function getMetadataDirectory()
     {
-        return storage_path() . '/' . env('FETCH_METADATA_FOLDER', 'metadata') . '/';
+        return storage_path() . '/' . env('STORAGE_RELATIVE_BASE_FOLDER') . env('FETCH_METADATA_FOLDER', 'metadata') . '/';
     }
 
     /**
@@ -57,7 +57,7 @@ class Paths
      */
     public static function getOutputDirectory()
     {
-        return storage_path() . '/' . env('PARSE_JSON_OUTPUT_FOLDER', 'generated-data') . '/';
+        return storage_path() . '/' . env('STORAGE_RELATIVE_BASE_FOLDER') . env('PARSE_JSON_OUTPUT_FOLDER', 'generated-data') . '/';
     }
 
     /**
