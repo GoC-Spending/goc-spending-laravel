@@ -85,6 +85,6 @@ class IrccHandler extends DepartmentHandler
     public function parseHtml($html)
     {
 
-        return Parsers::extractContractDataViaGenericXpathParser($html, "//table//th[@scope='row']", "//table//td", ' to ');
+        return Parsers::extractContractDataViaGenericXpathParser($html, "//table//th", "//table//td", ' to ');
     }
 }
