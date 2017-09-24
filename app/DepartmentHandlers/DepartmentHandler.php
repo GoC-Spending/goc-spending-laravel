@@ -190,6 +190,7 @@ abstract class DepartmentHandler
         }
 
         $quartersFetched = 0;
+        $totalContractsFetched = 0;
 
         foreach ($quarterUrls as $quarterUrl) {
             if (env('FETCH_LIMIT_QUARTERS', 2) && $quartersFetched >= env('FETCH_LIMIT_QUARTERS', 2)) {
@@ -226,7 +227,12 @@ abstract class DepartmentHandler
             }
 
             echo "$contractsFetched pages downloaded for this quarter.\n\n";
+            $totalContractsFetched += $contractsFetched;
         }
+
+        echo "...started scraping " . $this->ownerAcronym . " at " . $startDate . "\n";
+        echo "$totalContractsFetched contracts fetched over $quartersFetched quarters.\n";
+        echo "Finished scraping " . $this->ownerAcronym . " at ". date('Y-m-d H:i:s') . " \n\n";
     }
 
     /**
