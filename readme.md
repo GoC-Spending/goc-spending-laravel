@@ -14,17 +14,16 @@ Requires an environment [that can run the latest version](https://laravel.com/do
 4. ???
 5. Profit!
 
-At the moment, all of the code is run manually via the `php artisan tinker` command-line tool. 
+We have a set of Artisan commands available, under the `department` namespace. (Run `php artisan help department:` to get a
+complete list.) To run them, you’ll need a department acronym—you can see the full list of supported departments by checking
+the `app/DepartmentHandlers/` folder. Example usage, for Environment Canada:
 
-For example, to run the Environment Canada parser:
+`php artisan department:fetch ec`
+`php artisan department:parse ec`
 
-```
-$department = new App\DepartmentHandlers\EcHandler;
-$department->fetch();
-$department->parse();
-```
+Or, running the fetch and parse in one go:
 
-More usage details to follow.
+`php artisan department:run ec`
 
 ## License
 
