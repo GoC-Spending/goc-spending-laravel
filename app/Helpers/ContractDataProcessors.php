@@ -49,7 +49,7 @@ class ContractDataProcessors
     {
         if ($values['sourceYear'] && $values['sourceQuarter']) {
             // Generate a more traditional "20162017-Q3"
-            $values['sourceFiscal'] = $values['sourceYear'] . (substr($values['sourceYear'], 2, 2) + 1) . '-Q' . $values['sourceQuarter'];
+            $values['sourceFiscal'] = $values['sourceYear'] . str_pad((substr($values['sourceYear'], 2, 2) + 1), 2, '0', STR_PAD_LEFT) . '-Q' . $values['sourceQuarter'];
         }
 
         return $values;
