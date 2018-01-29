@@ -14,6 +14,8 @@ class FjaHandler extends DepartmentHandler
 
     public $quarterToContractXpath = "//div[@id='wb-main']//table//td//a/@href";
 
+    public $contractContentSubsetXpath = "//div[@id='wb-main']";
+
     public function indexToQuarterUrlTransform($url)
     {
         return $this->baseUrl . $url;
@@ -42,7 +44,7 @@ class FjaHandler extends DepartmentHandler
             // Values
             "//table//td[@class='align-left']",
             // Period split
-            ' to/à ',
+            ' to/Ã ',
             // Keys
             [
                 'vendorName' => 'Vendor Name:',
