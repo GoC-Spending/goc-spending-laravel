@@ -48,14 +48,16 @@ class FjaHandler extends DepartmentHandler
 
     public function parseHtml($html)
     {
+        $html = str_replace([' to/Ã ', ' to/au ', ' to/à '], ' to ', $html);
+
         $data = Parsers::extractContractDataViaGenericXpathParser(
             $html,
             // Keys
-            "//table//th[@scope='row']",
+            "//table//th",
             // Values
-            "//table//td[@class='align-left']",
+            "//table//td",
             // Period split
-            ' to/Ã ',
+            ' to ',
             // Keys
             [
                 'vendorName' => 'Vendor Name:',
