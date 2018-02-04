@@ -43,7 +43,7 @@ class FeddevHandler extends DepartmentHandler
         $startMonth = Parsers::xpathRegexComboSearch($quarterHtml, "//div[@role='main']//h1", '/(January|April|July|October)/');
         $year = (int)Parsers::xpathRegexComboSearch($quarterHtml, "//div[@role='main']//h1", '/([0-9]{4})/');
 
-        switch($startMonth) {
+        switch ($startMonth) {
             case 'January':
                 return '4';
             case 'April':
@@ -55,7 +55,8 @@ class FeddevHandler extends DepartmentHandler
         }
     }
 
-    public function parseHtml($html) {
+    public function parseHtml($html)
+    {
         $data = Parsers::extractContractDataViaGenericXpathParser(
             $html,
             // Keys

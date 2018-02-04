@@ -36,7 +36,8 @@ class AcoaHandler extends DepartmentHandler
         return Parsers::xpathRegexComboSearch($quarterHtml, "//div[@class='center']//h2", '/([0-9])[a-z]/');
     }
 
-    public function parseHtml($html) {
+    public function parseHtml($html)
+    {
         $data = Parsers::extractContractDataViaGenericXpathParser(
             $html,
             // Keys

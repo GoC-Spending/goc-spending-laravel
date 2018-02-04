@@ -36,7 +36,8 @@ class OsfiHandler extends DepartmentHandler
         return Parsers::xpathRegexComboSearch($quarterHtml, "//div[@id='wb-main']//h3", '/([0-9])$/');
     }
 
-    public function parseHtml($html) {
+    public function parseHtml($html)
+    {
         $data = Parsers::extractContractDataViaGenericXpathParser(
             $html,
             // Keys

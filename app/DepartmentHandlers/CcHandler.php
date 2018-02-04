@@ -36,7 +36,8 @@ class CcHandler extends DepartmentHandler
         return Parsers::xpathRegexComboSearch($quarterHtml, "//div[@role='main']//div[@class='score-right']//h2", '/([0-9])</');
     }
 
-    public function parseHtml($html) {
+    public function parseHtml($html)
+    {
         $data = Parsers::extractContractDataViaGenericXpathParser(
             $html,
             // Keys
