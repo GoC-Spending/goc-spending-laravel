@@ -23,7 +23,17 @@ class FjaHandler extends DepartmentHandler
 
     public function quarterToContractUrlTransform($url)
     {
-        return $this->baseUrl . $url;
+        if (strpos($url, '?') !== false) {
+            // URL style is
+            // http://www.fja-cmf.gc.ca/pd-dp/contracts-contrats/details-eng.aspx?refno=4F001-14-514
+            return $this->baseUrl . $url;
+        } else {
+            // URL style is
+            // http://www.fja.gc.ca/pd-dp/contracts-contrats/2014-2015_3/ctrt1-eng.html
+            // Quarter page URL style is,
+            // http://www.fja-cmf.gc.ca/pd-dp/contracts-contrats/2014-2015_3/index-eng.html
+            return str_replace('index-eng.html', $url, $this->activeQuarterPageUrl);
+        }
     }
 
     public function fiscalYearFromQuarterPage($quarterHtml)
