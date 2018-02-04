@@ -36,13 +36,17 @@ class JustHandler extends DepartmentHandler
     public function fiscalYearFromQuarterPage($quarterHtml)
     {
 
-        // <h1 id="wb-cont" property="name" class="page-header mrgn-tp-md">2016-2017, 3rd quarter (1 October - 31 December 2016)</h1>
+        // Recently broken by the "Moved to open.canada.ca" message, which also uses an h2
+        $quarterHtml = str_replace('<h2>Important Information</h2>', '', $quarterHtml);
 
         return Parsers::xpathRegexComboSearch($quarterHtml, "//main//h2", '/([0-9]{4})/');
     }
 
     public function fiscalQuarterFromQuarterPage($quarterHtml)
     {
+
+        // Recently broken by the "Moved to open.canada.ca" message, which also uses an h2
+        $quarterHtml = str_replace('<h2>Important Information</h2>', '', $quarterHtml);
 
         return Parsers::xpathRegexComboSearch($quarterHtml, "//main//h2", '/([0-9])</');
     }
