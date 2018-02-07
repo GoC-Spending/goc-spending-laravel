@@ -37,7 +37,19 @@ class Cleaners
      */
     public static function cleanContractValue($input)
     {
-        $output = str_replace(['$', ',', ' '], '', $input);
+        // Strip whitespace
+        $output = str_replace(' ', '', $input);
+
+        // French currency ends with a dollar sign
+        if (substr($output, -1) == '$') {
+            // Look for a trailing comman used for demical place
+            if (substr($output, -4, 1) == ',') {
+              // Fudge in a period for decimal, comma stripped later
+              $output = substr_replace($output, '.', -4, 1);
+            }
+        }
+
+        $output = str_replace(['$', ','], '', $output);
 
         $output = floatval($output);
 
