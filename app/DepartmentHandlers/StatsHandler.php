@@ -17,11 +17,11 @@ class StatsHandler extends DepartmentHandler
 
     public $quarterToContractXpath = "//div[@role='main']//table//td//a/@href";
 
-    /*
 	public function quarterToContractUrlTransform($contractUrl) {
-		return "http://www.cic.gc.ca/disclosure-divulgation/" . $contractUrl;
+		return trim($contractUrl);
 	}
 
+    /*
 	public function indexToQuarterUrlTransform($url) {
 		return "http://www.cic.gc.ca/disclosure-divulgation/" . $url;
 	}*/
