@@ -36,7 +36,8 @@ class WddeoHandler extends DepartmentHandler
         return Parsers::xpathRegexComboSearch($quarterHtml, "//div[@class='center']//h2", '/([0-9])</');
     }
 
-    public function parseHtml($html) {
+    public function parseHtml($html)
+    {
         $data = Parsers::extractContractDataViaGenericXpathParser(
             $html,
             // Keys
@@ -57,11 +58,11 @@ class WddeoHandler extends DepartmentHandler
                'originalValue' => 'Original Contract Value :',
                'contractValue' => 'Contract Value :',
                'comments' => 'Comments :',
-           ]
-       );
+            ]
+        );
 
       // Since the data is in the same field, set them that way in the output.
-      $data['deliveryDate'] = $data['contractPeriodRange'];
+        $data['deliveryDate'] = $data['contractPeriodRange'];
 
         return $data;
     }

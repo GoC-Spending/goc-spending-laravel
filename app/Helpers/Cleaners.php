@@ -45,7 +45,7 @@ class Cleaners
             // Look for a trailing comman used for demical place
             if (substr($output, -4, 1) == ',') {
               // Fudge in a period for decimal, comma stripped later
-              $output = substr_replace($output, '.', -4, 1);
+                $output = substr_replace($output, '.', -4, 1);
             }
         }
 
