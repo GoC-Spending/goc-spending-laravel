@@ -17,9 +17,10 @@ class StatsHandler extends DepartmentHandler
 
     public $quarterToContractXpath = "//div[@role='main']//table//td//a/@href";
 
-	public function quarterToContractUrlTransform($contractUrl) {
-		return trim($contractUrl);
-	}
+    public function quarterToContractUrlTransform($contractUrl)
+    {
+        return trim($contractUrl);
+    }
 
     /*
 	public function indexToQuarterUrlTransform($url) {
@@ -92,6 +93,33 @@ class StatsHandler extends DepartmentHandler
 
     public function parseHtml($html)
     {
+
+        // Older StatCan pages don't use <th> elements for labels
+        // So as a quick fix, we'll str_replace those ahead of time
+        // and then keep the Xpath parser consistent.
+        $html = str_replace(
+            [
+                '<td>Vendor:</td>',
+                '<td>Reference Number:</td>',
+                '<td>Contract Date:</td>',
+                '<td>Description of Work:</td>',
+                '<td>Contract Period :</td>',
+                '<td>Delivery Date:</td>',
+                '<td>Contract Value:</td>',
+                '<td>Comments:</td>',
+            ],
+            [
+                '<th scope="row">Vendor:</th>',
+                '<th scope="row">Reference Number:</th>',
+                '<th scope="row">Contract Date:</th>',
+                '<th scope="row">Description of Work:</th>',
+                '<th scope="row">Contract Period :</th>',
+                '<th scope="row">Delivery Date:</th>',
+                '<th scope="row">Contract Value:</th>',
+                '<th scope="row">Comments:</th>',
+            ],
+            $html
+        );
 
         $keyArray = [
             'vendorName' => 'Vendor',
