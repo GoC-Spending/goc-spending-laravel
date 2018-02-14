@@ -108,6 +108,11 @@ class StatsHandler extends DepartmentHandler
                 '<td>Delivery Date:</td>',
                 '<td>Contract Value:</td>',
                 '<td>Comments:</td>',
+                // Fixes for eg.
+                // https://www.statcan.gc.ca/eng/about/contract/2004/62700-04-0035
+                '<th class="row-stub" scope="row">Nom du vendeur:</th>',
+                '<th class="row-stub" scope="row">Numéro&nbsp;de&nbsp;référence&nbsp;:</th>',
+                '<th class="row-stub" scope="row">Description&nbsp;of&nbsp;Work:</th>',
             ],
             [
                 '<th scope="row">Vendor:</th>',
@@ -115,9 +120,15 @@ class StatsHandler extends DepartmentHandler
                 '<th scope="row">Contract Date:</th>',
                 '<th scope="row">Description of Work:</th>',
                 '<th scope="row">Contract Period :</th>',
+                '<th scope="row">Contract Period :</th>',
                 '<th scope="row">Delivery Date:</th>',
                 '<th scope="row">Contract Value:</th>',
                 '<th scope="row">Comments:</th>',
+                // Replacements per above
+                '<th scope="row">Vendor:</th>',
+                '<th scope="row">Reference Number:</th>',
+                '<th scope="row">Description of Work:</th>',
+
             ],
             $html
         );
