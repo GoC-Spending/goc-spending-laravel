@@ -111,7 +111,7 @@ class StatsHandler extends DepartmentHandler
                 // Fixes for eg.
                 // https://www.statcan.gc.ca/eng/about/contract/2004/62700-04-0035
                 '<th class="row-stub" scope="row">Nom du vendeur:</th>',
-                '<th class="row-stub" scope="row">Numéro&nbsp;de&nbsp;référence&nbsp;:</th>',
+                '<th class="row-stub" scope="row">Numéro de référence :</th>',
                 '<th class="row-stub" scope="row">Description&nbsp;of&nbsp;Work:</th>',
             ],
             [
