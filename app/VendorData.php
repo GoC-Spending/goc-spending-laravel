@@ -72,6 +72,7 @@ class VendorData
             "'",
             "\t",
             '.',
+            ' INCORPORATED',
             ' INC',
             ' LTD',
             ' -',
