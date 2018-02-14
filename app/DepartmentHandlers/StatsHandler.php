@@ -104,6 +104,7 @@ class StatsHandler extends DepartmentHandler
                 '<td>Contract Date:</td>',
                 '<td>Description of Work:</td>',
                 '<td>Contract Period :</td>',
+                '<td>Contract Period:</td>',
                 '<td>Delivery Date:</td>',
                 '<td>Contract Value:</td>',
                 '<td>Comments:</td>',
