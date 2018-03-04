@@ -20,7 +20,7 @@ class CspsHandler extends DepartmentHandler
 
     // Mystery 404 page for one of the contracts
     public $knownBrokenContractUrls = [
-        'http://www.csps-efpc.gc.ca/transparency/contract/contractdetail-eng.aspx?id=11364&quar=2&an=2013-2014',
+        '/transparency/contract/contractdetail-eng.aspx?id=11364&quar=2&an=2013-2014',
     ];
 
 
