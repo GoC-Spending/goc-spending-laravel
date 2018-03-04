@@ -18,13 +18,7 @@ class CspsHandler extends DepartmentHandler
     public $includeFirstPaginatedPage = true;
     public $quarterMultiPageXpath = "//div[@id='mainContent_plcPaging']//a/@href";
 
-    // Mystery 404 page for one of the contracts
-    public $knownBrokenContractUrls = [
-        '/transparency/contract/contractdetail-eng.aspx?id=11364&quar=2&an=2013-2014',
-        '/transparency/contract/contractdetail-eng.aspx?id=8805&quar=1&an=2009-2010',
-        '/transparency/contract/contractdetail-eng.aspx?id=8756&quar=1&an=2009-2010',
-        '/transparency/contract/contractdetail-eng.aspx?id=8756&quar=1&an=2009-2010',
-    ];
+    public $brokenPageDetectionString = 'HTTP error 404';
 
 
     public $quarterToContractXpath = "//main//table//td//a/@href";

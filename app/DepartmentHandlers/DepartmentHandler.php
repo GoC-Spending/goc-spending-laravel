@@ -112,7 +112,7 @@ abstract class DepartmentHandler
      */
     public $totalAlreadyDownloaded = 0;
 
-    public $knownBrokenContractUrls = [];
+    public $brokenPageDetectionString = null;
 
 
     // Parsing variables:
@@ -317,11 +317,6 @@ abstract class DepartmentHandler
      */
     public function fetchPageForContract($contractUrl)
     {
-
-        if ($this->knownBrokenContractUrls && in_array($contractUrl, $this->knownBrokenContractUrls)) {
-            return false;
-        }
-
         $contractUrl = $this->quarterToContractUrlTransform($contractUrl);
 
         echo "   " . $contractUrl . "\n";
@@ -386,6 +381,11 @@ abstract class DepartmentHandler
             // echo "ENCODING IS: ";
             // $encoding = mb_detect_encoding($pageSource, mb_detect_order(), 1);
             // echo $encoding . "\n";
+
+            if ($this->brokenPageDetectionString && strstr($pageSource, $this->brokenPageDetectionString)) {
+                echo "\n\nFailed to download " . $url . "\n\n";
+                return false;
+            }
 
             if ($pageSource) {
                 if ($this->contractContentSubsetXpath) {
