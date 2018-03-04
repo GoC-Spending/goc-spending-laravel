@@ -264,6 +264,14 @@ abstract class DepartmentHandler
 
             // If there aren't multipages, this just returns the original quarter URL back as a single item array:
             $quarterMultiPages = Parsers::getArrayFromHtmlViaXpath($quarterPage, $this->quarterMultiPageXpath);
+
+            foreach ($quarterMultiPages as $key => $pageUrl) {
+                $quarterMultiPages[$key] = $this->indexToQuarterUrlTransform($pageUrl);
+            }
+
+            if (isset($this->includeFirstPaginatedPage) && $this->includeFirstPaginatedPage) {
+                array_unshift($quarterMultiPages, $url);
+            }
         } else {
             $quarterMultiPages = [ $url ];
         }
