@@ -22,6 +22,8 @@ class CspsHandler extends DepartmentHandler
     public $knownBrokenContractUrls = [
         '/transparency/contract/contractdetail-eng.aspx?id=11364&quar=2&an=2013-2014',
         '/transparency/contract/contractdetail-eng.aspx?id=8805&quar=1&an=2009-2010',
+        '/transparency/contract/contractdetail-eng.aspx?id=8756&quar=1&an=2009-2010',
+        '/transparency/contract/contractdetail-eng.aspx?id=8756&quar=1&an=2009-2010',
     ];
 
 
