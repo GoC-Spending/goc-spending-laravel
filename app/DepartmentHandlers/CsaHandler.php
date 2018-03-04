@@ -14,7 +14,8 @@ class CsaHandler extends DepartmentHandler
     public $indexToQuarterXpath = "//div[@id='wb-main-in']//table//ul/li/a/@href";
 
     public $areQuartersPaginated = true;
-    public $quarterMultiPageXpath = "//div[@class='embedded-nav']//a/@href";
+    public $includeFirstPaginatedPage = true;
+    public $quarterMultiPageXpath = "//div[@class='embedded-nav']//a[@class='linkContenu']/@href";
 
     public $quarterToContractXpath = "//div[@id='wb-main-in']//table//td//a/@href";
 
