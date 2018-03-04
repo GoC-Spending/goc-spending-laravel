@@ -107,6 +107,9 @@ class Cleaners
     {
         $output = str_replace(["\n", "\r", "\t"], ' ', $input);
 
+        // Remove double spaces:
+        $output = str_replace('  ', ' ', $output);
+
         $output = trim($output);
 
         return $output;

@@ -64,7 +64,7 @@ class Parsers
             $keyNode = Cleaners::cleanLabelText($keyNode);
 
             if (isset($labelToKey[$keyNode]) && $labelToKey[$keyNode] && isset($valueNodes[$index])) {
-                $values[$labelToKey[$keyNode]] = Cleaners::cleanHtmlValue($valueNodes[$index]);
+                $values[$labelToKey[$keyNode]] = Cleaners::removeLinebreaks(Cleaners::cleanHtmlValue($valueNodes[$index]));
             }
         }
 
