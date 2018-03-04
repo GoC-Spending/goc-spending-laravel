@@ -112,6 +112,8 @@ abstract class DepartmentHandler
      */
     public $totalAlreadyDownloaded = 0;
 
+    public $knownBrokenContractUrls = [];
+
 
     // Parsing variables:
     public static $rowParams = [
@@ -227,9 +229,11 @@ abstract class DepartmentHandler
                         break;
                     }
 
-                    $this->fetchPageForContract($contractUrl);
-
-                    $contractsFetched++;
+                    if ($this->fetchPageForContract($contractUrl)) {
+                        $contractsFetched++;
+                    } else {
+                        echo "\nFailed to download " . $contractUrl . "\n\n";
+                    }
                 }
             }
 
@@ -313,12 +317,19 @@ abstract class DepartmentHandler
      */
     public function fetchPageForContract($contractUrl)
     {
+
+        if ($this->knownBrokenContractUrls && in_array($contractUrl, $this->knownBrokenContractUrls)) {
+            return false;
+        }
+
         $contractUrl = $this->quarterToContractUrlTransform($contractUrl);
 
         echo "   " . $contractUrl . "\n";
 
         $this->downloadPage($contractUrl, $this->ownerAcronym);
         $this->saveMetadata($contractUrl);
+
+        return true;
     }
 
     // Get a page using the Guzzle library
