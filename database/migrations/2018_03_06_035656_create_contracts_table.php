@@ -96,8 +96,6 @@ class CreateContractsTable extends Migration
             $table->integer('gen_effective_end_year')->nullable()->index();
             $table->double('gen_effective_total_value', 15, 2)->nullable();
             $table->double('gen_effective_yearly_value', 15, 2)->nullable();
-
-
         });
     }
 

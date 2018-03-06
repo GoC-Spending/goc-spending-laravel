@@ -11,5 +11,7 @@
 
     <arg value="np"/>
 
-    <rule ref="PSR2"/>
+    <rule ref="PSR2">
+        <exclude name="PSR1.Classes.ClassDeclaration.MissingNamespace"/>
+    </rule>
 </ruleset>
