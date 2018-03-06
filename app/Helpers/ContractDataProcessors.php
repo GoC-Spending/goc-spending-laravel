@@ -24,9 +24,10 @@ class ContractDataProcessors
             $values['contractValue'] = $values['originalValue'];
         }
 
-        if ($values['originalValue'] == 0) {
-            $values['originalValue'] = $values['contractValue'];
-        }
+        // Commenting this out - if no originalValue exists in the HTML, don't add it here
+        // if ($values['originalValue'] == 0) {
+        //     $values['originalValue'] = $values['contractValue'];
+        // }
 
         // Check for error-y non-unicode characters
         $values['referenceNumber'] = Cleaners::convertToUtf8($values['referenceNumber']);
@@ -80,9 +81,10 @@ class ContractDataProcessors
         }
 
         // If there's no original contract value, use the current value:
-        if (!$contract['originalValue']) {
-            $contract['originalValue'] = $contract['contractValue'];
-        }
+        // (Update: don't do that.)
+        // if (!$contract['originalValue']) {
+        //     $contract['originalValue'] = $contract['contractValue'];
+        // }
 
         $contract['yearsDuration'] = abs($contract['endYear'] - $contract['startYear']) + 1;
         $contract['valuePerYear'] = $contract['contractValue'] / $contract['yearsDuration'];
