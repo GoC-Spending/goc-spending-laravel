@@ -55,7 +55,7 @@ class DbOps
 
 
         try {
-            DB::table('contracts')->insert($output);
+            DB::table('l_contracts')->insert($output);
             return true;
         } catch (\Illuminate\Database\QueryException $e) {
             echo "Failed to add " . $jsonPath . " \n";
@@ -74,7 +74,7 @@ class DbOps
         echo "Starting " . $acronym . " at ". $startDate . " \n\n";
 
         if ($clearOldEntries) {
-            DB::table('contracts')->where('owner_acronym', '=', $acronym)->delete();
+            DB::table('l_contracts')->where('owner_acronym', '=', $acronym)->delete();
         }
 
         // "Output" directory refers to where the generated JSON files are stored

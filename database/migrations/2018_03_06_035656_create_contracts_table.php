@@ -38,7 +38,7 @@ class CreateContractsTable extends Migration
         // "source_url",
         // "vendor_clean",
 
-        Schema::create('contracts', function (Blueprint $table) {
+        Schema::create('l_contracts', function (Blueprint $table) {
             $table->increments('id');
 
             // Original values from JSON:
@@ -106,6 +106,6 @@ class CreateContractsTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('contracts');
+        Schema::dropIfExists('l_contracts');
     }
 }
