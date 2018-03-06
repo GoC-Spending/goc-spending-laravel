@@ -88,4 +88,23 @@ class Paths
     {
         return md5($url) . $extension;
     }
+
+    /**
+     * Get an array of all the departmental acronyms (for all installed handler classes.)
+     *
+     * @return array  The list of DepartmentHandlers as a set of acronyms.
+     */
+    public static function getAllDepartmentAcronyms()
+    {
+
+        $handlersPath = app_path('DepartmentHandlers');
+
+        $departmentList = array_diff(scandir($handlersPath), array('..', '.'));
+
+        $departmentList = array_map(function ($entry) {
+            return strtolower(str_replace('Handler.php', '', $entry));
+        }, $departmentList);
+
+        return $departmentList;
+    }
 }
