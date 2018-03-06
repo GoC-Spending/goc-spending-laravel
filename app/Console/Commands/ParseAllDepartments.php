@@ -5,7 +5,7 @@ namespace App\Console\Commands;
 use App\Helpers\Paths;
 use Illuminate\Console\Command;
 
-class ParseDepartment extends Command
+class ParseAllDepartments extends Command
 {
     /**
      * The name and signature of the console command.
