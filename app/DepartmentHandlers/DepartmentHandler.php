@@ -519,11 +519,9 @@ abstract class DepartmentHandler
 
             $fileValues = array_merge($fileValues, $metadata);
 
-            $fileValues = ContractDataProcessors::generateAdditionalMetadata($fileValues);
-
             $fileValues['ownerAcronym'] = $this->ownerAcronym;
 
-            $fileValues['objectCode'] = Parsers::extractObjectCodeFromDescription($fileValues['description']);
+
 
             // Useful for troubleshooting:
             $fileValues['sourceFilename'] = $this->ownerAcronym . '/' . $file;
@@ -535,20 +533,12 @@ abstract class DepartmentHandler
                 $fileValues['referenceNumber'] = $filehash;
             }
 
-            // Final check for missing values, etc.
-            if (env('PARSE_CLEAN_CONTRACT_VALUES', 1) == 1) {
-                if (env('PARSE_CLEAN_VENDOR_NAMES', 1) == 1) {
-                    $fileValues = ContractDataProcessors::assureRequiredContractValues($fileValues, VendorData::getInstance());
-                } else {
-                    $fileValues = ContractDataProcessors::assureRequiredContractValues($fileValues);
-                }
-            }
-
-
             // TODO - update this to match the schema discussed at 2017-03-28's Civic Tech!
             $fileValues['uuid'] = $this->ownerAcronym . '-' . $fileValues['referenceNumber'];
 
-            $fileValues = ContractDataProcessors::cleanupExportedContractValues($fileValues);
+
+            $fileValues = self::parseSingleData($fileValues);
+            
 
             if (file_put_contents($outputDirectory . '/' . $filehash . '.json', json_encode($fileValues, JSON_PRETTY_PRINT))) {
                 // echo "...saved.\n";
@@ -558,6 +548,30 @@ abstract class DepartmentHandler
         } else {
             echo "Error: could not parse data for $file\n";
         }
+    }
+
+    public static function parseSingleData($fileValues)
+    {
+
+        $fileValues = ContractDataProcessors::generateAdditionalMetadata($fileValues);
+
+        $fileValues['objectCode'] = Parsers::extractObjectCodeFromDescription($fileValues['description']);
+
+        // Final check for missing values, etc.
+        if (env('PARSE_CLEAN_CONTRACT_VALUES', 1) == 1) {
+            if (env('PARSE_CLEAN_VENDOR_NAMES', 1) == 1) {
+                $fileValues = ContractDataProcessors::assureRequiredContractValues($fileValues, VendorData::getInstance());
+            } else {
+                $fileValues = ContractDataProcessors::assureRequiredContractValues($fileValues);
+            }
+        }
+
+
+        
+
+        $fileValues = ContractDataProcessors::cleanupExportedContractValues($fileValues);
+
+        return $fileValues;
     }
 
     public function getMetadata($htmlFilename)

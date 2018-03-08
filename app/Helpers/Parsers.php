@@ -113,6 +113,21 @@ class Parsers
         return $output;
     }
 
+    public static function xpathReturnSingle($text, $regexPattern)
+    {
+
+        $output = '';
+        $matches = [];
+        $pattern = $regexPattern;
+
+        preg_match($pattern, $text, $matches);
+        if ($matches) {
+            $output = $matches[1];
+        }
+
+        return $output;
+    }
+
     /**
      * Pull an array of items, selected via an XPath selector, from an
      * HTML page.

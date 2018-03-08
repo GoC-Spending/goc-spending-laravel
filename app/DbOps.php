@@ -16,9 +16,13 @@ class DbOps
     public static function importJsonFileToDatabase($jsonPath, $contractId)
     {
 
-        // echo $jsonPath . "\n";
-
         $json = json_decode(file_get_contents($jsonPath), 1);
+
+        return self::importJsonDataToDatabase($json, $contractId, $jsonPath);
+    }
+
+    public static function importJsonDataToDatabase($json, $contractId, $jsonPath)
+    {
 
         // Clean up empty string entries
         $json = array_map(function ($entry) {
@@ -27,6 +31,10 @@ class DbOps
             }
             return $entry;
         }, $json);
+
+        if (! isset($json['sourceOrigin'])) {
+            $json['sourceOrigin'] = 1;
+        }
 
         $output = [
             'json_id' => $json['uuid'],
@@ -46,7 +54,7 @@ class DbOps
             'source_year' => $json['sourceYear'],
             'source_quarter' => $json['sourceQuarter'],
             'source_fiscal' => $json['sourceFiscal'],
-            'source_origin' => 1,
+            'source_origin' => $json['sourceOrigin'],
             'gen_start_year' => $json['startYear'],
             'gen_end_year' => $json['endYear'],
             'gen_vendor_clean' => $json['vendorClean'],
