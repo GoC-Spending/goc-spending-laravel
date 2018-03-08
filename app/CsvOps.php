@@ -30,6 +30,7 @@ class CsvOps
         'sourceYear' => '',
         'sourceQuarter' => '',
         'sourceFiscal' => 30,
+        'csvReferenceNumber' => 0,
     ];
 
     public static function rowToArray($rowData)
@@ -45,16 +46,23 @@ class CsvOps
 
         $data = array_merge(DepartmentHandler::$rowParams, $data);
 
-        $data = self::csvFiscalHandling($data);
-        $data = self::csvOwnerAcronymHandling($data);
+        // Make sure there's really data here!
+        if ($data['vendorName'] && $data['contractValue'] && $data['ownerAcronym']) {
+            $data = ContractDataProcessors::cleanParsedArray($data);
 
-        $data = DepartmentHandler::parseSingleData($data);
+            $data = self::csvFiscalHandling($data);
+            $data = self::csvOwnerAcronymHandling($data);
 
-        $data['uuid'] = $data['ownerAcronym'] . '-' . $data['referenceNumber'];
+            $data = DepartmentHandler::parseSingleData($data);
 
-        $data['sourceOrigin'] = 2;
+            $data['uuid'] = $data['ownerAcronym'] . '-' . $data['referenceNumber'];
 
-        return $data;
+            $data['sourceOrigin'] = 2;
+
+            return $data;
+        } else {
+            return [];
+        }
     }
 
     public static function csvFiscalHandling($data)
@@ -62,6 +70,9 @@ class CsvOps
 
         // Assumes that a value has already been stored in $data['sourceFiscal']
         $sourceFiscal = $data['sourceFiscal'];
+        if (! $sourceFiscal) {
+            $sourceFiscal = $data['csvReferenceNumber'];
+        }
 
         $data['sourceYear'] = Parsers::xpathReturnSingle($sourceFiscal, '/([0-9]{4})/');
 
@@ -69,6 +80,7 @@ class CsvOps
 
         // Reset sourceFiscal, which gets recreated in ContractDataProcessors::generateAdditionalMetadata
         $data['sourceFiscal'] = '';
+        unset($data['csvReferenceNumber']);
 
         return $data;
     }

@@ -63,14 +63,23 @@ class ImportCsvContracts extends Command
             while (($data = fgetcsv($handle, 0, ",")) !== false) {
                 if ($row != 1) {
                     // Skip the header row
-                    $output = CsvOps::rowToArray($data);
 
-
-                    $contractId = $output['ownerAcronym'] . '-csv-' . str_pad($row, 10, '0', STR_PAD_LEFT);
-
-                    if (DbOps::importJsonDataToDatabase($output, $contractId, 'csv:' . $row)) {
-                        $successTotal++;
+                    try {
+                        $output = CsvOps::rowToArray($data);
+                    } catch (\ErrorException $e) {
+                        echo "Failed to convert row $row\n";
+                        var_dump($data);
+                        continue;
                     }
+                    
+                    if ($output) {
+                        $contractId = $output['ownerAcronym'] . '-csv-' . str_pad($row, 10, '0', STR_PAD_LEFT);
+
+                        if (DbOps::importJsonDataToDatabase($output, $contractId, 'csv:' . $row)) {
+                            $successTotal++;
+                        }
+                    }
+
                     $totalRows++;
                 }
             
