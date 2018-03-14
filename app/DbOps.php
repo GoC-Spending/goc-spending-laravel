@@ -66,6 +66,8 @@ class DbOps
             DB::table('l_contracts')->insert($output);
             return true;
         } catch (\Illuminate\Database\QueryException $e) {
+            // dd($output);
+
             echo "Failed to add " . $jsonPath . " \n";
             return false;
         } catch (PDOException $e) {

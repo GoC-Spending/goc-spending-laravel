@@ -14,6 +14,11 @@ use Illuminate\Support\Facades\DB;
 class CsvOps
 {
 
+    // CSV value => scraper value
+    public static $ownerAcronymMapping = [
+        'feddevontario' => 'feddev',
+    ];
+
     public static $rowMapping = [
         'vendorName' => 2,
         'referenceNumber' => 1,
@@ -50,6 +55,10 @@ class CsvOps
         if ($data['vendorName'] && $data['contractValue'] && $data['ownerAcronym']) {
             $data = ContractDataProcessors::cleanParsedArray($data);
 
+            if (! $data['referenceNumber']) {
+                $data['referenceNumber'] = $data['csvReferenceNumber'];
+            }
+
             $data = self::csvFiscalHandling($data);
             $data = self::csvOwnerAcronymHandling($data);
 
@@ -61,6 +70,7 @@ class CsvOps
 
             return $data;
         } else {
+            // dd($data);
             return [];
         }
     }
@@ -74,7 +84,7 @@ class CsvOps
             $sourceFiscal = $data['csvReferenceNumber'];
         }
 
-        $data['sourceYear'] = Parsers::xpathReturnSingle($sourceFiscal, '/([0-9]{4})/');
+        $data['sourceYear'] = Parsers::xpathReturnSingle($sourceFiscal, '/([1-2][0-9][0-9][0-9])/');
 
         $data['sourceQuarter'] = Parsers::xpathReturnSingle($sourceFiscal, '/Q([0-9])/');
 
@@ -90,6 +100,10 @@ class CsvOps
 
         if ($data['ownerAcronym']) {
             $data['ownerAcronym'] = explode('-', $data['ownerAcronym'])[0];
+        }
+
+        if (array_key_exists($data['ownerAcronym'], self::$ownerAcronymMapping)) {
+            $data['ownerAcronym'] = self::$ownerAcronymMapping[$data['ownerAcronym']];
         }
         
         return $data;
