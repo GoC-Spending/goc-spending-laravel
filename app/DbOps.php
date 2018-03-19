@@ -160,7 +160,7 @@ class DbOps
 
 
     // Based on a single contract row, check for duplicates in the rest of the database:
-    public static function findDuplicateEntries($rowData, $doUpdate = 1)
+    public static function findDuplicateEntries($rowData)
     {
         // For all modes, limit to the same department owner_acronym
 
@@ -242,5 +242,110 @@ class DbOps
             });
             
         return $totalDuplicates;
+    }
+
+    public static function markAmendmentEntries($ownerAcronym, $amendmentRows, $method = 1)
+    {
+        // Includs the ownerAcronym just to be on the safe side.
+
+        // Remove the first entry (so that it isn't also marked as a duplicate, since at least one entry should stay "valid")
+        $sourceId = $amendmentRows->shift();
+
+        $amendmentRows = $amendmentRows->toArray();
+
+        // Update the original (sourceId) entry
+        DB::table('l_contracts')
+            ->where('owner_acronym', '=', $ownerAcronym)
+            ->where('id', '=', $sourceId)
+            ->update([
+                'gen_amendment_group_id' => $sourceId,
+                ]);
+
+        return DB::table('l_contracts')
+            ->where('owner_acronym', '=', $ownerAcronym)
+            ->whereIn('id', $amendmentRows)
+            ->update([
+                'gen_is_amendment' => 1,
+                'gen_amendment_via' => $method,
+                'gen_amendment_group_id' => $sourceId,
+                ]);
+    }
+
+    public static function findAmendmentEntries($rowData)
+    {
+        // For all modes, limit to the same department owner_acronym
+
+        $totalAmendments = 0;
+        
+        // mode 1: same gen_vendor_clean, same reference_number, different contract_value
+        $amendmentRows = DB::table('l_contracts')
+            ->where('owner_acronym', '=', $rowData['owner_acronym'])
+            ->where('gen_is_duplicate', '=', 0)
+            ->whereNull('gen_amendment_group_id')
+            ->where('contract_value', '!=', $rowData['contract_value'])
+            ->where('gen_vendor_clean', '=', $rowData['gen_vendor_clean'])
+            ->where('reference_number', '=', $rowData['reference_number'])
+            ->orderBy('source_fiscal', 'asc')
+            ->orderBy('id', 'asc')
+            ->pluck('id');
+
+        if ($amendmentRows->count() > 0) {
+            // Just 1 row is enough (since it'll be different than the original row)
+            // Add back in the original ID (sorted by source_fiscal then ID in the earlier query in findAmendments)
+            $amendmentRows->prepend($rowData['id']);
+
+            $totalAmendments += self::markAmendmentEntries($rowData['owner_acronym'], $amendmentRows, 1);
+        }
+
+        // mode 2: same gen_vendor_clean, original_value matches source contract_value, same gen_start_year
+        $amendmentRows = DB::table('l_contracts')
+            ->where('owner_acronym', '=', $rowData['owner_acronym'])
+            ->where('gen_is_duplicate', '=', 0)
+            ->whereNull('gen_amendment_group_id')
+            ->where('original_value', '=', $rowData['contract_value'])
+            ->where('gen_vendor_clean', '=', $rowData['gen_vendor_clean'])
+            ->where('gen_start_year', '=', $rowData['gen_start_year'])
+            ->orderBy('source_fiscal', 'asc')
+            ->orderBy('id', 'asc')
+            ->pluck('id');
+
+        if ($amendmentRows->count() > 0) {
+            // Just 1 row is enough (since it'll be different than the original row)
+            // Add back in the original ID (sorted by source_fiscal then ID in the earlier query in findAmendments)
+            $amendmentRows->prepend($rowData['id']);
+
+            $totalAmendments += self::markAmendmentEntries($rowData['owner_acronym'], $amendmentRows, 2);
+        }
+
+        return $totalAmendments;
+    }
+
+    public static function findAmendments($ownerAcronym)
+    {
+
+        $totalAmendments = 0;
+
+        DB::table('l_contracts')
+            ->where('owner_acronym', '=', $ownerAcronym)
+            ->where('gen_is_duplicate', '=', 0)
+            ->orderBy('source_fiscal', 'asc')
+            ->orderBy('id', 'asc')
+            ->select('id')
+            ->chunk(100, function ($rows) use (&$totalAmendments) {
+                foreach ($rows as $row) {
+                    // Check if it's a duplicate *in here* rather than in the parent query,
+                    // in case one iteration will change the values of the next ones:
+                    $rowData = (array) DB::table('l_contracts')
+                        ->where('id', $row->id)
+                        ->whereNull('gen_amendment_group_id')
+                        ->first();
+
+                    if ($rowData) {
+                        $totalAmendments += self::findAmendmentEntries($rowData);
+                    }
+                }
+            });
+            
+        return $totalAmendments;
     }
 }

@@ -49,12 +49,24 @@ class UpdateMetadata extends Command
         if ($action == 'reset') {
             foreach ($departmentList as $department) {
                 DbOps::resetGeneratedValues($department);
-                echo "  finished " . $department . "\n";
+                echo "  finished " . $department . " at " . date('Y-m-d H:i:s'). "\n";
             }
         } else if ($action == 'duplicates') {
             foreach ($departmentList as $department) {
                 DbOps::findDuplicates($department);
-                echo "  finished " . $department . "\n";
+                echo "  finished " . $department . " at " . date('Y-m-d H:i:s'). "\n";
+            }
+        } else if ($action == 'amendments') {
+            foreach ($departmentList as $department) {
+                DbOps::findAmendments($department);
+                echo "  finished " . $department . " at " . date('Y-m-d H:i:s'). "\n";
+            }
+        } else if ($action == 'all') {
+            foreach ($departmentList as $department) {
+                DbOps::resetGeneratedValues($department);
+                DbOps::findDuplicates($department);
+                DbOps::findAmendments($department);
+                echo "  finished " . $department . " at " . date('Y-m-d H:i:s') . "\n";
             }
         }
 
