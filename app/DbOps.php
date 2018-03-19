@@ -113,4 +113,134 @@ class DbOps
         echo "Imported " . $successTotal . " of " . $index . " contracts.\n";
         echo "Finished " . $acronym . " at ". date('Y-m-d H:i:s') . " \n\n";
     }
+
+
+    // Reset all the "generated" values related to identifying duplicates and amended contracts
+    public static function resetGeneratedValues($acronym = null)
+    {
+        $updateArray = [
+            'gen_is_duplicate' => 0,
+            'gen_duplicate_via' => null,
+            'gen_duplicate_source_id' => null,
+            'gen_is_amendment' => 0,
+            'gen_amendment_via' => null,
+            'gen_amendment_group_id' => null,
+            'gen_effective_start_year' => null,
+            'gen_effective_end_year' => null,
+            'gen_effective_total_value' => null,
+            'gen_effective_yearly_value' => null,
+        ];
+
+        if ($acronym) {
+            return DB::table('l_contracts')->where('owner_acronym', '=', $acronym)->update($updateArray);
+        } else {
+            return DB::table('l_contracts')->update($updateArray);
+        }
+    }
+
+    // Update a list of IDs and mark them as duplicates
+    public static function markDuplicateEntries($ownerAcronym, $duplicateRows, $method = 1)
+    {
+        // Includs the ownerAcronym just to be on the safe side.
+
+        // Remove the first entry (so that it isn't also marked as a duplicate, since at least one entry should stay "valid")
+        $sourceId = $duplicateRows->shift();
+
+        $duplicateRows = $duplicateRows->toArray();
+
+        return DB::table('l_contracts')
+            ->where('owner_acronym', '=', $ownerAcronym)
+            ->whereIn('id', $duplicateRows)
+            ->update([
+                'gen_is_duplicate' => 1,
+                'gen_duplicate_via' => $method,
+                'gen_duplicate_source_id' => $sourceId,
+                ]);
+    }
+
+
+    // Based on a single contract row, check for duplicates in the rest of the database:
+    public static function findDuplicateEntries($rowData, $doUpdate = 1)
+    {
+        // For all modes, limit to the same department owner_acronym
+
+        $totalDuplicates = 0;
+
+        // mode 1: same contract_value, same gen_vendor_clean, same raw_contract_date
+        $duplicateRows = DB::table('l_contracts')
+            ->where('owner_acronym', '=', $rowData['owner_acronym'])
+            ->where('gen_is_duplicate', '=', 0)
+            ->where('contract_value', '=', $rowData['contract_value'])
+            ->where('gen_vendor_clean', '=', $rowData['gen_vendor_clean'])
+            ->where('raw_contract_date', '=', $rowData['raw_contract_date'])
+            ->orderBy('id')
+            ->pluck('id');
+
+        if ($duplicateRows->count() > 1) {
+            // Then, there's duplicates based on this method.
+            $totalDuplicates += self::markDuplicateEntries($rowData['owner_acronym'], $duplicateRows, 1);
+        }
+
+
+        // mode 2: same contract_value, same gen_vendor_clean, same reference_number, same gen_start_year
+        // (in case the raw contract dates are formatted inconsistently or missing)
+        $duplicateRows = DB::table('l_contracts')
+            ->where('owner_acronym', '=', $rowData['owner_acronym'])
+            ->where('gen_is_duplicate', '=', 0)
+            ->where('contract_value', '=', $rowData['contract_value'])
+            ->where('gen_vendor_clean', '=', $rowData['gen_vendor_clean'])
+            ->where('reference_number', '=', $rowData['reference_number'])
+            ->where('gen_start_year', '=', $rowData['gen_start_year'])
+            ->orderBy('id')
+            ->pluck('id');
+
+        if ($duplicateRows->count() > 1) {
+            // Then, there's duplicates based on this method.
+            $totalDuplicates += self::markDuplicateEntries($rowData['owner_acronym'], $duplicateRows, 2);
+        }
+
+        // mode 3: same contract_value and same reference_number
+        // (in case both the raw contract dates and the vendor names are input inconsistently)
+        $duplicateRows = DB::table('l_contracts')
+            ->where('owner_acronym', '=', $rowData['owner_acronym'])
+            ->where('gen_is_duplicate', '=', 0)
+            ->where('contract_value', '=', $rowData['contract_value'])
+            ->where('reference_number', '=', $rowData['reference_number'])
+            ->orderBy('id')
+            ->pluck('id');
+
+        if ($duplicateRows->count() > 1) {
+            // Then, there's duplicates based on this method.
+            $totalDuplicates += self::markDuplicateEntries($rowData['owner_acronym'], $duplicateRows, 3);
+        }
+
+        return $totalDuplicates;
+    }
+
+    public static function findDuplicates($ownerAcronym)
+    {
+
+        $totalDuplicates = 0;
+
+        DB::table('l_contracts')
+            ->where('owner_acronym', '=', $ownerAcronym)
+            ->orderBy('id', 'asc')
+            ->select('id')
+            ->chunk(100, function ($rows) use (&$totalDuplicates) {
+                foreach ($rows as $row) {
+                    // Check if it's a duplicate *in here* rather than in the parent query,
+                    // in case one iteration will change the values of the next ones:
+                    $rowData = (array) DB::table('l_contracts')
+                        ->where('id', $row->id)
+                        ->where('gen_is_duplicate', '=', 0)
+                        ->first();
+
+                    if ($rowData) {
+                        $totalDuplicates += self::findDuplicateEntries($rowData);
+                    }
+                }
+            });
+            
+        return $totalDuplicates;
+    }
 }
