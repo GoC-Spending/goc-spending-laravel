@@ -84,7 +84,7 @@ class CsvOps
             $sourceFiscal = $data['csvReferenceNumber'];
         }
 
-        $data['sourceYear'] = Parsers::xpathReturnSingle($sourceFiscal, '/([1-2][0-9][0-9][0-9])/');
+        $data['sourceYear'] = Parsers::xpathReturnSingle($sourceFiscal, '((?:19|20)\d{2})\D');
 
         $data['sourceQuarter'] = Parsers::xpathReturnSingle($sourceFiscal, '/Q([0-9])/');
 
