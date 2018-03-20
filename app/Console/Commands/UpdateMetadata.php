@@ -40,7 +40,7 @@ class UpdateMetadata extends Command
     public function handle()
     {
         $action = $this->argument('action');
-        $departmentList = Paths::getAllDepartmentAcronyms();
+        $departmentList = DbOps::getAllDepartmentAcronyms();
 
         $startDate = date('Y-m-d H:i:s');
         echo "Starting update at ". $startDate . " \n";

@@ -280,13 +280,28 @@ class DbOps
         // mode 1: same gen_vendor_clean, same reference_number, different contract_value
         $amendmentRows = DB::table('l_contracts')
             ->where('owner_acronym', '=', $rowData['owner_acronym'])
+            // Ensure it's not the exact same row:
+            ->where('id', '!=', $rowData['id'])
+            // Make sure it's not a duplicate entry
             ->where('gen_is_duplicate', '=', 0)
+            // Make sure it isn't part of a different amendment group (TODO - review this)
             ->whereNull('gen_amendment_group_id')
-            ->where('contract_value', '!=', $rowData['contract_value'])
+            // Make sure it's the same vendor:
             ->where('gen_vendor_clean', '=', $rowData['gen_vendor_clean'])
-            ->where('reference_number', '=', $rowData['reference_number'])
+
+            // This is a bit of a complicated combination, but the resulting SQL is,
+            //  and ("reference_number" = ? or ("original_value" = ? and "gen_start_year" = ?))
+            // Because of threshold limits (sole source, NAFTA, etc.), we wouldn't want to just match original and contract values without also matching start years (in case completely different contracts have the same values).
+            ->where(function ($query) use ($rowData) {
+                return $query->where('reference_number', '=', $rowData['reference_number'])
+                    ->orWhere(function ($query) use ($rowData) {
+                        return $query->where('original_value', '=', $rowData['contract_value'])
+                            ->where('gen_start_year', '=', $rowData['gen_start_year']);
+                    });
+            })
             ->orderBy('source_fiscal', 'asc')
             ->orderBy('id', 'asc')
+            // ->toSql();
             ->pluck('id');
 
         if ($amendmentRows->count() > 0) {
@@ -295,26 +310,6 @@ class DbOps
             $amendmentRows->prepend($rowData['id']);
 
             $totalAmendments += self::markAmendmentEntries($rowData['owner_acronym'], $amendmentRows, 1);
-        }
-
-        // mode 2: same gen_vendor_clean, original_value matches source contract_value, same gen_start_year
-        $amendmentRows = DB::table('l_contracts')
-            ->where('owner_acronym', '=', $rowData['owner_acronym'])
-            ->where('gen_is_duplicate', '=', 0)
-            ->whereNull('gen_amendment_group_id')
-            ->where('original_value', '=', $rowData['contract_value'])
-            ->where('gen_vendor_clean', '=', $rowData['gen_vendor_clean'])
-            ->where('gen_start_year', '=', $rowData['gen_start_year'])
-            ->orderBy('source_fiscal', 'asc')
-            ->orderBy('id', 'asc')
-            ->pluck('id');
-
-        if ($amendmentRows->count() > 0) {
-            // Just 1 row is enough (since it'll be different than the original row)
-            // Add back in the original ID (sorted by source_fiscal then ID in the earlier query in findAmendments)
-            $amendmentRows->prepend($rowData['id']);
-
-            $totalAmendments += self::markAmendmentEntries($rowData['owner_acronym'], $amendmentRows, 2);
         }
 
         return $totalAmendments;
@@ -347,5 +342,16 @@ class DbOps
             });
             
         return $totalAmendments;
+    }
+
+    // Unlike the Paths version,this one gets it from the database:
+    public static function getAllDepartmentAcronyms()
+    {
+
+        return DB::table('l_contracts')
+            ->select(['owner_acronym'])
+            ->distinct()
+            ->pluck('owner_acronym')
+            ->toArray();
     }
 }
