@@ -361,6 +361,17 @@ class DbOps
         // rowData is a collection of rows that all have the same gen_amendment_group_id
         // These are already sorted by ascending source_fiscal
 
+        foreach ($rowData as $row) {
+            // Fix for situations where the end year is earlier than the start year
+            // use whichever is later of the start year or the source year (when it was published).
+            if ($row->gen_end_year < $row->gen_start_year) {
+                $row->gen_end_year = $row->gen_start_year;
+                if ($row->source_year > $row->gen_end_year) {
+                    $row->gen_end_year = $row->source_year;
+                }
+            }
+        }
+
         // We're using Collection methods here, which are great:
         // https://laravel.com/docs/5.6/collections
 
