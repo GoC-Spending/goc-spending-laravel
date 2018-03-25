@@ -22,6 +22,7 @@ class CsvOps
         'jus' => 'just',
         'infc' => 'infra',
         'aandc' => 'inac',
+        'aafc' => 'agr',
     ];
 
     public static $rowMapping = [
