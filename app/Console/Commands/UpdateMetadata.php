@@ -13,7 +13,7 @@ class UpdateMetadata extends Command
      *
      * @var string
      */
-    protected $signature = 'department:metadata {action : either reset, duplicates, or amendments.}';
+    protected $signature = 'department:metadata {action : either reset, duplicates, or amendments.} {department=all : either an acronym, or all }';
 
     /**
      * The console command description.
@@ -40,35 +40,45 @@ class UpdateMetadata extends Command
     public function handle()
     {
         $action = $this->argument('action');
+        
+
+        $departmentArgument = $this->argument('department');
+
         $departmentList = DbOps::getAllDepartmentAcronyms();
+
+        // dd($departmentList);
+
+        if ($departmentArgument != 'all') {
+            if (in_array($departmentArgument, $departmentList)) {
+                // Only apply operations to the single selected department
+                $departmentList = [$departmentArgument];
+            } else {
+                // Requested a department that doesn't exist:
+                $this->error('The requested department (' . $departmentArgument . ') does not exist.');
+                exit();
+            }
+        }
 
         $startDate = date('Y-m-d H:i:s');
         echo "Starting update at ". $startDate . " \n";
 
 
-        if ($action == 'reset') {
-            foreach ($departmentList as $department) {
+        foreach ($departmentList as $department) {
+            if ($action == 'reset') {
                 DbOps::resetGeneratedValues($department);
-                echo "  finished " . $department . " at " . date('Y-m-d H:i:s'). "\n";
-            }
-        } else if ($action == 'duplicates') {
-            foreach ($departmentList as $department) {
+            } else if ($action == 'duplicates') {
                 DbOps::findDuplicates($department);
-                echo "  finished " . $department . " at " . date('Y-m-d H:i:s'). "\n";
-            }
-        } else if ($action == 'amendments') {
-            foreach ($departmentList as $department) {
+            } else if ($action == 'amendments') {
                 DbOps::findAmendments($department);
-                echo "  finished " . $department . " at " . date('Y-m-d H:i:s'). "\n";
-            }
-        } else if ($action == 'all') {
-            foreach ($departmentList as $department) {
+            } else if ($action == 'all') {
                 DbOps::resetGeneratedValues($department);
                 DbOps::findDuplicates($department);
                 DbOps::findAmendments($department);
-                echo "  finished " . $department . " at " . date('Y-m-d H:i:s') . "\n";
             }
+
+            echo "  finished " . $department . " at " . date('Y-m-d H:i:s'). "\n";
         }
+
 
         
 
