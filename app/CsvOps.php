@@ -17,6 +17,11 @@ class CsvOps
     // CSV value => scraper value
     public static $ownerAcronymMapping = [
         'feddevontario' => 'feddev',
+        'statcan' => 'stats',
+        'pwgsc' => 'pspc',
+        'jus' => 'just',
+        'infc' => 'infra',
+        'aandc' => 'inac',
     ];
 
     public static $rowMapping = [
