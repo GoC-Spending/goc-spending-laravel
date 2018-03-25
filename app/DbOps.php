@@ -355,4 +355,226 @@ class DbOps
             ->pluck('owner_acronym')
             ->toArray();
     }
+
+    public static function calculateEffectiveAmendmentValues($rowData)
+    {
+        // rowData is a collection of rows that all have the same gen_amendment_group_id
+        // These are already sorted by ascending source_fiscal
+
+        // We're using Collection methods here, which are great:
+        // https://laravel.com/docs/5.6/collections
+
+        // Step 1: find the earliest and latest years of the contract
+        $earliestYear = $rowData->min('gen_start_year');
+        $latestYear = $rowData->max('gen_end_year');
+
+        $originalValue = $rowData->min('original_value');
+        if (! $originalValue) {
+            $originalValue = $rowData->min('contract_value');
+        }
+
+        // Step 2: create an array range of each year in this set, and then match each year with the most updated amendment row ID
+
+        $years = range($earliestYear, $latestYear);
+        $yearMapping = [];
+
+        $firstRow = 1;
+        $genAmendmentGroupId = null;
+
+        foreach ($rowData as $row) {
+            // Store this for error tracking later (it's the same for all rows in rowData)
+            if (! $genAmendmentGroupId) {
+                $genAmendmentGroupId = $row->gen_amendment_group_id;
+            }
+
+            foreach ($years as $year) {
+                if ($firstRow) {
+                    // Use the start_year since this is the beginning
+                    // even if the source_year is later (if it was retroactively published)
+                    if ($row->gen_start_year <= $year && $row->gen_end_year >= $year) {
+                        $yearMapping[$year] = $row->id;
+                    }
+                } else {
+                    // Use the source_year instead of the start_year
+                    if ($row->source_year <= $year && $row->gen_end_year >= $year) {
+                        $yearMapping[$year] = $row->id;
+                    }
+                }
+            }
+
+            $firstRow = 0;
+        }
+
+        // dd($yearMapping);
+        // var_dump($yearMapping);
+        // array:3 [
+        //   2010 => 1251303
+        //   2011 => 1250608
+        //   2012 => 1250608
+        // ]
+
+        // Step 3: loop through rows again and set effective start and end years
+        $cumulativeTotal = 0;
+        $firstRow = 1;
+        $rowIdsToUpdate = [];
+
+        foreach ($rowData as $row) {
+            $effectiveStartYear = null;
+            $effectiveEndYear = null;
+
+            foreach ($yearMapping as $year => $rowId) {
+                if ($rowId == $row->id) {
+                    // If they match, update the effective start and end years
+                    // echo "Match: " . $row->id . " for " . $year . "\n";
+                    if ($effectiveStartYear == null || $year < $effectiveStartYear) {
+                        $effectiveStartYear = $year;
+                    }
+                    if ($effectiveEndYear == null || $year > $effectiveEndYear) {
+                        $effectiveEndYear = $year;
+                    }
+                } else {
+                    // echo "No match for: " . $row->id . " for " . $year . "\n";
+                }
+            }
+
+            if ($effectiveStartYear == null || $effectiveEndYear == null) {
+                // If this row ID isn't in the yearMapping array, skip to the next row.
+                // echo "Skipping... \n";
+                continue;
+            }
+
+            $rowIdsToUpdate[] = $row->id;
+            // echo "here for " . $row->id . "\n";
+
+            $row->gen_effective_start_year = $effectiveStartYear;
+            $row->gen_effective_end_year = $effectiveEndYear;
+
+            // Effective total value is, the theoretical yearly value of the contract over the originally planned start and end years
+            if ($firstRow) {
+                $theoreticalYearlyValue = $row->contract_value / ($row->gen_end_year - $row->gen_start_year + 1);
+            } else {
+                $theoreticalYearlyValue = $row->contract_value / ($row->gen_end_year - $row->source_year + 1);
+            }
+            
+
+            // dd($effectiveEndYear);
+
+            $row->gen_effective_total_value = $theoreticalYearlyValue * ($effectiveEndYear - $effectiveStartYear + 1) - $cumulativeTotal;
+            $row->gen_effective_yearly_value = $row->gen_effective_total_value / ($effectiveEndYear - $effectiveStartYear + 1);
+
+            $cumulativeTotal += $row->gen_effective_total_value;
+
+            $firstRow = 0;
+        }
+
+        $updatesSaved = 0;
+        // Update the rows in the database:
+        foreach ($rowData as $row) {
+            // Make sure there are actually changes
+            if (in_array($row->id, $rowIdsToUpdate)) {
+                DB::table('l_contracts')
+                    ->where('owner_acronym', '=', $row->owner_acronym)
+                    ->where('id', '=', $row->id)
+                    ->update([
+                        'gen_effective_start_year' => $row->gen_effective_start_year,
+                        'gen_effective_end_year' => $row->gen_effective_end_year,
+                        'gen_effective_total_value' => $row->gen_effective_total_value,
+                        'gen_effective_yearly_value' => $row->gen_effective_yearly_value,
+                        ]);
+                $updatesSaved = 1;
+                // echo "Updated " . $row->id . "\n";
+            } else {
+                // Update the effective total and yearly values, but not the start and end years
+                // these are amendments that were overridden by other amendments in the same year.
+                DB::table('l_contracts')
+                    ->where('owner_acronym', '=', $row->owner_acronym)
+                    ->where('id', '=', $row->id)
+                    ->update([
+                        'gen_effective_total_value' => 0,
+                        'gen_effective_yearly_value' => 0,
+                        ]);
+            }
+        }
+
+        if ($updatesSaved) {
+            return true;
+        } else {
+            echo "No updates for gen_amendment_group_id " . $genAmendmentGroupId . "\n";
+            return false;
+        }
+    }
+
+    public static function updateEffectiveAmendmentValues($ownerAcronym)
+    {
+
+        $totalUpdates = 0;
+
+        DB::table('l_contracts')
+            ->where('owner_acronym', '=', $ownerAcronym)
+            ->where('gen_is_duplicate', '=', 0)
+            // Useful for testing purposes:
+            // ->where('gen_amendment_group_id', '=', 1251964)
+            ->whereNotNull('gen_amendment_group_id')
+            ->whereNotNull('gen_start_year')
+            ->whereNotNull('gen_end_year')
+            ->whereNotNull('source_year')
+            ->orderBy('gen_amendment_group_id', 'asc')
+            ->select('gen_amendment_group_id')
+            ->distinct()
+            ->chunk(100, function ($rows) use (&$totalUpdates) {
+                foreach ($rows as $row) {
+                    // Check if it's a duplicate *in here* rather than in the parent query,
+                    // in case one iteration will change the values of the next ones:
+                    $rowData = DB::table('l_contracts')
+                        ->where('gen_amendment_group_id', '=', $row->gen_amendment_group_id)
+                        ->orderBy('source_fiscal', 'asc')
+                        ->get();
+
+                    if ($rowData) {
+                        if (self::calculateEffectiveAmendmentValues($rowData)) {
+                            $totalUpdates++;
+                        }
+                    }
+                }
+            });
+            
+        return $totalUpdates;
+    }
+
+    public static function updateEffectiveRegularValues($ownerAcronym)
+    {
+
+        DB::table('l_contracts')
+            ->where('owner_acronym', '=', $ownerAcronym)
+            ->where('gen_is_duplicate', '=', 0)
+            // Find all contracts that *do not* have amendments
+            ->whereNull('gen_amendment_group_id')
+            ->whereNotNull('gen_start_year')
+            ->whereNotNull('gen_end_year')
+            ->whereNotNull('source_year')
+            ->orderBy('source_fiscal', 'asc')
+            ->orderBy('id', 'asc')
+            ->chunk(100, function ($rows) use (&$totalAmendments) {
+                foreach ($rows as $row) {
+                    // Fix for situations where the end year is earlier than the start year
+                    // use whichever is later of the start year or the source year (when it was published).
+                    if ($row->gen_end_year < $row->gen_start_year) {
+                        $row->gen_end_year = $row->gen_start_year;
+                        if ($row->source_year > $row->gen_end_year) {
+                            $row->gen_end_year = $row->source_year;
+                        }
+                    }
+                    
+                    DB::table('l_contracts')
+                        ->where('owner_acronym', '=', $row->owner_acronym)
+                        ->where('id', '=', $row->id)
+                        ->update([
+                            'gen_effective_start_year' => $row->gen_start_year,
+                            'gen_effective_end_year' => $row->gen_end_year,
+                            'gen_effective_total_value' => $row->contract_value,
+                            'gen_effective_yearly_value' => $row->contract_value / ($row->gen_end_year - $row->gen_start_year + 1),
+                        ]);
+                }
+            });
+    }
 }

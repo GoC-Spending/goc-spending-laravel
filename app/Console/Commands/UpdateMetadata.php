@@ -70,10 +70,16 @@ class UpdateMetadata extends Command
                 DbOps::findDuplicates($department);
             } else if ($action == 'amendments') {
                 DbOps::findAmendments($department);
+            } else if ($action == 'amendmentvalues') {
+                DbOps::updateEffectiveAmendmentValues($department);
+            } else if ($action == 'regularvalues') {
+                DbOps::updateEffectiveRegularValues($department);
             } else if ($action == 'all') {
                 DbOps::resetGeneratedValues($department);
                 DbOps::findDuplicates($department);
                 DbOps::findAmendments($department);
+                DbOps::updateEffectiveAmendmentValues($department);
+                DbOps::updateEffectiveRegularValues($department);
             }
 
             echo "  finished " . $department . " at " . date('Y-m-d H:i:s'). "\n";
