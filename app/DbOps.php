@@ -350,6 +350,7 @@ class DbOps
 
         return DB::table('l_contracts')
             ->select(['owner_acronym'])
+            ->orderBy('owner_acronym')
             ->distinct()
             ->pluck('owner_acronym')
             ->toArray();
