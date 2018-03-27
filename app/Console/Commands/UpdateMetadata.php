@@ -60,7 +60,7 @@ class UpdateMetadata extends Command
         }
 
         $startDate = date('Y-m-d H:i:s');
-        echo "Starting update at ". $startDate . " \n";
+        echo "Starting '" . $action . "' update at ". $startDate . " \n";
 
 
         foreach ($departmentList as $department) {
@@ -90,7 +90,7 @@ class UpdateMetadata extends Command
 
         
 
-        echo "\n\n...started update at " . $startDate . "\n";
-        echo "Finished update at ". date('Y-m-d H:i:s') . " \n\n";
+        echo "\n\n...started '" . $action . "' update at " . $startDate . "\n";
+        echo "Finished '" . $action . "' update at ". date('Y-m-d H:i:s') . " \n\n";
     }
 }

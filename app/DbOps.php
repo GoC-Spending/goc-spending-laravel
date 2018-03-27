@@ -173,7 +173,9 @@ class DbOps
             ->where('contract_value', '=', $rowData['contract_value'])
             ->where('gen_vendor_clean', '=', $rowData['gen_vendor_clean'])
             ->where('raw_contract_date', '=', $rowData['raw_contract_date'])
-            ->orderBy('id')
+            ->whereNotNull('source_fiscal')
+            ->orderBy('source_fiscal', 'asc')
+            ->orderBy('id', 'asc')
             ->pluck('id');
 
         if ($duplicateRows->count() > 1) {
@@ -191,7 +193,9 @@ class DbOps
             ->where('gen_vendor_clean', '=', $rowData['gen_vendor_clean'])
             ->where('reference_number', '=', $rowData['reference_number'])
             ->where('gen_start_year', '=', $rowData['gen_start_year'])
-            ->orderBy('id')
+            ->whereNotNull('source_fiscal')
+            ->orderBy('source_fiscal', 'asc')
+            ->orderBy('id', 'asc')
             ->pluck('id');
 
         if ($duplicateRows->count() > 1) {
@@ -206,7 +210,9 @@ class DbOps
             ->where('gen_is_duplicate', '=', 0)
             ->where('contract_value', '=', $rowData['contract_value'])
             ->where('reference_number', '=', $rowData['reference_number'])
-            ->orderBy('id')
+            ->whereNotNull('source_fiscal')
+            ->orderBy('source_fiscal', 'asc')
+            ->orderBy('id', 'asc')
             ->pluck('id');
 
         if ($duplicateRows->count() > 1) {
@@ -224,6 +230,8 @@ class DbOps
 
         DB::table('l_contracts')
             ->where('owner_acronym', '=', $ownerAcronym)
+            ->whereNotNull('source_fiscal')
+            ->orderBy('source_fiscal', 'asc')
             ->orderBy('id', 'asc')
             ->select('id')
             ->chunk(100, function ($rows) use (&$totalDuplicates) {
@@ -286,6 +294,7 @@ class DbOps
             ->where('gen_is_duplicate', '=', 0)
             // Make sure it isn't part of a different amendment group (TODO - review this)
             ->whereNull('gen_amendment_group_id')
+            ->whereNotNull('source_fiscal')
             // Make sure it's the same vendor:
             ->where('gen_vendor_clean', '=', $rowData['gen_vendor_clean'])
 
@@ -300,7 +309,8 @@ class DbOps
                     });
             })
             ->orderBy('source_fiscal', 'asc')
-            ->orderBy('id', 'asc')
+            ->orderBy('contract_value', 'asc')
+            // ->orderBy('id', 'asc')
             // ->toSql();
             ->pluck('id');
 
@@ -323,6 +333,7 @@ class DbOps
         DB::table('l_contracts')
             ->where('owner_acronym', '=', $ownerAcronym)
             ->where('gen_is_duplicate', '=', 0)
+            ->whereNotNull('source_fiscal')
             ->orderBy('source_fiscal', 'asc')
             ->orderBy('id', 'asc')
             ->select('id')
@@ -528,17 +539,17 @@ class DbOps
             ->whereNotNull('gen_amendment_group_id')
             ->whereNotNull('gen_start_year')
             ->whereNotNull('gen_end_year')
-            ->whereNotNull('source_year')
+            ->whereNotNull('source_fiscal')
             ->orderBy('gen_amendment_group_id', 'asc')
             ->select('gen_amendment_group_id')
             ->distinct()
             ->chunk(100, function ($rows) use (&$totalUpdates) {
                 foreach ($rows as $row) {
-                    // Check if it's a duplicate *in here* rather than in the parent query,
-                    // in case one iteration will change the values of the next ones:
                     $rowData = DB::table('l_contracts')
                         ->where('gen_amendment_group_id', '=', $row->gen_amendment_group_id)
                         ->orderBy('source_fiscal', 'asc')
+                        ->orderBy('contract_value', 'asc')
+                        ->whereNotNull('source_fiscal')
                         ->get();
 
                     if ($rowData) {
@@ -562,7 +573,7 @@ class DbOps
             ->whereNull('gen_amendment_group_id')
             ->whereNotNull('gen_start_year')
             ->whereNotNull('gen_end_year')
-            ->whereNotNull('source_year')
+            ->whereNotNull('source_fiscal')
             ->orderBy('source_fiscal', 'asc')
             ->orderBy('id', 'asc')
             ->chunk(100, function ($rows) use (&$totalAmendments) {
