@@ -491,7 +491,13 @@ class DbOps
 
         $updatesSaved = 0;
         // Update the rows in the database:
-        foreach ($rowData as $row) {
+        foreach ($rowData as $index => $row) {
+            $isFinalValue = 0;
+            if ($index == count($rowData) - 1) {
+                $isFinalValue = 1;
+            }
+            
+
             // Make sure there are actually changes
             if (in_array($row->id, $rowIdsToUpdate)) {
                 DB::table('l_contracts')
@@ -502,6 +508,8 @@ class DbOps
                         'gen_effective_end_year' => $row->gen_effective_end_year,
                         'gen_effective_total_value' => $row->gen_effective_total_value,
                         'gen_effective_yearly_value' => $row->gen_effective_yearly_value,
+                        'gen_original_value' => $originalValue,
+                        'gen_is_most_recent_value' => $isFinalValue,
                         ]);
                 $updatesSaved = 1;
                 // echo "Updated " . $row->id . "\n";
@@ -586,6 +594,11 @@ class DbOps
                             $row->gen_end_year = $row->source_year;
                         }
                     }
+
+                    $originalValue = $row->original_value;
+                    if (! $originalValue) {
+                        $originalValue = $row->contract_value;
+                    }
                     
                     DB::table('l_contracts')
                         ->where('owner_acronym', '=', $row->owner_acronym)
@@ -595,6 +608,9 @@ class DbOps
                             'gen_effective_end_year' => $row->gen_end_year,
                             'gen_effective_total_value' => $row->contract_value,
                             'gen_effective_yearly_value' => $row->contract_value / ($row->gen_end_year - $row->gen_start_year + 1),
+                            'gen_original_value' => $originalValue,
+                            // For rows without amendments, the current value is also the final / most recent value:
+                            'gen_is_most_recent_value' => 1,
                         ]);
                 }
             });
