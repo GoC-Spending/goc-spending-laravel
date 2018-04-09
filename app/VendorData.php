@@ -458,6 +458,7 @@ class VendorData
             'ROGERS SHARED SERV/ROGERS COMMINC',
             'ROGERS TELECOM',
             'ROGERS TELECOM ATT DIANE MENARD ACCOUNT CONSULTANT',
+            'ROGER WIRELESS',
 
 
         ],
