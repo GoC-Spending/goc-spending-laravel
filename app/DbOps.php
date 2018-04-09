@@ -615,4 +615,35 @@ class DbOps
                 }
             });
     }
+
+    public static function updateCleanVendorNames($updateExport = 1)
+    {
+
+        $vendorData = VendorData::getInstance();
+
+        foreach ($vendorData->vendorTable as $rawName => $cleanName) {
+            echo "Replacing <" . $rawName . "> with <" . $cleanName . ">\n";
+
+            // Update the source contracts table
+            // This may not do as precise of matches as the original vendor cleanup function - it'll catch new additions to the table, but not updates to the $charactersToRemove array.
+            DB::table('l_contracts')
+                ->where('gen_vendor_clean', '=', VendorData::cleanupVendorName($rawName))
+                ->update([
+                    'gen_vendor_clean' => $cleanName,
+                    ]);
+
+            if ($updateExport) {
+                // DB::table('exports_v1')
+                //     ->where('vendor_clean', '=', $rawName)
+                //     ->update([
+                //         'vendor_clean' => $cleanName,
+                //         ]);
+                DB::table('exports_v1')
+                    ->where('vendor_clean', '=', VendorData::cleanupVendorName($rawName))
+                    ->update([
+                        'vendor_clean' => $cleanName,
+                        ]);
+            }
+        }
+    }
 }

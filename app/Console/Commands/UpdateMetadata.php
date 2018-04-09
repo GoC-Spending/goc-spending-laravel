@@ -48,47 +48,51 @@ class UpdateMetadata extends Command
 
         // dd($departmentList);
 
-        if ($departmentArgument != 'all') {
-            if (in_array($departmentArgument, $departmentList)) {
-                // Only apply operations to the single selected department
-                $departmentList = [$departmentArgument];
-            } else {
-                // Requested a department that doesn't exist:
-                $this->error('The requested department (' . $departmentArgument . ') does not exist.');
-                exit();
-            }
-        }
-
         $startDate = date('Y-m-d H:i:s');
         echo "Starting '" . $action . "' update at ". $startDate . " \n";
 
 
-        foreach ($departmentList as $department) {
-            if ($action == 'reset') {
-                DbOps::resetGeneratedValues($department);
-            } else if ($action == 'duplicates') {
-                DbOps::findDuplicates($department);
-            } else if ($action == 'amendments') {
-                DbOps::findAmendments($department);
-            } else if ($action == 'amendmentvalues') {
-                DbOps::updateEffectiveAmendmentValues($department);
-            } else if ($action == 'regularvalues') {
-                DbOps::updateEffectiveRegularValues($department);
-            } else if ($action == 'all') {
-                DbOps::resetGeneratedValues($department);
-                DbOps::findDuplicates($department);
-                DbOps::findAmendments($department);
-                DbOps::updateEffectiveAmendmentValues($department);
-                DbOps::updateEffectiveRegularValues($department);
+        if ($action == 'cleannames') {
+            // Only happens once across all departments:
+            DbOps::updateCleanVendorNames();
+        } else {
+            // Department-specific actions:
+
+            if ($departmentArgument != 'all') {
+                if (in_array($departmentArgument, $departmentList)) {
+                    // Only apply operations to the single selected department
+                    $departmentList = [$departmentArgument];
+                } else {
+                    // Requested a department that doesn't exist:
+                    $this->error('The requested department (' . $departmentArgument . ') does not exist.');
+                    exit();
+                }
             }
 
-            echo "  finished " . $department . " at " . date('Y-m-d H:i:s'). "\n";
+            foreach ($departmentList as $department) {
+                if ($action == 'reset') {
+                    DbOps::resetGeneratedValues($department);
+                } else if ($action == 'duplicates') {
+                    DbOps::findDuplicates($department);
+                } else if ($action == 'amendments') {
+                    DbOps::findAmendments($department);
+                } else if ($action == 'amendmentvalues') {
+                    DbOps::updateEffectiveAmendmentValues($department);
+                } else if ($action == 'regularvalues') {
+                    DbOps::updateEffectiveRegularValues($department);
+                } else if ($action == 'all') {
+                    DbOps::resetGeneratedValues($department);
+                    DbOps::findDuplicates($department);
+                    DbOps::findAmendments($department);
+                    DbOps::updateEffectiveAmendmentValues($department);
+                    DbOps::updateEffectiveRegularValues($department);
+                }
+
+                echo "  finished " . $department . " at " . date('Y-m-d H:i:s'). "\n";
+            }
         }
-
-
         
 
-        
 
         echo "\n\n...started '" . $action . "' update at " . $startDate . "\n";
         echo "Finished '" . $action . "' update at ". date('Y-m-d H:i:s') . " \n\n";
