@@ -398,7 +398,7 @@ class DbOps
         $latestYear = $rowData->last()->gen_end_year;
 
         // Edge cases where the end year is earlier than the start year, use the last one's start year instead:
-        if($rowData->last()->gen_start_year > $rowData->last()->gen_end_year) {
+        if ($rowData->last()->gen_start_year > $rowData->last()->gen_end_year) {
             $latestYear = $rowData->last()->gen_start_year;
         }
 
