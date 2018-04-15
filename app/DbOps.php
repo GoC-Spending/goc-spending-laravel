@@ -388,7 +388,11 @@ class DbOps
 
         // Step 1: find the earliest and latest years of the contract
         $earliestYear = $rowData->min('gen_start_year');
-        $latestYear = $rowData->max('gen_end_year');
+
+        // Update: rather than the maximum end year, it should actually be the end year of the *last* row in the (ordered by source_fiscal) array of amendments.
+        // In some cases, the contract gets *shortened* from what was originally planned.
+        // $latestYear = $rowData->max('gen_end_year');
+        $latestYear = $rowData->last()->gen_end_year;
 
         $originalValue = $rowData->min('original_value');
         if (! $originalValue) {
