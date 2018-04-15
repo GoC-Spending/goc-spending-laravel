@@ -24,6 +24,8 @@ class DbOps
     public static function importJsonDataToDatabase($json, $contractId, $jsonPath)
     {
 
+        $vendorData = VendorData::getInstance();
+
         // Clean up empty string entries
         $json = array_map(function ($entry) {
             if ($entry === '') {
@@ -57,7 +59,8 @@ class DbOps
             'source_origin' => $json['sourceOrigin'],
             'gen_start_year' => $json['startYear'],
             'gen_end_year' => $json['endYear'],
-            'gen_vendor_clean' => $json['vendorClean'],
+            // Re-run the cleanup function:
+            'gen_vendor_clean' => $vendorData->consolidateVendorNames($json['vendorName']),
             'gen_contract_id' => $contractId,
         ];
 
