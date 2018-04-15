@@ -397,6 +397,11 @@ class DbOps
         // $latestYear = $rowData->max('gen_end_year');
         $latestYear = $rowData->last()->gen_end_year;
 
+        // Edge cases where the end year is earlier than the start year, use the last one's start year instead:
+        if($rowData->last()->gen_start_year > $rowData->last()->gen_end_year) {
+            $latestYear = $rowData->last()->gen_start_year;
+        }
+
         $originalValue = $rowData->min('original_value');
         if (! $originalValue) {
             $originalValue = $rowData->min('contract_value');
