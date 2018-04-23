@@ -43,7 +43,6 @@ class CreateExportsV2Table extends Migration
             $table->text('description')->nullable();
             $table->text('extra_description')->nullable();
             $table->text('comments')->nullable();
-
         });
     }
 
