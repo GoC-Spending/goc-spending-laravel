@@ -80,10 +80,12 @@ class VendorData
             ' LIMITED',
             ' LIMITE',
             ' LCC',
-            ' LLC'
+            ' LLC',
+            '"',
         ];
 
         $output = str_replace($charactersToRemove, '', strtoupper($input));
+        $output = str_replace(['    ', '   ', '  '], ' ', $output);
         return trim($output);
     }
 
