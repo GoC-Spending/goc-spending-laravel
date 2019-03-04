@@ -1,6 +1,8 @@
 <?php
 namespace App;
 
+use App\Helpers\Paths;
+
 class VendorData
 {
 
@@ -28,7 +30,40 @@ class VendorData
 
     protected function __construct()
     {
-        $this->vendorTable = self::reindexVendorData(self::$vendors);
+        $this->vendorTable = self::reindexVendorData(self::getVendorCsvData());
+    }
+
+    public static function getVendorCsvData()
+    {
+      // Retrieve the list of vendors from the goc-spending-vendors repository folder
+        $filepath = Paths::getVendorDataDirectory() . "vendor_data.csv";
+        $vendorData = [];
+
+        if (file_exists($filepath)) {
+           // Thanks to
+           // http://php.net/manual/en/function.str-getcsv.php#117692
+            $csv = array_map('str_getcsv', file($filepath));
+            array_walk($csv, function (&$a) use ($csv) {
+                $a = array_combine($csv[0], $a);
+            });
+            array_shift($csv);
+        } else {
+            echo "Error: could not load vendor_data.csv file. Make sure the goc-spending-vendors repository exists. \n";
+        }
+
+      // Re-index according to the usual structure (parent => childArray)
+        if (is_array($csv)) {
+            foreach ($csv as $row) {
+              // dd($row);
+                if ($row['Company name']) {
+                    $vendorData[$row['Parent company']][] = $row['Company name'];
+                }
+            }
+        } else {
+            echo "Error: could not parse the vendor_data.csv file. Make sure that vendor_data.csv is a valid CSV file. \n";
+        }
+      
+        return $vendorData;
     }
 
     // Re-index the vendor data so that the name variants are keys and the common name is the value for each, to speed up matching in the consolidateVendorNames function:
