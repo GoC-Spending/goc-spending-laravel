@@ -23,9 +23,9 @@ class StatsHandler extends DepartmentHandler
     }
 
     /*
-	public function indexToQuarterUrlTransform($url) {
-		return "http://www.cic.gc.ca/disclosure-divulgation/" . $url;
-	}*/
+    public function indexToQuarterUrlTransform($url) {
+        return "http://www.cic.gc.ca/disclosure-divulgation/" . $url;
+    }*/
 
 
     // Ignore the latest quarter that uses "open.canada.ca" as a link instead.

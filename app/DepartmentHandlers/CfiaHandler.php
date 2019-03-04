@@ -19,10 +19,10 @@ class CfiaHandler extends DepartmentHandler
 
     // Quarters are returned as absolute URLs, so no quarterToContractUrlTransform needed.
     /*
-	public function quarterToContractUrlTransform($contractUrl) {
-		return "http://www.cic.gc.ca/disclosure-divulgation/" . $contractUrl;
-	}
-	*/
+    public function quarterToContractUrlTransform($contractUrl) {
+        return "http://www.cic.gc.ca/disclosure-divulgation/" . $contractUrl;
+    }
+    */
 
     // Ignore the latest quarter that uses "open.canada.ca" as a link instead.
     // We'll need to retrieve those from the actual dataset.
@@ -41,10 +41,10 @@ class CfiaHandler extends DepartmentHandler
     }
 
     /*
-	public function indexToQuarterUrlTransform($url) {
-		return "http://www.cic.gc.ca/disclosure-divulgation/" . $url;
-	}
-	*/
+    public function indexToQuarterUrlTransform($url) {
+        return "http://www.cic.gc.ca/disclosure-divulgation/" . $url;
+    }
+    */
 
     public $contractContentSubsetXpath = "//main";
 

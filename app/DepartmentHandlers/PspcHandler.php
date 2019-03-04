@@ -18,11 +18,11 @@ class PspcHandler extends DepartmentHandler
     public $quarterToContractXpath = "//div[@id='wb-main-in']//table//td//a/@href";
 
     // public function quarterToContractUrlTransform($contractUrl) {
-    // 	return "http://disclosure.esdc.gc.ca/dp-pd/" . $contractUrl;
+    //  return "http://disclosure.esdc.gc.ca/dp-pd/" . $contractUrl;
     // }
 
     // public function indexToQuarterUrlTransform($url) {
-    // 	return "http://disclosure.esdc.gc.ca/dp-pd/" . $url;
+    //  return "http://disclosure.esdc.gc.ca/dp-pd/" . $url;
     // }
 
     public $contractContentSubsetXpath = "//div[@id='wb-main-in']";

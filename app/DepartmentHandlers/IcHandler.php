@@ -18,11 +18,11 @@ class IcHandler extends DepartmentHandler
     public $quarterToContractXpath = "//div[@role='main']//table//td//a/@href";
 
     // public function quarterToContractUrlTransform($contractUrl) {
-    // 	return "http://www.cic.gc.ca/disclosure-divulgation/" . $contractUrl;
+    //  return "http://www.cic.gc.ca/disclosure-divulgation/" . $contractUrl;
     // }
 
     // public function indexToQuarterUrlTransform($url) {
-    // 	return "http://www.cic.gc.ca/disclosure-divulgation/" . $url;
+    //  return "http://www.cic.gc.ca/disclosure-divulgation/" . $url;
     // }
 
     public $contractContentSubsetXpath = "//div[@role='main']";

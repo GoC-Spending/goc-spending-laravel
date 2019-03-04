@@ -16,16 +16,16 @@ class AgrHandler extends DepartmentHandler
     public $quarterToContractXpath = "//main//table//td//a/@href";
 
     /*
-	public function quarterToContractUrlTransform($contractUrl) {
-		return "http://www.ec.gc.ca/contracts-contrats/" . $contractUrl;
-	}
-	*/
+    public function quarterToContractUrlTransform($contractUrl) {
+        return "http://www.ec.gc.ca/contracts-contrats/" . $contractUrl;
+    }
+    */
 
     /*
-	public function indexToQuarterUrlTransform($url) {
-		return "http://www.ec.gc.ca/contracts-contrats/" . $url;
-	}
-	*/
+    public function indexToQuarterUrlTransform($url) {
+        return "http://www.ec.gc.ca/contracts-contrats/" . $url;
+    }
+    */
 
     public $contractContentSubsetXpath = "//main";
 

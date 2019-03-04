@@ -18,13 +18,13 @@ class SscHandler extends DepartmentHandler
     public $quarterToContractXpath = "//div[@id='wb-main-in']//table//td//a/@href";
 
     /*
-	public function quarterToContractUrlTransform($contractUrl) {
-		return "http://www.cic.gc.ca/disclosure-divulgation/" . $contractUrl;
-	}
+    public function quarterToContractUrlTransform($contractUrl) {
+        return "http://www.cic.gc.ca/disclosure-divulgation/" . $contractUrl;
+    }
 
-	public function indexToQuarterUrlTransform($url) {
-		return "http://www.cic.gc.ca/disclosure-divulgation/" . $url;
-	}*/
+    public function indexToQuarterUrlTransform($url) {
+        return "http://www.cic.gc.ca/disclosure-divulgation/" . $url;
+    }*/
 
 
     // Ignore the latest quarter that uses "open.canada.ca" as a link instead.
