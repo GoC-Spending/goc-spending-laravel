@@ -58,7 +58,7 @@ class VendorData
         }
 
         // if($vendorName != $output) {
-        // 	echo "Replacing [$vendorName] with [$output]. \n";
+        //  echo "Replacing [$vendorName] with [$output]. \n";
         // }
 
         return $output;
@@ -77,15 +77,41 @@ class VendorData
             ' LTD',
             ' -',
             ' /',
+            '/ ',
             ' LIMITED',
             ' LIMITE',
             ' LCC',
             ' LLC',
             '"',
+            ')',
+            '(',
+            '#',
+            ':',
+            ' \\',
+            '\\ ',
         ];
 
-        $output = str_replace($charactersToRemove, '', strtoupper($input));
+        $output = str_replace($charactersToRemove, ' ', strtoupper($input));
+
+         // 2nd pass
+        $output = str_replace($charactersToRemove, ' ', strtoupper($input));
+
+         // Remove extra spaces
         $output = str_replace(['    ', '   ', '  '], ' ', $output);
+
+        $trimCharacters = [
+         '-',
+         '&',
+         '/',
+         '\\',
+         '*',
+         '@',
+        ];
+
+        foreach ($trimCharacters as $character) {
+            $output = trim($output, $character);
+        }
+
         return trim($output);
     }
 
@@ -238,6 +264,8 @@ class VendorData
             '"XWAVE A DIVISION OF BELL ALIANT REGIONAL COMMUNICATIONS       "',
             'XWAVE A DIVISION OF BELL ALIANT REGIONAL COMMUNICATIONS',
             'XWAVE A DIVISION OF BELL ALLIANT',
+
+            'BELL CONFERENCING',
 
         ],
 

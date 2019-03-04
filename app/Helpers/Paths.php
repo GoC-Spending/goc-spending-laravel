@@ -107,4 +107,14 @@ class Paths
 
         return $departmentList;
     }
+
+    /**
+     * Get the path to the raw data folder.
+     *
+     * @return string  The path to the raw data folder, with a trailing slash.
+     */
+    public static function getVendorDataDirectory()
+    {
+        return storage_path() . '/' . env('STORAGE_RELATIVE_VENDOR_FOLDER');
+    }
 }
