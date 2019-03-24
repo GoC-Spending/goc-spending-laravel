@@ -26,7 +26,7 @@ git clone git@github.com:GoC-Spending/goc-spending-vendors.git
 
 And, the set of scraped and parsed data from departmental websites. Note that this repo is several GB in size and will take a while to download:
 ```
-git@github.com:GoC-Spending/goc-spending-data.git
+git clone git@github.com:GoC-Spending/goc-spending-data.git
 ```
 
 ### 2\. Install dependencies, create a .env file, and run database migrations
