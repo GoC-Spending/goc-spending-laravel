@@ -66,7 +66,9 @@ php artisan csv:download
 
 These were the original use-cases for this repository. As of 2019, most departmental proactive disclosure pages have either already been added to the [`goc-spending-data` repository](https://github.com/GoC-Spending/goc-spending-data) or are no longer available online. 
 
-Previously, the two functions below were used to scrape and parse data. **Unless you've added a new DepartmentHandler class, you should skip to [Importing data into the database](#importing-data-into-the-database).**
+Previously, the two functions below were used to scrape and parse data. 
+
+**Unless you've added a new DepartmentHandler class, you should skip to [Importing data into the database](#importing-data-into-the-database).**
 
 ### 1\. Scraping a department's proactive disclosure webpage.
 
@@ -101,6 +103,8 @@ php artisan department:parse ec
 ## Importing data into the database
 
 To import data from the structured JSON data files into a database, use the following command. This could take a long time (up to several hours on slow machines). 
+
+**See [Tips](#tips) below for ways to run these commands on intermittent network connections.**
 
 You can monitor its progress by checking the total number of entries in the `l_contracts` table in your database.
 
