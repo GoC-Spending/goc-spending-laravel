@@ -124,6 +124,11 @@ class CsvOps
         // The online CSV file is updated daily, so if we have one from today it's okay to replace it:
         $filename = date('Y-m-d') . '-contracts.csv';
 
+        // If the CSV folder doesn't exist yet, create it:
+        if (! file_exists($filepath)) {
+            mkdir($filepath, 0755);
+        }
+
         if (file_exists($filepath.$filename)) {
             // Remove an existing entry from today to avoid stream errors or confusion below:
             unlink($filepath.$filename);
