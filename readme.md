@@ -193,7 +193,7 @@ This saves the output to the `_results.log` file (in the working directory). You
 
 ## About
 
-This repository (and the related [GoC-spending repositories](https://github.com/GoC-Spending)) are part of an [Ottawa Civic Tech](http://ottawacivictech.ca/) project. Get in touch by joining our [Slack channel](https://yowct-invite-bot.herokuapp.com/), or by reaching out to any of the contributors.
+This repository (and the related [GoC-spending repositories](https://github.com/GoC-Spending)) are part of an [Ottawa Civic Tech](http://ottawacivictech.ca/) project. Get in touch by joining our [Slack channel](https://yowct-invite-bot.herokuapp.com/) (`#big_little_contractin`), or by reaching out to any of the contributors.
 
 This is a volunteer project and is not affiliated with the Government of Canada.
 
