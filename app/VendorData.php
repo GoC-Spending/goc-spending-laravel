@@ -122,6 +122,7 @@ class VendorData
             '(',
             '#',
             ':',
+            ';',
             ' \\',
             '\\ ',
         ];
@@ -148,5 +149,106 @@ class VendorData
         }
 
         return trim($output);
+    }
+
+    // To help add new entries to the vendor data CSV file
+    // the first entry needs to match the cleanupVendorName entries above, otherwise scraped or CSV entries won't match later.
+    // Usage is via Tinker, e.g.
+    /*
+\App\VendorData::csvEntryPrep("
+WARTSILA
+WARTSILA CANADA
+WARTSILA CANADA (QC)
+WARTSILA CANDA
+WARTSILA LIPS
+", 'WARTSILA')
+*/
+    public static function csvEntryPrep($multilineVendors, $normalizedName, $echo = 1)
+    {
+
+        $output = [];
+        $outputText = '';
+
+        $normalizedName = self::cleanupVendorName($normalizedName);
+
+        // Handle either comma separation, or linebreaks
+        $multilineVendors = str_replace("\n", ',', $multilineVendors);
+        $multilineVendors = str_replace(',,', ',', $multilineVendors);
+
+        $vendors = explode(',', $multilineVendors);
+
+        foreach ($vendors as &$vendor) {
+            $vendor = self::cleanupVendorName($vendor);
+        }
+
+        foreach ($vendors as $vendor) {
+            if (trim($vendor)) {
+                // If it's identical, it isn't needed in the list:
+                if ($vendor != $normalizedName) {
+                    $output[$vendor] = $normalizedName;
+                }
+            }
+        }
+
+        foreach ($output as $name => $normalized) {
+            $outputText .= trim($normalized) . ',' . trim($name) . "\n";
+        }
+
+        // For convenient use via Artisan Tinker
+        if ($echo) {
+            echo "\n\n";
+            echo $outputText;
+        } else {
+            return $outputText;
+        }
+    }
+
+
+    // Re-sorts the vendor CSV file (in goc-spending-vendors)
+    // usage is via Tinker, e.g.
+    // \App\VendorData::resortVendorDataCsv(1)
+    // Using the saveChanges flag will modify the CSV file (which is git-tracked).
+    public static function resortVendorDataCsv($saveChanges = 0)
+    {
+
+        $vendorData = self::getVendorCsvData();
+
+        // dd($vendorData);
+
+        $vendorKeys = array_keys($vendorData);
+        $outputArray = [];
+
+        foreach ($vendorKeys as $parent) {
+            $parent = VendorData::cleanupVendorName($parent);
+            $outputArray[$parent] = [];
+        }
+
+        foreach ($vendorData as $parent => $childArray) {
+            $parent = VendorData::cleanupVendorName($parent);
+            foreach ($childArray as $child) {
+                $outputArray[$parent][] = VendorData::cleanupVendorName($child);
+            }
+        }
+        foreach ($outputArray as $parent => &$childArray) {
+            sort($childArray, SORT_NATURAL);
+            $childArray = array_unique($childArray, SORT_STRING);
+        }
+        // dd($outputArray);
+
+        $outputCsvString = "Parent company,Company name\n";
+        foreach ($outputArray as $parent => &$childArray) {
+            foreach ($childArray as $child) {
+                $outputCsvString .= $parent . "," . $child . "\n";
+            }
+        }
+
+        if ($saveChanges) {
+            $filepath = Paths::getVendorDataDirectory() . "vendor_data.csv";
+
+            file_put_contents($filepath, $outputCsvString);
+            echo "Finished exporting vendor entries. \n";
+        } else {
+            echo $outputCsvString;
+        }
     }
 }
