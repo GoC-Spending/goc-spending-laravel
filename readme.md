@@ -46,7 +46,7 @@ cp .env.example .env
 
 **Update the database settings in the new `.env` file** to match your intended database (e.g. PostgreSQL or MySQL hostname, username, password, and database).
 
-Then, run the artisan migrate command to set up your database tables. This is a good way to test if your .env database settings are correct.
+Then, run the artisan migrate command to set up your database tables. This is a good way to test if your `.env` database settings are correct.
 
 ```
 php artisan migrate
