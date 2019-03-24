@@ -5,6 +5,7 @@ use App\Helpers\Cleaners;
 use App\Helpers\ContractDataProcessors;
 use App\Helpers\Parsers;
 use App\Helpers\Paths;
+use App\Helpers\Miscellaneous;
 use App\VendorData;
 use GuzzleHttp\Client;
 use XPathSelector\Selector;
@@ -672,6 +673,28 @@ class DbOps
         
         foreach ($vendorData->vendorTable as $rawName => $cleanName) {
             echo "Replacing <" . $rawName . "> with <" . $cleanName . ">\n";
+
+            DB::table('l_contracts')
+                ->where('gen_vendor_clean', '=', $rawName)
+                ->update([
+                    'gen_vendor_normalized' => $cleanName,
+                    ]);
+        }
+    }
+
+    public static function renormalizeOwnerNames()
+    {
+
+        $vendorData = VendorData::getInstance();
+        
+        foreach (Miscellaneous::$ownerAcronymMapping as $originalName => $updatedName) {
+            echo "Replacing <" . $originalName . "> with <" . $updatedName . ">\n";
+
+            DB::table('l_contracts')
+                ->where('owner_acronym', '=', $originalName)
+                ->update([
+                    'owner_acronym' => $updatedName,
+                    ]);
         }
     }
 }

@@ -6,6 +6,7 @@ use App\Helpers\Cleaners;
 use App\Helpers\ContractDataProcessors;
 use App\Helpers\Parsers;
 use App\Helpers\Paths;
+use App\Helpers\Miscellaneous;
 use App\VendorData;
 use GuzzleHttp\Client;
 use XPathSelector\Selector;
@@ -13,17 +14,6 @@ use Illuminate\Support\Facades\DB;
 
 class CsvOps
 {
-
-    // CSV value => scraper value
-    public static $ownerAcronymMapping = [
-        'feddevontario' => 'feddev',
-        'statcan' => 'stats',
-        'pwgsc' => 'pspc',
-        'jus' => 'just',
-        'infc' => 'infra',
-        'aandc' => 'inac',
-        'aafc' => 'agr',
-    ];
 
     public static $rowMapping = [
         'vendorName' => 2,
@@ -109,8 +99,8 @@ class CsvOps
             $data['ownerAcronym'] = explode('-', $data['ownerAcronym'])[0];
         }
 
-        if (array_key_exists($data['ownerAcronym'], self::$ownerAcronymMapping)) {
-            $data['ownerAcronym'] = self::$ownerAcronymMapping[$data['ownerAcronym']];
+        if (array_key_exists($data['ownerAcronym'], Miscellaneous::$ownerAcronymMapping)) {
+            $data['ownerAcronym'] = Miscellaneous::$ownerAcronymMapping[$data['ownerAcronym']];
         }
         
         return $data;

@@ -90,5 +90,10 @@ class ImportCsvContracts extends Command
 
         echo "\n\n...started importing CSV rows at " . $startDate . "\n";
         echo "Finished parsing " . $successTotal . " of " . $totalRows . " rows at ". date('Y-m-d H:i:s') . " \n\n";
+
+        echo "\n\nNormalizing owner acronyms\n";
+        DbOps::renormalizeOwnerNames();
+
+        echo "Finished normalizing owner acronyms at ". date('Y-m-d H:i:s') . " \n\n";
     }
 }
