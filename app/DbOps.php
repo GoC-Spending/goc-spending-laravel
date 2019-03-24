@@ -68,6 +68,8 @@ class DbOps
             'gen_vendor_clean' => VendorData::cleanupVendorName($json['vendorName']),
             'gen_vendor_normalized' => $vendorData->consolidateVendorNames($json['vendorName']),
             'gen_contract_id' => $contractId,
+            // Track when the row was added (right now)
+            'row_created_at' => date('Y-m-d H:i:s'),
         ];
 
 
