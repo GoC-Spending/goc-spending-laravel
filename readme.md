@@ -10,7 +10,7 @@ Requires an environment [that can run the latest version](https://laravel.com/do
 
 This repository is designed to scrape, parse, interpret, and import contracting data into a database. It operates in combination with several other repositories, which adds to the difficulty of the initial setup. Overall this repo is intended for one-time use, before the data is analyzed via the database.
 
-Full setup steps (run in your intended parent directory).
+Follow the steps below to install the various components (run these in your intended parent directory).
 
 ### 1\. Clone the three repositories:
 
@@ -44,7 +44,7 @@ Create a copy of `.env.example` and name it `.env`. This will allow you to custo
 cp .env.example .env
 ```
 
-**Update the database settings in the new `.env` file** to match your intended database (e.g. Postgres or MySQL hostname, username, password, and database).
+**Update the database settings in the new `.env` file** to match your intended database (e.g. PostgreSQL or MySQL hostname, username, password, and database).
 
 Then, run the artisan migrate command to set up your database tables. This is a good way to test if your .env database settings are correct.
 
@@ -66,7 +66,7 @@ php artisan csv:download
 
 These were the original use-cases for this repository. As of 2019, most departmental proactive disclosure pages have either already been added to the [`goc-spending-data` repository](https://github.com/GoC-Spending/goc-spending-data) or are no longer available online. 
 
-Previously, the two functions below were used to scrape and parse data. Unless you've added a new DepartmentHandler class, you should skip to [Importing data into the database](#importing-data-into-the-database).
+Previously, the two functions below were used to scrape and parse data. **Unless you've added a new DepartmentHandler class, you should skip to [Importing data into the database](#importing-data-into-the-database).**
 
 ### 1\. Scraping a department's proactive disclosure webpage.
 
@@ -116,7 +116,7 @@ php artisan csv:import
 
 ## Update automatically-generated metadata
 
-The repository includes a number of functions to analyze and clean up the contracting data. These functions are located in the [`DbOps` class](https://github.com/GoC-Spending/goc-spending-laravel/blob/master/app/DbOps.php) This includes,
+The repository includes a number of functions to analyze and clean up the contracting data. These functions are located in the [`DbOps` class](https://github.com/GoC-Spending/goc-spending-laravel/blob/master/app/DbOps.php). This includes,
 
 - finding duplicate entries `findDuplicates`
 - finding amendments to previous contracts, and grouping them together `findAmendments`
