@@ -60,7 +60,8 @@ class DbOps
             'gen_start_year' => $json['startYear'],
             'gen_end_year' => $json['endYear'],
             // Re-run the cleanup function:
-            'gen_vendor_clean' => $vendorData->consolidateVendorNames($json['vendorName']),
+            'gen_vendor_clean' => VendorData::cleanupVendorName($json['vendorName']),
+            'gen_vendor_normalized' => $vendorData->consolidateVendorNames($json['vendorName']),
             'gen_contract_id' => $contractId,
         ];
 
@@ -169,12 +170,12 @@ class DbOps
 
         $totalDuplicates = 0;
 
-        // mode 1: same contract_value, same gen_vendor_clean, same raw_contract_date
+        // mode 1: same contract_value, same gen_vendor_normalized, same raw_contract_date
         $duplicateRows = DB::table('l_contracts')
             ->where('owner_acronym', '=', $rowData['owner_acronym'])
             ->where('gen_is_duplicate', '=', 0)
             ->where('contract_value', '=', $rowData['contract_value'])
-            ->where('gen_vendor_clean', '=', $rowData['gen_vendor_clean'])
+            ->where('gen_vendor_normalized', '=', $rowData['gen_vendor_normalized'])
             ->where('raw_contract_date', '=', $rowData['raw_contract_date'])
             ->whereNotNull('source_fiscal')
             ->orderBy('source_fiscal', 'asc')
@@ -187,13 +188,13 @@ class DbOps
         }
 
 
-        // mode 2: same contract_value, same gen_vendor_clean, same reference_number, same gen_start_year
+        // mode 2: same contract_value, same gen_vendor_normalized, same reference_number, same gen_start_year
         // (in case the raw contract dates are formatted inconsistently or missing)
         $duplicateRows = DB::table('l_contracts')
             ->where('owner_acronym', '=', $rowData['owner_acronym'])
             ->where('gen_is_duplicate', '=', 0)
             ->where('contract_value', '=', $rowData['contract_value'])
-            ->where('gen_vendor_clean', '=', $rowData['gen_vendor_clean'])
+            ->where('gen_vendor_normalized', '=', $rowData['gen_vendor_normalized'])
             ->where('reference_number', '=', $rowData['reference_number'])
             ->where('gen_start_year', '=', $rowData['gen_start_year'])
             ->whereNotNull('source_fiscal')
@@ -288,7 +289,7 @@ class DbOps
 
         $totalAmendments = 0;
         
-        // mode 1: same gen_vendor_clean, same reference_number, different contract_value
+        // mode 1: same gen_vendor_normalized, same reference_number, different contract_value
         $amendmentRows = DB::table('l_contracts')
             ->where('owner_acronym', '=', $rowData['owner_acronym'])
             // Ensure it's not the exact same row:
@@ -299,7 +300,7 @@ class DbOps
             ->whereNull('gen_amendment_group_id')
             ->whereNotNull('source_fiscal')
             // Make sure it's the same vendor:
-            ->where('gen_vendor_clean', '=', $rowData['gen_vendor_clean'])
+            ->where('gen_vendor_normalized', '=', $rowData['gen_vendor_normalized'])
 
             // This is a bit of a complicated combination, but the resulting SQL is,
             //  and ("reference_number" = ? or ("original_value" = ? and "gen_start_year" = ?))
@@ -628,6 +629,7 @@ class DbOps
             });
     }
 
+    // Deprecated by the renormalizeVendorNames function below
     public static function updateCleanVendorNames($updateExport = 1)
     {
 
@@ -641,7 +643,7 @@ class DbOps
             DB::table('l_contracts')
                 ->where('gen_vendor_clean', '=', VendorData::cleanupVendorName($rawName))
                 ->update([
-                    'gen_vendor_clean' => $cleanName,
+                    'gen_vendor_normalized' => $cleanName,
                     ]);
 
             if ($updateExport) {
@@ -651,11 +653,21 @@ class DbOps
                 //         'vendor_clean' => $cleanName,
                 //         ]);
                 DB::table('exports_v1')
-                    ->where('vendor_clean', '=', VendorData::cleanupVendorName($rawName))
+                    ->where('gen_vendor_clean', '=', VendorData::cleanupVendorName($rawName))
                     ->update([
-                        'vendor_clean' => $cleanName,
+                        'gen_vendor_normalized' => $cleanName,
                         ]);
             }
+        }
+    }
+
+    public static function renormalizeVendorNames()
+    {
+
+        $vendorData = VendorData::getInstance();
+        
+        foreach ($vendorData->vendorTable as $rawName => $cleanName) {
+            echo "Replacing <" . $rawName . "> with <" . $cleanName . ">\n";
         }
     }
 }

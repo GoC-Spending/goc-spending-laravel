@@ -62,6 +62,7 @@ class ExportDatabaseV1 extends Command
                     DB::table('exports_v1')->insert([
 
                         'vendor_clean' => $row->gen_vendor_clean,
+                        'vendor_normalized' => $row->gen_vendor_normalized,
                         'owner_acronym' => $row->owner_acronym,
                         'effective_total_value' => $row->gen_effective_total_value,
                         'effective_yearly_value' => $row->gen_effective_yearly_value,
