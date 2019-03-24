@@ -37,10 +37,13 @@ class DbOps
         if (! isset($json['sourceOrigin'])) {
             $json['sourceOrigin'] = 1;
         }
+        if (! isset($json['sourceCsvFilename'])) {
+            $json['sourceCsvFilename'] = null;
+        }
 
         $output = [
             'json_id' => $json['uuid'],
-            'vendor_name' => $json['vendorName'],
+            'vendor_name' => strtoupper($json['vendorName']),
             'owner_acronym' => $json['ownerAcronym'],
             'contract_value' => $json['contractValue'],
             'original_value' => $json['originalValue'],
@@ -57,6 +60,7 @@ class DbOps
             'source_quarter' => $json['sourceQuarter'],
             'source_fiscal' => $json['sourceFiscal'],
             'source_origin' => $json['sourceOrigin'],
+            'source_csv_filename' => $json['sourceCsvFilename'],
             'gen_start_year' => $json['startYear'],
             'gen_end_year' => $json['endYear'],
             // Re-run the cleanup function:

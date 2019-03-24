@@ -48,9 +48,9 @@ class ImportCsvContracts extends Command
         $totalRows = 0;
         $successTotal = 0;
 
-        $csvFilename = storage_path() . '/' . env('STORAGE_RELATIVE_CSV_FILEPATH');
+        $csvFilepath = CsvOps::getLatestCsvFile();
 
-
+        $csvFilename = pathinfo($csvFilepath, PATHINFO_FILENAME);
         
         // Clear old entries from the database.
         // source_origin = 2 is the CSV file
@@ -59,13 +59,13 @@ class ImportCsvContracts extends Command
 
 
         $row = 1;
-        if (($handle = fopen($csvFilename, "r")) !== false) {
+        if (($handle = fopen($csvFilepath, "r")) !== false) {
             while (($data = fgetcsv($handle, 0, ",")) !== false) {
                 if ($row != 1) {
                     // Skip the header row
 
                     try {
-                        $output = CsvOps::rowToArray($data);
+                        $output = CsvOps::rowToArray($data, $csvFilename);
                     } catch (\ErrorException $e) {
                         echo "Failed to convert row $row\n";
                         var_dump($data);

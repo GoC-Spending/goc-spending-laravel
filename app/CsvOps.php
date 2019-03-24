@@ -44,7 +44,7 @@ class CsvOps
         'csvReferenceNumber' => 0,
     ];
 
-    public static function rowToArray($rowData)
+    public static function rowToArray($rowData, $csvFilename)
     {
 
         $data = [];
@@ -73,6 +73,7 @@ class CsvOps
             $data['uuid'] = $data['ownerAcronym'] . '-' . $data['referenceNumber'];
 
             $data['sourceOrigin'] = 2;
+            $data['sourceCsvFilename'] = $csvFilename;
 
             return $data;
         } else {
@@ -113,5 +114,55 @@ class CsvOps
         }
         
         return $data;
+    }
+
+    // Gets the CSV file from the open.canada.ca website, since it's too large to track in GitHub.
+    // This may take several minutes to run.
+    // Usage is via Artisan,
+    // php artisan csv:download
+    public static function downloadLatestCsvFile()
+    {
+
+        $datasetpath = env('CSV_DATASET_PATH');
+
+        if (! $datasetpath) {
+            echo "Error: you need to set CSV_DATASET_PATH in your .env file.";
+            return false;
+        }
+
+        $filepath = storage_path() . '/' . env('STORAGE_RELATIVE_CSV_FOLDER');
+        // The online CSV file is updated daily, so if we have one from today it's okay to replace it:
+        $filename = date('Y-m-d') . '-contracts.csv';
+
+        if (file_exists($filepath.$filename)) {
+            // Remove an existing entry from today to avoid stream errors or confusion below:
+            unlink($filepath.$filename);
+        }
+
+        // Stream-file saving, to save memory
+        // Thanks to
+        // https://stackoverflow.com/a/3938551/756641
+        file_put_contents($filepath . $filename, fopen("$datasetpath", 'r'));
+    }
+
+    public static function getLatestCsvFile()
+    {
+
+        $folderpath = storage_path() . '/' . env('STORAGE_RELATIVE_CSV_FOLDER');
+
+        // Thanks to
+        // https://stackoverflow.com/a/2667105/756641
+        // Gets all CSV files, and sorts in descending date order (awesome!)
+        $files = glob("$folderpath*.csv");
+        usort($files, function ($a, $b) {
+            return filemtime($a) < filemtime($b);
+        });
+        
+        if ($files) {
+            return $files[0];
+        } else {
+            echo "No CSV files could be found.";
+            return false;
+        }
     }
 }
