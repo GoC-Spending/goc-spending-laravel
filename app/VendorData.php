@@ -115,6 +115,7 @@ class VendorData
             '/ ',
             ' LIMITED',
             ' LIMITE',
+            // ' LIMITEE',
             ' LCC',
             ' LLC',
             '"',
@@ -218,6 +219,8 @@ WARTSILA LIPS
         $vendorKeys = array_keys($vendorData);
         $outputArray = [];
 
+        sort($vendorKeys, SORT_STRING);
+
         foreach ($vendorKeys as $parent) {
             $parent = VendorData::cleanupVendorName($parent);
             $outputArray[$parent] = [];
@@ -230,7 +233,7 @@ WARTSILA LIPS
             }
         }
         foreach ($outputArray as $parent => &$childArray) {
-            sort($childArray, SORT_NATURAL);
+            sort($childArray, SORT_STRING);
             $childArray = array_unique($childArray, SORT_STRING);
         }
         // dd($outputArray);

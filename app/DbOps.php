@@ -668,7 +668,7 @@ class DbOps
         }
     }
 
-    public static function renormalizeVendorNames()
+    public static function renormalizeVendorNames($includeExportsV1 = 0, $includeExportsV2 = 0)
     {
 
         $vendorData = VendorData::getInstance();
@@ -681,14 +681,27 @@ class DbOps
                 ->update([
                     'gen_vendor_normalized' => $cleanName,
                     ]);
+            
+            if ($includeExportsV1) {
+                DB::table('exports_v1')
+                ->where('vendor_clean', '=', $rawName)
+                ->update([
+                    'vendor_normalized' => $cleanName,
+                    ]);
+            }
+            if ($includeExportsV2) {
+                DB::table('exports_v2')
+                ->where('vendor_clean', '=', $rawName)
+                ->update([
+                    'vendor_normalized' => $cleanName,
+                    ]);
+            }
         }
     }
 
     public static function renormalizeOwnerNames()
     {
 
-        $vendorData = VendorData::getInstance();
-        
         foreach (Miscellaneous::$ownerAcronymMapping as $originalName => $updatedName) {
             echo "Replacing <" . $originalName . "> with <" . $updatedName . ">\n";
 
