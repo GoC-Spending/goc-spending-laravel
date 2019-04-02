@@ -52,6 +52,9 @@ class ExportDatabaseV1 extends Command
 
         // Across all departments,
         // as long as there's a source_fiscal and it's not a duplicate entry.
+        
+        // Test-replacing this with a large single SQL query, to avoid performance/quality issues.
+        /*
         DB::table('l_contracts')
             ->where('gen_is_duplicate', '=', 0)
             ->whereNotNull('source_fiscal')
@@ -90,6 +93,55 @@ class ExportDatabaseV1 extends Command
                     echo "  " . $totalRows . "\n";
                 }
             });
+
+        */
+
+        // Note that this contains Postgresql-specific syntax for type bindings (::)
+        DB::statement("INSERT INTO exports_v1 ( 
+            vendor_clean, 
+            vendor_normalized, 
+            owner_acronym, 
+            effective_total_value,
+            effective_yearly_value,
+            original_value,
+            effective_start_year,
+            effective_end_year,
+            source_fiscal,
+            source_year,
+            source_quarter,
+            source_origin,
+            is_most_recent_value,
+            is_amendment,
+            amendment_group_id,
+            reference_number,
+            object_code,
+            description,
+            extra_description,
+            comments
+            )
+          SELECT
+            l_contracts.gen_vendor_clean, 
+            l_contracts.gen_vendor_normalized, 
+            l_contracts.owner_acronym, 
+            l_contracts.gen_effective_total_value,
+            l_contracts.gen_effective_yearly_value,
+            l_contracts.original_value,
+            l_contracts.gen_effective_start_year,
+            l_contracts.gen_effective_end_year,
+            l_contracts.source_fiscal,
+            l_contracts.source_year,
+            l_contracts.source_quarter,
+            l_contracts.source_origin,
+            l_contracts.gen_is_most_recent_value::integer,
+            l_contracts.gen_is_amendment::integer,
+            l_contracts.gen_amendment_group_id,
+            l_contracts.reference_number,
+            l_contracts.object_code,
+            l_contracts.description,
+            l_contracts.extra_description,
+            l_contracts.comments
+          FROM    l_contracts
+          WHERE   l_contracts.gen_is_duplicate::integer = 0 AND l_contracts.source_fiscal IS NOT NULL;");
 
         echo "\n\n...started database export update at " . $startDate . "\n";
         echo "Finished database export at ". date('Y-m-d H:i:s') . " \n\n";
