@@ -214,7 +214,7 @@ class DbOps
             $totalDuplicates += self::markDuplicateEntries($rowData['owner_acronym'], $duplicateRows, 2);
         }
 
-        // mode 3: same contract_value and same reference_number
+        // mode 3: same gen_vendor_normalized and same reference_number
         // (in case both the raw contract dates and the vendor names are input inconsistently)
         $duplicateRows = DB::table('l_contracts')
             ->where('owner_acronym', '=', $rowData['owner_acronym'])
