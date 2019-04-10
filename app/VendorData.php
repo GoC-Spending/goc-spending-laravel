@@ -103,6 +103,11 @@ class VendorData
     {
 
         $charactersToRemove = [
+            ' LIMITED',
+            ' LIMITE',
+            // ' LIMITEE',
+            ' LCC',
+            ' LLC',
             ',',
             "'",
             "\t",
@@ -113,11 +118,8 @@ class VendorData
             ' -',
             ' /',
             '/ ',
-            ' LIMITED',
-            ' LIMITE',
-            // ' LIMITEE',
-            ' LCC',
-            ' LLC',
+            
+            
             '"',
             ')',
             '(',
