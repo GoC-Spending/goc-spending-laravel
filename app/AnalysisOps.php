@@ -11,6 +11,7 @@ use GuzzleHttp\Client;
 use XPathSelector\Selector;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Arr;
+use Illuminate\Support\Str;
 
 class AnalysisOps
 {
@@ -111,6 +112,20 @@ class AnalysisOps
             self::saveAnalysisCsvFile("departments/$ownerAcronym/largest-companies-by-entries-total-" . self::$config['startYear'] . '-to-' . self::$config['endYear'], self::largestCompaniesByEntries($ownerAcronym));
 
             self::saveAnalysisCsvFile("departments/$ownerAcronym/largest-companies-by-entries-by-year-" . self::$config['startYear'] . '-to-' . self::$config['endYear'], self::largestCompaniesByEntriesByYear($ownerAcronym));
+        }
+
+        $vendors = self::largestVendorNamesByEffectiveValue();
+
+        foreach ($vendors as $vendor) {
+            $vendorSlug = Str::slug($vendor);
+
+            self::saveAnalysisCsvFile("vendors/$vendorSlug/largest-departments-by-effective-value-total-" . self::$config['startYear'] . '-to-' . self::$config['endYear'], self::largestDepartmentsByEffectiveValue($vendor));
+    
+            self::saveAnalysisCsvFile("vendors/$vendorSlug/largest-departments-by-effective-value-by-year-" . self::$config['startYear'] . '-to-' . self::$config['endYear'], self::largestDepartmentsByEffectiveValueByYear($vendor));
+      
+            self::saveAnalysisCsvFile("vendors/$vendorSlug/largest-departments-by-entries-total-" . self::$config['startYear'] . '-to-' . self::$config['endYear'], self::largestDepartmentsByEntries($vendor));
+
+            self::saveAnalysisCsvFile("vendors/$vendorSlug/largest-departments-by-entries-by-year-" . self::$config['startYear'] . '-to-' . self::$config['endYear'], self::largestDepartmentsByEntriesByYear($vendor));
         }
     }
 
@@ -288,6 +303,15 @@ COUNT("id") filter (where gen_is_amendment::integer = 1) as total_amendments
         return $ownerAcronyms->toArray();
     }
 
+    public static function largestVendorNamesByEffectiveValue($length = 10)
+    {
+        $results = self::largestCompaniesByEffectiveValue();
+
+        $vendors = array_slice(Arr::pluck($results, 'vendor_normalized'), 0, $length);
+      
+        return $vendors;
+    }
+
 
     // Gets the largest companies ordered by total number of entries (over the total time range specified, e.g. multiple years.)
     public static function largestCompaniesByEntries($ownerAcronym = '')
@@ -390,6 +414,176 @@ COUNT("id") filter (where gen_is_amendment::integer = 1) as total_amendments
         ORDER BY gen_vendor_normalized, source_year ASC
         LIMIT 1000
       ';
+
+        $results = DB::select(DB::raw($query), $params);
+
+        return $results;
+    }
+  
+    // For a specified vendor, gives the breakdown by department
+    public static function largestDepartmentsByEffectiveValue($vendorName)
+    {
+
+        $query = '
+        SELECT owner_acronym, SUM("yearly_value") as sum_effective_value
+        FROM "exports_v2"
+        WHERE effective_year <= :endYear
+        AND effective_year >= :startYear
+        AND vendor_normalized = :vendorName
+        GROUP BY owner_acronym
+        ORDER BY sum_effective_value DESC
+        LIMIT :limit
+      ';
+
+        $params = [
+        'startYear' => self::$config['startYear'],
+        'endYear' => self::$config['endYear'],
+        'vendorName' => $vendorName,
+        'limit' => self::$config['vendorLimit'],
+        ];
+
+        $results = DB::select(DB::raw($query), $params);
+
+        return $results;
+    }
+
+    public static function largestDepartmentsByEffectiveValueByYear($vendorName)
+    {
+        $query = '
+        SELECT owner_acronym, SUM("yearly_value") as sum_effective_value
+        FROM "exports_v2"
+        WHERE effective_year <= :endYear
+        AND effective_year >= :startYear
+        AND vendor_normalized = :vendorName
+        GROUP BY owner_acronym
+        ORDER BY sum_effective_value DESC
+        LIMIT :vendorLimitTimebound
+      ';
+
+        $params = [
+        'startYear' => self::$config['startYear'],
+        'endYear' => self::$config['endYear'],
+        'vendorName' => $vendorName,
+        'vendorLimitTimebound' => self::$config['vendorLimitTimebound'],
+        ];
+
+
+
+        $results = DB::select(DB::raw($query), $params);
+
+        $ownerAcronyms = Arr::pluck($results, 'owner_acronym');
+
+      // Part 2:
+      // Use the department ownerAcronyms list as input for a time-sorted select
+
+        $query = '
+        SELECT owner_acronym, effective_year, SUM("yearly_value") as sum_yearly_value
+        FROM "exports_v2"
+        WHERE effective_year <= :endYear
+        AND effective_year >= :startYear
+        AND owner_acronym = ' . self::arrayToArrayString($ownerAcronyms) . '
+        AND vendor_normalized = :vendorName
+        GROUP BY owner_acronym, effective_year
+        ORDER BY owner_acronym, effective_year ASC
+        LIMIT 10000;
+        ';
+
+        $params = [
+        'startYear' => self::$config['startYear'],
+        'endYear' => self::$config['endYear'],
+        'vendorName' => $vendorName,
+        ];
+
+        $results = DB::select(DB::raw($query), $params);
+
+        return $results;
+    }
+
+    public static function largestDepartmentsByEntries($vendorName)
+    {
+        $query = '
+        SELECT owner_acronym, COUNT("id") as total_entries,
+        COUNT("id") filter (where gen_is_amendment::integer = 0) as total_contracts,
+        COUNT("id") filter (where gen_is_amendment::integer = 1) as total_amendments
+        FROM "l_contracts"
+        WHERE source_year IS NOT NULL
+        AND source_year <= :endYear
+        AND source_year >= :startYear
+        AND gen_is_duplicate::integer = 0
+        AND gen_vendor_normalized = :vendorName
+        GROUP BY owner_acronym
+        ORDER BY total_entries DESC
+        LIMIT :vendorLimit
+      ';
+
+        $params = [
+        'startYear' => self::$config['startYear'],
+        'endYear' => self::$config['endYear'],
+        'vendorName' => $vendorName,
+        'vendorLimit' => self::$config['vendorLimit'],
+        ];
+
+
+        $results = DB::select(DB::raw($query), $params);
+
+        return $results;
+    }
+
+    // Gets the largest companies ordered by total number of entries, by year.
+    public static function largestDepartmentsByEntriesByYear($vendorName)
+    {
+        $query = '
+        SELECT owner_acronym, COUNT("id") as total_entries,
+        COUNT("id") filter (where gen_is_amendment::integer = 0) as total_contracts,
+        COUNT("id") filter (where gen_is_amendment::integer = 1) as total_amendments
+        FROM "l_contracts"
+        WHERE source_year IS NOT NULL
+        AND source_year <= :endYear
+        AND source_year >= :startYear
+        AND gen_is_duplicate::integer = 0
+        AND gen_vendor_normalized = :vendorName
+        GROUP BY owner_acronym
+        ORDER BY total_entries DESC
+        LIMIT :vendorLimitTimebound
+      ';
+
+        $params = [
+        'startYear' => self::$config['startYear'],
+        'endYear' => self::$config['endYear'],
+        'vendorName' => $vendorName,
+        'vendorLimitTimebound' => self::$config['vendorLimitTimebound'],
+        ];
+
+
+        $results = DB::select(DB::raw($query), $params);
+
+        $ownerAcronyms = Arr::pluck($results, 'owner_acronym');
+
+      // Part 2:
+      // Use the vendor list as input for a time-sorted select
+
+        $query = '
+          SELECT owner_acronym, source_year, COUNT("id") as total_entries,
+          COUNT("id") filter (where gen_is_amendment::integer = 0) as total_contracts,
+          COUNT("id") filter (where gen_is_amendment::integer = 1) as total_amendments
+          FROM "l_contracts"
+          WHERE source_year IS NOT NULL
+          AND source_year <= :endYear
+          AND source_year >= :startYear
+          AND gen_vendor_normalized = :vendorName
+          AND owner_acronym = ' . self::arrayToArrayString($ownerAcronyms) . '
+          AND gen_is_duplicate::integer = 0
+          GROUP BY owner_acronym, source_year
+          ORDER BY owner_acronym, source_year ASC
+          LIMIT 10000
+      ';
+
+        $params = [
+        'startYear' => self::$config['startYear'],
+        'endYear' => self::$config['endYear'],
+        'vendorName' => $vendorName,
+        ];
+
 
         $results = DB::select(DB::raw($query), $params);
 
