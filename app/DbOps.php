@@ -87,6 +87,64 @@ class DbOps
         }
     }
 
+    public static function addErrorRowToDatabase($data, $errorType)
+    {
+        // 1 = CSV import error
+        // 2 = no source_fiscal
+        // 3 = contract_value is 0
+        // 4 = manual error flag
+
+        if (! isset($data['sourceOrigin'])) {
+            $data['sourceOrigin'] = 1;
+        }
+        
+        $defaults = [
+            'uuid' => null,
+            'ownerAcronym' => '',
+            'referenceNumber' => null,
+            'contractValue' => 0,
+            'sourceYear' => null,
+            'sourceQuarter' => null,
+            'sourceFiscal' => null,
+            'sourceOrigin' => null,
+            'sourceCsvFilename' => null,
+        ];
+
+        $data = array_merge($defaults, $data);
+
+        $output = [
+            'json_id' => $data['uuid'],
+
+            'owner_acronym' => $data['ownerAcronym'],
+            'reference_number' => $data['referenceNumber'],
+            'contract_value' => $data['contractValue'],
+
+            'source_year' => $data['sourceYear'],
+            'source_quarter' => $data['sourceQuarter'],
+            'source_fiscal' => $data['sourceFiscal'],
+            'source_origin' => $data['sourceOrigin'],
+            'source_csv_filename' => $data['sourceCsvFilename'],
+
+            'row_created_at' => date('Y-m-d H:i:s'),
+            'gen_is_error' => 1,
+            'gen_error_via' => intval($errorType),
+        ];
+
+        DB::table('l_contracts')->insert($output);
+
+        try {
+            return true;
+        } catch (\Illuminate\Database\QueryException $e) {
+            // dd($output);
+
+            echo "Failed to add error row (query exception) \n";
+            return false;
+        } catch (PDOException $e) {
+            echo "Failed to add error row (PDO exception) \n";
+            return false;
+        }
+    }
+
     public static function importDepartmentalJsonToDatabase($acronym, $clearOldEntries = 1)
     {
 
@@ -181,6 +239,7 @@ class DbOps
         $duplicateRows = DB::table('l_contracts')
             ->where('owner_acronym', '=', $rowData['owner_acronym'])
             ->where('gen_is_duplicate', '=', 0)
+            ->where('gen_is_error', '=', 0)
             ->where('contract_value', '=', $rowData['contract_value'])
             ->where('gen_vendor_normalized', '=', $rowData['gen_vendor_normalized'])
             ->where('raw_contract_date', '=', $rowData['raw_contract_date'])
@@ -200,6 +259,7 @@ class DbOps
         $duplicateRows = DB::table('l_contracts')
             ->where('owner_acronym', '=', $rowData['owner_acronym'])
             ->where('gen_is_duplicate', '=', 0)
+            ->where('gen_is_error', '=', 0)
             ->where('contract_value', '=', $rowData['contract_value'])
             ->where('gen_vendor_normalized', '=', $rowData['gen_vendor_normalized'])
             ->where('reference_number', '=', $rowData['reference_number'])
@@ -219,6 +279,7 @@ class DbOps
         $duplicateRows = DB::table('l_contracts')
             ->where('owner_acronym', '=', $rowData['owner_acronym'])
             ->where('gen_is_duplicate', '=', 0)
+            ->where('gen_is_error', '=', 0)
             ->where('contract_value', '=', $rowData['contract_value'])
             ->where('reference_number', '=', $rowData['reference_number'])
             ->whereNotNull('source_fiscal')
@@ -242,6 +303,7 @@ class DbOps
         DB::table('l_contracts')
             ->where('owner_acronym', '=', $ownerAcronym)
             ->whereNotNull('source_fiscal')
+            ->where('gen_is_error', '=', 0)
             ->orderBy('source_fiscal', 'asc')
             ->orderBy('id', 'asc')
             ->select('id')
@@ -303,6 +365,8 @@ class DbOps
             ->where('id', '!=', $rowData['id'])
             // Make sure it's not a duplicate entry
             ->where('gen_is_duplicate', '=', 0)
+            // Make sure it's not an error row
+            ->where('gen_is_error', '=', 0)
             // Make sure it isn't part of a different amendment group (TODO - review this)
             ->whereNull('gen_amendment_group_id')
             ->whereNotNull('source_fiscal')
@@ -344,6 +408,7 @@ class DbOps
         DB::table('l_contracts')
             ->where('owner_acronym', '=', $ownerAcronym)
             ->where('gen_is_duplicate', '=', 0)
+            ->where('gen_is_error', '=', 0)
             ->whereNotNull('source_fiscal')
             ->orderBy('source_fiscal', 'asc')
             ->orderBy('id', 'asc')
@@ -562,6 +627,7 @@ class DbOps
         DB::table('l_contracts')
             ->where('owner_acronym', '=', $ownerAcronym)
             ->where('gen_is_duplicate', '=', 0)
+            ->where('gen_is_error', '=', 0)
             // Useful for testing purposes:
             // ->where('gen_amendment_group_id', '=', 1251964)
             ->whereNotNull('gen_amendment_group_id')
@@ -597,6 +663,7 @@ class DbOps
         DB::table('l_contracts')
             ->where('owner_acronym', '=', $ownerAcronym)
             ->where('gen_is_duplicate', '=', 0)
+            ->where('gen_is_error', '=', 0)
             // Find all contracts that *do not* have amendments
             ->whereNull('gen_amendment_group_id')
             ->whereNotNull('gen_start_year')
@@ -711,5 +778,31 @@ class DbOps
                     'owner_acronym' => $updatedName,
                     ]);
         }
+    }
+
+    public static function checkForDataErrors()
+    {
+
+        echo "Checking for missing source_fiscal\n";
+
+        DB::table('l_contracts')
+            ->whereNull('source_fiscal')
+            ->where('gen_is_error', '=', 0)
+            ->update([
+                'gen_is_error' => 1,
+                'gen_error_via' => 2,
+                ]);
+        
+        echo "Checking for empty contract_value\n";
+
+        DB::table('l_contracts')
+            ->where('contract_value', '=', 0)
+            ->where('gen_is_error', '=', 0)
+            ->update([
+                'gen_is_error' => 1,
+                'gen_error_via' => 3,
+                ]);
+        
+        echo "Done error checking.\n";
     }
 }

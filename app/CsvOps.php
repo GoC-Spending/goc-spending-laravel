@@ -47,6 +47,16 @@ class CsvOps
 
         $data = array_merge(DepartmentHandler::$rowParams, $data);
 
+        // dd($data);
+
+        // In some cases, contracts have an originalValue but not a contractValue. If so, add it here:
+        if ($data['contractValue'] == '' && $data['originalValue']) {
+            $data['contractValue'] = $data['originalValue'];
+        }
+
+        // In other cases (hopefully more rare), contracts have an amendedValue but not an originalValue or contractValue. In that case, use the amendedValue even though typically it's only a partial amount.
+        // TODO - review if this is needed.
+
         // Make sure there's really data here!
         if ($data['vendorName'] && $data['contractValue'] && $data['ownerAcronym']) {
             $data = ContractDataProcessors::cleanParsedArray($data);
@@ -69,6 +79,31 @@ class CsvOps
         } else {
             // dd($data);
             return [];
+        }
+    }
+
+    public static function getOwnerAcronymFromRow($rowData, $default = 'unknown', $returnArray = 1)
+    {
+
+        // dd($rowData);
+
+        $columnNumber = self::$rowMapping['ownerAcronym'];
+        $output = [];
+        if (isset($rowData[$columnNumber])) {
+            $output['ownerAcronym'] = $rowData[$columnNumber];
+            $output = self::csvOwnerAcronymHandling($output);
+
+            if ($returnArray) {
+                return $output;
+            } else {
+                return $output['ownerAcronym'];
+            }
+        }
+
+        if ($returnArray) {
+            return $output['ownerAcronym'] = $default;
+        } else {
+            return $default;
         }
     }
 

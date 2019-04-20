@@ -64,11 +64,16 @@ class ImportCsvContracts extends Command
                 if ($row != 1) {
                     // Skip the header row
 
+                    $importSuccess = 0;
+
                     try {
                         $output = CsvOps::rowToArray($data, $csvFilename);
                     } catch (\ErrorException $e) {
                         echo "Failed to convert row $row\n";
                         var_dump($data);
+                        
+                        // TODO: review how often this happens, and if DbOps::addErrorRowToDatabase should be called here.
+                        // dd($data);
                         continue;
                     }
                     
@@ -77,7 +82,15 @@ class ImportCsvContracts extends Command
 
                         if (DbOps::importJsonDataToDatabase($output, $contractId, 'csv:' . $row)) {
                             $successTotal++;
+                            $importSuccess = 1;
                         }
+                    }
+
+                    if (! $importSuccess) {
+                        // If the row couldn't be successfully imported, add an "error row" to the database that (if possible) flags which department had the error:
+                        $output = CsvOps::getOwnerAcronymFromRow($data);
+                        $output['sourceOrigin'] = 2;
+                        DbOps::addErrorRowToDatabase($output, 1);
                     }
 
                     $totalRows++;
@@ -95,5 +108,10 @@ class ImportCsvContracts extends Command
         DbOps::renormalizeOwnerNames();
 
         echo "Finished normalizing owner acronyms at ". date('Y-m-d H:i:s') . " \n\n";
+
+        echo "\n\nChecking for data errors\n";
+        DbOps::checkForDataErrors();
+
+        echo "Finished checking for data errors at ". date('Y-m-d H:i:s') . " \n\n";
     }
 }

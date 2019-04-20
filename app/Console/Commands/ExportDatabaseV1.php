@@ -57,6 +57,7 @@ class ExportDatabaseV1 extends Command
         /*
         DB::table('l_contracts')
             ->where('gen_is_duplicate', '=', 0)
+            ->where('gen_is_error', '=', 0)
             ->whereNotNull('source_fiscal')
             ->orderBy('owner_acronym', 'asc')
             ->orderBy('source_fiscal', 'asc')
@@ -141,7 +142,7 @@ class ExportDatabaseV1 extends Command
             l_contracts.extra_description,
             l_contracts.comments
           FROM    l_contracts
-          WHERE   l_contracts.gen_is_duplicate::integer = 0 AND l_contracts.source_fiscal IS NOT NULL;");
+          WHERE   l_contracts.gen_is_duplicate::integer = 0 AND l_contracts.gen_is_error::integer = 0 AND l_contracts.source_fiscal IS NOT NULL;");
 
         echo "\n\n...started database export update at " . $startDate . "\n";
         echo "Finished database export at ". date('Y-m-d H:i:s') . " \n\n";

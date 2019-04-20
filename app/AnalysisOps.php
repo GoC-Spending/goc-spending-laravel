@@ -140,6 +140,7 @@ COUNT("id") filter (where gen_is_amendment::integer = 1) as total_amendments
     FROM "l_contracts"
     WHERE source_year IS NOT NULL
     AND gen_is_duplicate::integer = 0
+    AND gen_is_error::integer = 0
     GROUP BY owner_acronym, source_year
     ORDER BY owner_acronym, source_year
     LIMIT 50000
@@ -159,6 +160,7 @@ COUNT("id") filter (where gen_is_amendment::integer = 1) as total_amendments
     FROM "l_contracts"
     WHERE source_fiscal IS NOT NULL
     AND gen_is_duplicate::integer = 0
+    AND gen_is_error::integer = 0
     GROUP BY owner_acronym, source_fiscal
     ORDER BY owner_acronym, source_fiscal
     LIMIT 50000
@@ -325,6 +327,7 @@ COUNT("id") filter (where gen_is_amendment::integer = 1) as total_amendments
         AND source_year <= :endYear
         AND source_year >= :startYear
         AND gen_is_duplicate::integer = 0
+        AND gen_is_error::integer = 0
       ';
 
         $params = [
@@ -361,6 +364,7 @@ COUNT("id") filter (where gen_is_amendment::integer = 1) as total_amendments
         AND source_year <= :endYear
         AND source_year >= :startYear
         AND gen_is_duplicate::integer = 0
+        AND gen_is_error::integer = 0
       ';
 
         $params = [
@@ -397,6 +401,7 @@ COUNT("id") filter (where gen_is_amendment::integer = 1) as total_amendments
           AND source_year >= :startYear
           AND gen_vendor_normalized = ' . self::arrayToArrayString($vendors) . '
           AND gen_is_duplicate::integer = 0
+          AND gen_is_error::integer = 0
       ';
 
         $params = [
@@ -510,6 +515,7 @@ COUNT("id") filter (where gen_is_amendment::integer = 1) as total_amendments
         AND source_year <= :endYear
         AND source_year >= :startYear
         AND gen_is_duplicate::integer = 0
+        AND gen_is_error::integer = 0
         AND gen_vendor_normalized = :vendorName
         GROUP BY owner_acronym
         ORDER BY total_entries DESC
@@ -541,6 +547,7 @@ COUNT("id") filter (where gen_is_amendment::integer = 1) as total_amendments
         AND source_year <= :endYear
         AND source_year >= :startYear
         AND gen_is_duplicate::integer = 0
+        AND gen_is_error::integer = 0
         AND gen_vendor_normalized = :vendorName
         GROUP BY owner_acronym
         ORDER BY total_entries DESC
@@ -573,6 +580,7 @@ COUNT("id") filter (where gen_is_amendment::integer = 1) as total_amendments
           AND gen_vendor_normalized = :vendorName
           AND owner_acronym = ' . self::arrayToArrayString($ownerAcronyms) . '
           AND gen_is_duplicate::integer = 0
+          AND gen_is_error::integer = 0
           GROUP BY owner_acronym, source_year
           ORDER BY owner_acronym, source_year ASC
           LIMIT 10000

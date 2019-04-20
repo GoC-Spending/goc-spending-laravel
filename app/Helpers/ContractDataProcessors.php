@@ -2,6 +2,8 @@
 
 namespace App\Helpers;
 
+use App\VendorData;
+
 class ContractDataProcessors
 {
 
@@ -91,7 +93,9 @@ class ContractDataProcessors
 
         // Find the consolidated vendor name:
         if ($vendorData) {
-            $contract['vendorClean'] = $vendorData->consolidateVendorNames($contract['vendorName']);
+            // TODO - review if this is still used (versus getting calculated later).
+            $contract['vendorClean'] = VendorData::cleanupVendorName($contract['vendorName']);
+            $contract['vendorNormalized'] = $vendorData->consolidateVendorNames($contract['vendorName']);
         }
 
         // Remove any linebreaks etc.
