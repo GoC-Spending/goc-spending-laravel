@@ -142,7 +142,8 @@ class VendorData
         return $output;
     }
 
-    public static function cleanupVendorName($input)
+    // NOTE - Now replaced with the v2 version below
+    public static function cleanupVendorNameOLD($input)
     {
 
         $charactersToRemove = [
@@ -197,7 +198,8 @@ class VendorData
         return trim($output);
     }
 
-    public static function cleanupVendorNameV2($input)
+    // Version 2 as of 2019-04-22
+    public static function cleanupVendorName($input)
     {
         
         $input = str_replace('/', ' / ', $input);
