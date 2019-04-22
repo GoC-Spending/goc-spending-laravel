@@ -2,6 +2,7 @@
 namespace App;
 
 use App\Helpers\Paths;
+use Illuminate\Support\Str;
 
 class VendorData
 {
@@ -12,6 +13,48 @@ class VendorData
      * @var VendorData
      */
     private static $instance;
+
+    public static $suffixes = [
+        'LIMITED',
+        'LIMITEE',
+        'LIMITE',
+        'LIMITACE',
+        'LTE',
+        'LT',
+        'LTEE',
+        'LLP',
+        'LP',
+        'PLC',
+        'LCC',
+        'LLC',
+        'INCORPORATED',
+        'INC',
+        'LTD',
+        'LDT',
+        'CO',
+        'CORP',
+        'CORPORATION',
+        'PLC',
+        'PTY',
+        'ULC',
+        'LP',
+        'AB',
+        'SENC',
+        'SENCRL',
+        'SENCRLSRL',
+        'SRL',
+        'LLPSEN',
+        'LTACE',
+        'GMBH',
+        'SA',
+        'SPZOO',
+        'SP ZOO',
+        'SP Z OO',
+        'SP Z O O',
+        'BV',
+        'B V',
+        'SAS',
+    ];
 
     public $vendorTable;
 
@@ -152,6 +195,36 @@ class VendorData
         }
 
         return trim($output);
+    }
+
+    public static function cleanupVendorNameV2($input)
+    {
+        
+        $input = str_replace('/', ' / ', $input);
+
+        $input = strtoupper(Str::slug($input, ' '));
+
+        foreach (self::$suffixes as $suffix) {
+            $input = self::removeFromEnd($input, ' ' . $suffix);
+
+            $input = str_replace(' ' . $suffix . ' ', ' ', $input);
+        }
+
+        $input = trim($input);
+        
+        return $input;
+    }
+
+    // Thanks to
+    // https://stackoverflow.com/a/47689812/756641
+    public static function removeFromEnd($haystack, $needle)
+    {
+        $length = strlen($needle);
+    
+        if (substr($haystack, -$length) === $needle) {
+            $haystack = substr($haystack, 0, -$length);
+        }
+        return $haystack;
     }
 
     // To help add new entries to the vendor data CSV file

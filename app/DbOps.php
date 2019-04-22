@@ -766,6 +766,62 @@ class DbOps
         }
     }
 
+    public static function findUpdatedVendorNames($echoCsv = 0)
+    {
+
+        $vendorData = VendorData::getInstance();
+        $matches = [];
+        $output = [];
+        
+        foreach ($vendorData->vendorTable as $cleanName => $normalizedName) {
+            // dd($cleanName);
+
+            $rawNames = DB::table('l_contracts')
+                ->where('gen_vendor_clean', '=', $cleanName)
+                ->select('vendor_name')
+                ->distinct()
+                ->pluck('vendor_name');
+
+            $matches[$cleanName] = [
+                'cleanName' => $cleanName,
+                'normalizedName' => $normalizedName,
+                'matches' => [],
+            ];
+
+            foreach ($rawNames as $rawName) {
+                $matches[$cleanName]['matches'][] = [
+                    'rawName' => $rawName,
+                    'cleanNameV2' => VendorData::cleanupVendorNameV2($rawName),
+                ];
+            }
+
+            // $matches[$cleanName] = $rawNames->toArray();
+        }
+
+        // var_export($matches);
+
+        foreach ($matches as $originalName => $data) {
+            // Add the original entry (which may not show up in the DB)
+            $output[VendorData::cleanupVendorNameV2($originalName)] = VendorData::cleanupVendorNameV2($data['normalizedName']);
+
+            // Add any entries from the database lookup
+            foreach ($data['matches'] as $match) {
+                $output[$match['cleanNameV2']] = VendorData::cleanupVendorNameV2($data['normalizedName']);
+            }
+        }
+
+        if ($echoCsv) {
+            $csvOutput = "Parent company,Company name\n";
+            foreach ($output as $cleanName => $normalizedName) {
+                $csvOutput .= "$normalizedName,$cleanName\n";
+            }
+            echo $csvOutput;
+            return;
+        } else {
+            return $output;
+        }
+    }
+
     public static function renormalizeOwnerNames()
     {
 
