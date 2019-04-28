@@ -23,6 +23,35 @@ class AnalysisOps
     'vendorLimitTimebound' => 10,
     ];
 
+
+
+    public static function run($filename, $dataMethod, $dataMethodParams = [], $chartMethod = '', $chartMethodParams = [])
+    {
+
+        if ($dataMethodParams) {
+          // So far, all the analysis functions take one parameter at most (e.g. department or vendor)
+          // May need to revisit this for multiple parameters (as is the case for chart functions)
+            $data = self::$dataMethod($dataMethodParams);
+        } else {
+            $data = self::$dataMethod();
+        }
+      
+        self::saveAnalysisCsvFile($filename, $data);
+
+        if ($chartMethod) {
+            $html = self::$chartMethod($filename, $data, $chartMethodParams);
+            self::saveChartHtml($filename, $html);
+        }
+    }
+
+    // Todo - integrate this with Laravel views, and save output to a specific location
+    public static function saveChartHtml($id, $html)
+    {
+        $id = self::cleanHtmlId($id);
+        echo "Saving $id\n";
+        echo $html . "\n\n";
+    }
+
     public static function saveAnalysisCsvFile($filename, $csv)
     {
 
@@ -56,7 +85,7 @@ class AnalysisOps
 
     public static function createCsvHeaderKeys($input)
     {
-        if (is_array($input) && count($input) > 1) {
+        if (is_array($input) && count($input) >= 1) {
             $keys = array_keys(get_object_vars($input[0]));
             return $keys;
         } else {
@@ -76,8 +105,6 @@ class AnalysisOps
 
         $outputString .= implode(',', $headers) . "\n";
 
-      // dd($outputString);
-
         foreach ($input as $object) {
             $outputString .= implode(',', array_values(get_object_vars($object))) . "\n";
         }
@@ -88,30 +115,45 @@ class AnalysisOps
     public static function generateAnalysisCsvFiles()
     {
 
-        self::saveAnalysisCsvFile('general/entries-by-year', self::entriesByYear());
-    
-        self::saveAnalysisCsvFile('general/entries-by-fiscal', self::entriesByFiscal());
-    
-        self::saveAnalysisCsvFile('general/effective-total-by-year-' . self::$config['startYear'] . '-to-' . self::$config['endYear'], self::effectiveTotalByYear());
+        // self::saveAnalysisCsvFile('general/entries-by-year', self::entriesByYear());
+        self::run('general/entries-by-year', 'entriesByYear', [], 'arrayToChartJsStacked', [
+          'useConfigYears' => 1,
+          'valueColumn' => 'total_entries',
+          'labelColumn' => 'owner_acronym',
+          'timeColumn' => 'source_year',
+          ]);
+        // dd($a1->run());
 
-        self::saveAnalysisCsvFile('general/largest-companies-by-effective-value-total-' . self::$config['startYear'] . '-to-' . self::$config['endYear'], self::largestCompaniesByEffectiveValue());
-    
-        self::saveAnalysisCsvFile('general/largest-companies-by-effective-value-by-year-' . self::$config['startYear'] . '-to-' . self::$config['endYear'], self::largestCompaniesByEffectiveValueByYear());
-    
-        self::saveAnalysisCsvFile('general/largest-companies-by-entries-total-' . self::$config['startYear'] . '-to-' . self::$config['endYear'], self::largestCompaniesByEntries());
+// self::saveAnalysisCsvFile('general/effective-overall-total-by-year-' . self::$config['startYear'] . '-to-' . self::$config['endYear'], self::effectiveOverallTotalByYear());
+        self::run('general/effective-overall-total-by-year-' . self::$config['startYear'] . '-to-' . self::$config['endYear'], 'effectiveOverallTotalByYear', [], 'arrayToChartJsSingle', ['timeColumn' => 'effective_year']);
 
-        self::saveAnalysisCsvFile('general/largest-companies-by-entries-by-year-' . self::$config['startYear'] . '-to-' . self::$config['endYear'], self::largestCompaniesByEntriesByYear());
+        // dd('here');
+
+
+        self::run('general/entries-by-fiscal', 'entriesByFiscal');
+    
+        self::run('general/effective-total-by-year-' . self::$config['startYear'] . '-to-' . self::$config['endYear'], 'effectiveTotalByYear');
+        
+        self::run('general/effective-overall-total-by-year-' . self::$config['startYear'] . '-to-' . self::$config['endYear'], 'effectiveOverallTotalByYear');
+
+        self::run('general/largest-companies-by-effective-value-total-' . self::$config['startYear'] . '-to-' . self::$config['endYear'], 'largestCompaniesByEffectiveValue');
+    
+        self::run('general/largest-companies-by-effective-value-by-year-' . self::$config['startYear'] . '-to-' . self::$config['endYear'], 'largestCompaniesByEffectiveValueByYear');
+    
+        self::run('general/largest-companies-by-entries-total-' . self::$config['startYear'] . '-to-' . self::$config['endYear'], 'largestCompaniesByEntries');
+
+        self::run('general/largest-companies-by-entries-by-year-' . self::$config['startYear'] . '-to-' . self::$config['endYear'], 'largestCompaniesByEntriesByYear');
 
         $ownerAcronyms = self::allOwnerAcronyms();
 
         foreach ($ownerAcronyms as $ownerAcronym) {
-            self::saveAnalysisCsvFile("departments/$ownerAcronym/largest-companies-by-effective-value-total-" . self::$config['startYear'] . '-to-' . self::$config['endYear'], self::largestCompaniesByEffectiveValue($ownerAcronym));
+            self::run("departments/$ownerAcronym/largest-companies-by-effective-value-total-" . self::$config['startYear'] . '-to-' . self::$config['endYear'], 'largestCompaniesByEffectiveValue', $ownerAcronym);
     
-            self::saveAnalysisCsvFile("departments/$ownerAcronym/largest-companies-by-effective-value-by-year-" . self::$config['startYear'] . '-to-' . self::$config['endYear'], self::largestCompaniesByEffectiveValueByYear($ownerAcronym));
+            self::run("departments/$ownerAcronym/largest-companies-by-effective-value-by-year-" . self::$config['startYear'] . '-to-' . self::$config['endYear'], 'largestCompaniesByEffectiveValue', $ownerAcronym);
       
-            self::saveAnalysisCsvFile("departments/$ownerAcronym/largest-companies-by-entries-total-" . self::$config['startYear'] . '-to-' . self::$config['endYear'], self::largestCompaniesByEntries($ownerAcronym));
+            self::run("departments/$ownerAcronym/largest-companies-by-entries-total-" . self::$config['startYear'] . '-to-' . self::$config['endYear'], 'largestCompaniesByEntries', $ownerAcronym);
 
-            self::saveAnalysisCsvFile("departments/$ownerAcronym/largest-companies-by-entries-by-year-" . self::$config['startYear'] . '-to-' . self::$config['endYear'], self::largestCompaniesByEntriesByYear($ownerAcronym));
+            self::run("departments/$ownerAcronym/largest-companies-by-entries-by-year-" . self::$config['startYear'] . '-to-' . self::$config['endYear'], 'largestCompaniesByEntriesByYear', $ownerAcronym);
         }
 
         $vendors = self::largestVendorNamesByEffectiveValue();
@@ -119,13 +161,13 @@ class AnalysisOps
         foreach ($vendors as $vendor) {
             $vendorSlug = Str::slug($vendor);
 
-            self::saveAnalysisCsvFile("vendors/$vendorSlug/largest-departments-by-effective-value-total-" . self::$config['startYear'] . '-to-' . self::$config['endYear'], self::largestDepartmentsByEffectiveValue($vendor));
+            self::run("vendors/$vendorSlug/largest-departments-by-effective-value-total-" . self::$config['startYear'] . '-to-' . self::$config['endYear'], 'largestDepartmentsByEffectiveValue', $vendor);
     
-            self::saveAnalysisCsvFile("vendors/$vendorSlug/largest-departments-by-effective-value-by-year-" . self::$config['startYear'] . '-to-' . self::$config['endYear'], self::largestDepartmentsByEffectiveValueByYear($vendor));
+            self::run("vendors/$vendorSlug/largest-departments-by-effective-value-by-year-" . self::$config['startYear'] . '-to-' . self::$config['endYear'], 'largestDepartmentsByEffectiveValueByYear', $vendor);
       
-            self::saveAnalysisCsvFile("vendors/$vendorSlug/largest-departments-by-entries-total-" . self::$config['startYear'] . '-to-' . self::$config['endYear'], self::largestDepartmentsByEntries($vendor));
+            self::run("vendors/$vendorSlug/largest-departments-by-entries-total-" . self::$config['startYear'] . '-to-' . self::$config['endYear'], 'largestDepartmentsByEntries', $vendor);
 
-            self::saveAnalysisCsvFile("vendors/$vendorSlug/largest-departments-by-entries-by-year-" . self::$config['startYear'] . '-to-' . self::$config['endYear'], self::largestDepartmentsByEntriesByYear($vendor));
+            self::run("vendors/$vendorSlug/largest-departments-by-entries-by-year-" . self::$config['startYear'] . '-to-' . self::$config['endYear'], 'largestDepartmentsByEntriesByYear', $vendor);
         }
     }
 
@@ -181,6 +223,28 @@ COUNT("id") filter (where gen_is_amendment::integer = 1) as total_amendments
     AND effective_year >= :startYear
     GROUP BY owner_acronym, effective_year
     ORDER BY owner_acronym, effective_year ASC
+    LIMIT 10000
+    '),
+            [
+            'startYear' => self::$config['startYear'],
+            'endYear' => self::$config['endYear'],
+            ]
+        );
+
+        return $results;
+    }
+
+    public static function effectiveOverallTotalByYear()
+    {
+
+        $results = DB::select(
+            DB::raw('
+    SELECT effective_year, SUM("yearly_value") as sum_yearly_value
+    FROM "exports_v2"
+    WHERE effective_year <= :endYear
+    AND effective_year >= :startYear
+    GROUP BY effective_year
+    ORDER BY effective_year ASC
     LIMIT 10000
     '),
             [
@@ -596,5 +660,135 @@ COUNT("id") filter (where gen_is_amendment::integer = 1) as total_amendments
         $results = DB::select(DB::raw($query), $params);
 
         return $results;
+    }
+
+    public static function generateConfigYearRange()
+    {
+        return $years = range(self::$config['startYear'], self::$config['endYear']);
+    }
+
+    // Todo - remove this temporary function
+    public static function chartExport()
+    {
+        $years = self::generateConfigYearRange();
+        dd(json_encode($years));
+    }
+
+    public static function cleanHtmlId($id)
+    {
+        $id = str_replace('/', '-', $id);
+        return Str::slug($id);
+    }
+
+    public static function deIndexArrayTopLevel($array)
+    {
+        $output = [];
+        foreach ($array as $key => $values) {
+            $output[] = $values;
+        }
+        return $output;
+    }
+
+    public static function generateChartJsTemplate($id, $labelsArray, $valuesArray, $type = 'year-single')
+    {
+        return '<canvas id="' . self::cleanHtmlId($id) . '" width="400" height="200" data-chart-type="' . $type .'" data-chart-range="' . e(json_encode($labelsArray)) . '" data-chart-values="' . e(json_encode($valuesArray)) . '"></canvas>' . "\n";
+    }
+
+    public static function arrayToChartJsSingle($id, $input, $params)
+    {
+        $valueColumn = '';
+
+      // dd($params);
+
+        $timeColumn = data_get($params, 'timeColumn');
+        $stackGroupColumn = data_get($params, 'stackGroupColumn');
+
+        $columns = self::createCsvHeaderKeys($input);
+      // dd($timeColumn);
+        foreach ($columns as $column) {
+            if ($column != $timeColumn && $column != $stackGroupColumn) {
+                $valueColumn = $column;
+                break;
+            }
+        }
+
+      // dd($valueColumn);
+        $output = [];
+        foreach ($input as $item) {
+            $output[$item->$timeColumn] = $item->$valueColumn;
+        }
+
+        return self::generateChartJsTemplate($id, array_keys($output), array_values($output));
+    }
+
+    public static function arrayToChartJsStacked($id, $input, $params)
+    {
+      // Which column forms the "group", e.g. owner department
+        $labelColumn = data_get($params, 'labelColumn');
+
+        $timeColumn = data_get($params, 'timeColumn');
+        $valueColumn = data_get($params, 'valueColumn');
+        $useConfigYears = data_get($params, 'useConfigYears', 0);
+        $useConfigFiscal = data_get($params, 'useConfigFiscal', 0);
+        $defaultValue = data_get($params, 'defaultValue', 0);
+
+        $timeRange = [];
+        $output = [];
+        $axisLabels = [];
+
+        if ($useConfigYears) {
+            $timeRange = self::generateConfigYearRange();
+        }
+
+      // General labels
+        $axisLabels = $timeRange;
+
+      // Get label groups
+        $groupLabels = array_unique(data_get($input, "*.$labelColumn"));
+
+      
+        foreach ($groupLabels as $groupLabel) {
+            $output[$groupLabel] = [
+            'label' => $groupLabel,
+            'backgroundColor' => '#713',
+            'data' => [],
+            ];
+            foreach ($timeRange as $timeUnit) {
+                $output[$groupLabel]['data'][$timeUnit] = $defaultValue;
+            }
+        }
+
+      
+
+      
+
+        foreach ($input as $item) {
+            $label = data_get($item, $labelColumn, null);
+            $timePeriod = data_get($item, $timeColumn, null);
+            $value = data_get($item, $valueColumn, null);
+
+          // dd($value);
+            if ($label && $timePeriod && $value) {
+                if (isset($output[$label]['data'][$timePeriod])) {
+                    // dd('yes');
+                    $output[$label]['data'][$timePeriod] = $value;
+                }
+            }
+        }
+
+
+
+      // Remove the indexes for compatibility with Chart.js's datasets object:
+        foreach ($output as $label => &$values) {
+            $values['data'] = self::deIndexArrayTopLevel($values['data']);
+        }
+        $output = self::deIndexArrayTopLevel($output);
+
+        return self::generateChartJsTemplate($id, $axisLabels, $output, 'year-stacked');
+      // dd($output);
+
+      // foreach($timeRange as $timeUnit) {
+      //   $output[$timeUnit] = [];
+      // }
     }
 }
