@@ -115,24 +115,45 @@ class AnalysisOps
     public static function generateAnalysisCsvFiles()
     {
 
-        // self::saveAnalysisCsvFile('general/entries-by-year', self::entriesByYear());
-        self::run('general/entries-by-year', 'entriesByYear', [], 'arrayToChartJsStacked', [
+        // Entries by department, by year
+        self::run('general/entries-by-department-by-year', 'entriesByYear', [], 'arrayToChartJsStacked', [
           'useConfigYears' => 1,
           'valueColumn' => 'total_entries',
           'labelColumn' => 'owner_acronym',
           'timeColumn' => 'source_year',
           ]);
-        // dd($a1->run());
+        
+        // Entries by year, overall (government-wide)
+        self::run('general/entries-by-year', 'entriesByYearOverall', [], 'arrayToChartJsStackedTranspose', [
+          'useConfigYears' => 1,
+          'valueColumns' => ['total_contracts', 'total_amendments'],
+          'timeColumn' => 'source_year',
+          'colorMapping' => 'keyword',
+          ]);
 
-// self::saveAnalysisCsvFile('general/effective-overall-total-by-year-' . self::$config['startYear'] . '-to-' . self::$config['endYear'], self::effectiveOverallTotalByYear());
+        // Entries by fiscal quarter, overall
+        self::run('general/entries-by-fiscal', 'entriesByFiscalOverall', [], 'arrayToChartJsStackedTranspose', [
+          'useConfigFiscal' => 1,
+          'valueColumns' => ['total_contracts', 'total_amendments'],
+          'timeColumn' => 'source_fiscal',
+          'colorMapping' => 'keyword',
+          ]);
+
+        // Total spending by year, overall
         self::run('general/effective-overall-total-by-year-' . self::$config['startYear'] . '-to-' . self::$config['endYear'], 'effectiveOverallTotalByYear', [], 'arrayToChartJsSingle', ['timeColumn' => 'effective_year']);
 
-        // dd('here');
-
-
-        self::run('general/entries-by-fiscal', 'entriesByFiscal');
+        // (Deferred for now - entries by fiscal quarter, by department)
+        // self::run('general/entries-by-fiscal', 'entriesByFiscal');
     
-        self::run('general/effective-total-by-year-' . self::$config['startYear'] . '-to-' . self::$config['endYear'], 'effectiveTotalByYear');
+        self::run('general/effective-total-by-year-' . self::$config['startYear'] . '-to-' . self::$config['endYear'], 'effectiveTotalByYear', [], 'arrayToChartJsStacked', [
+          'useConfigYears' => 1,
+          'valueColumn' => 'sum_yearly_value',
+          'labelColumn' => 'owner_acronym',
+          'timeColumn' => 'effective_year',
+          'chartOptions' => 'timeStackedCurrency',
+          ]);
+        
+          dd('y');
         
         self::run('general/effective-overall-total-by-year-' . self::$config['startYear'] . '-to-' . self::$config['endYear'], 'effectiveOverallTotalByYear');
 
@@ -143,6 +164,8 @@ class AnalysisOps
         self::run('general/largest-companies-by-entries-total-' . self::$config['startYear'] . '-to-' . self::$config['endYear'], 'largestCompaniesByEntries');
 
         self::run('general/largest-companies-by-entries-by-year-' . self::$config['startYear'] . '-to-' . self::$config['endYear'], 'largestCompaniesByEntriesByYear');
+
+        dd('here');
 
         $ownerAcronyms = self::allOwnerAcronyms();
 
@@ -169,6 +192,46 @@ class AnalysisOps
 
             self::run("vendors/$vendorSlug/largest-departments-by-entries-by-year-" . self::$config['startYear'] . '-to-' . self::$config['endYear'], 'largestDepartmentsByEntriesByYear', $vendor);
         }
+    }
+
+    // Gets the total number of contract or amendment entries by year, government-wide
+    public static function entriesByYearOverall()
+    {
+
+        $results = DB::select(DB::raw('
+    SELECT source_year, COUNT("id") as total_entries,
+COUNT("id") filter (where gen_is_amendment::integer = 0) as total_contracts,
+COUNT("id") filter (where gen_is_amendment::integer = 1) as total_amendments
+    FROM "l_contracts"
+    WHERE source_year IS NOT NULL
+    AND gen_is_duplicate::integer = 0
+    AND gen_is_error::integer = 0
+    GROUP BY source_year
+    ORDER BY source_year
+    LIMIT 50000
+    '));
+
+        return $results;
+    }
+
+    // Gets the total number of contracts or amendment entries by fiscal quarter, by department
+    public static function entriesByFiscalOverall()
+    {
+
+        $results = DB::select(DB::raw('
+    SELECT source_fiscal, COUNT("id") as total_entries,
+COUNT("id") filter (where gen_is_amendment::integer = 0) as total_contracts,
+COUNT("id") filter (where gen_is_amendment::integer = 1) as total_amendments
+    FROM "l_contracts"
+    WHERE source_fiscal IS NOT NULL
+    AND gen_is_duplicate::integer = 0
+    AND gen_is_error::integer = 0
+    GROUP BY source_fiscal
+    ORDER BY source_fiscal
+    LIMIT 50000
+    '));
+
+        return $results;
     }
 
   // Gets the total number of contracts or amendment entries by year, by department
@@ -664,7 +727,21 @@ COUNT("id") filter (where gen_is_amendment::integer = 1) as total_amendments
 
     public static function generateConfigYearRange()
     {
-        return $years = range(self::$config['startYear'], self::$config['endYear']);
+        $years = range(self::$config['startYear'], self::$config['endYear']);
+        return $years;
+    }
+    public static function generateConfigFiscalRange()
+    {
+        $output = [];
+        $years = range(self::$config['startYear'], self::$config['endYear']);
+        foreach ($years as $year) {
+          // 201819-Q2
+            $fiscalYear = $year . substr(intval($year) + 1, 2, 2);
+            foreach (range(1, 4) as $quarter) {
+                $output[] = $fiscalYear . '-Q' . $quarter;
+            }
+        }
+        return $output;
     }
 
     // Todo - remove this temporary function
@@ -689,9 +766,18 @@ COUNT("id") filter (where gen_is_amendment::integer = 1) as total_amendments
         return $output;
     }
 
-    public static function generateChartJsTemplate($id, $labelsArray, $valuesArray, $type = 'year-single')
+    public static function generateChartJsTemplate($id, $labelsArray, $valuesArray, $type = 'year-single', $options = '')
     {
-        return '<canvas id="' . self::cleanHtmlId($id) . '" width="400" height="200" data-chart-type="' . $type .'" data-chart-range="' . e(json_encode($labelsArray)) . '" data-chart-values="' . e(json_encode($valuesArray)) . '"></canvas>' . "\n";
+        return '<canvas id="' . self::cleanHtmlId($id) . '" width="400" height="200" data-chart-type="' . $type .'" data-chart-options="' . $options . '" data-chart-range="' . e(json_encode($labelsArray)) . '" data-chart-values="' . e(json_encode($valuesArray)) . '"></canvas>' . "\n";
+    }
+
+    public static function getColor($colorMapping, $keyword, $index, $border = 0)
+    {
+        if ($colorMapping == 'keyword') {
+            return Miscellaneous::getColorByKeyword($keyword, $border);
+        } elseif ($colorMapping == 'index') {
+            return Miscellaneous::getColorByIndex($index, $border);
+        }
     }
 
     public static function arrayToChartJsSingle($id, $input, $params)
@@ -731,6 +817,8 @@ COUNT("id") filter (where gen_is_amendment::integer = 1) as total_amendments
         $useConfigYears = data_get($params, 'useConfigYears', 0);
         $useConfigFiscal = data_get($params, 'useConfigFiscal', 0);
         $defaultValue = data_get($params, 'defaultValue', 0);
+        $chartOptions = data_get($params, 'chartOptions', '');
+        $colorMapping = data_get($params, 'colorMapping', 'index');
 
         $timeRange = [];
         $output = [];
@@ -739,6 +827,9 @@ COUNT("id") filter (where gen_is_amendment::integer = 1) as total_amendments
         if ($useConfigYears) {
             $timeRange = self::generateConfigYearRange();
         }
+        if ($useConfigFiscal) {
+            $timeRange = self::generateConfigFiscalRange();
+        }
 
       // General labels
         $axisLabels = $timeRange;
@@ -746,21 +837,19 @@ COUNT("id") filter (where gen_is_amendment::integer = 1) as total_amendments
       // Get label groups
         $groupLabels = array_unique(data_get($input, "*.$labelColumn"));
 
-      
+        $colorIndex = 0;
         foreach ($groupLabels as $groupLabel) {
             $output[$groupLabel] = [
-            'label' => $groupLabel,
-            'backgroundColor' => '#713',
+            'label' => Cleaners::generateLabelText($groupLabel),
+            'backgroundColor' => self::getColor($colorMapping, $groupLabel, $colorIndex),
+            'borderColor' => self::getColor($colorMapping, $groupLabel, $colorIndex, 1),
             'data' => [],
             ];
+            $colorIndex++;
             foreach ($timeRange as $timeUnit) {
                 $output[$groupLabel]['data'][$timeUnit] = $defaultValue;
             }
         }
-
-      
-
-      
 
         foreach ($input as $item) {
             $label = data_get($item, $labelColumn, null);
@@ -776,7 +865,82 @@ COUNT("id") filter (where gen_is_amendment::integer = 1) as total_amendments
             }
         }
 
+      // Remove the indexes for compatibility with Chart.js's datasets object:
+        foreach ($output as $label => &$values) {
+            $values['data'] = self::deIndexArrayTopLevel($values['data']);
+        }
+        $output = self::deIndexArrayTopLevel($output);
 
+        return self::generateChartJsTemplate($id, $axisLabels, $output, 'year-stacked', $chartOptions);
+    }
+
+    // Stacked chart but, instead of using "group by" for stacking, take entries from different FILTER columns for a given time period
+    public static function arrayToChartJsStackedTranspose($id, $input, $params)
+    {
+
+      // 'arrayToChartJsStackedTranspose', [
+      //   'useConfigYears' => 1,
+      //   'valueColumns' => ['total_contracts', 'total_amendments'],
+      //   'timeColumn' => 'source_year',
+      //   ]);
+
+
+        $timeColumn = data_get($params, 'timeColumn');
+        // e.g. total_contracts, total_amendments
+        $valueColumns = data_get($params, 'valueColumns', []);
+        $useConfigYears = data_get($params, 'useConfigYears', 0);
+        $useConfigFiscal = data_get($params, 'useConfigFiscal', 0);
+        $defaultValue = data_get($params, 'defaultValue', 0);
+        $chartOptions = data_get($params, 'chartOptions', '');
+        $colorMapping = data_get($params, 'colorMapping', 'index');
+
+        $timeRange = [];
+        $output = [];
+        $axisLabels = [];
+
+        if ($useConfigYears) {
+            $timeRange = self::generateConfigYearRange();
+        }
+        if ($useConfigFiscal) {
+            $timeRange = self::generateConfigFiscalRange();
+        }
+
+      // General labels
+        $axisLabels = $timeRange;
+
+      // Get label groups
+        $groupLabels = $valueColumns;
+
+        $colorIndex = 0;
+        foreach ($groupLabels as $groupLabel) {
+            $output[$groupLabel] = [
+            'label' => Cleaners::generateLabelText($groupLabel),
+            'backgroundColor' => self::getColor($colorMapping, $groupLabel, $colorIndex),
+            'borderColor' => self::getColor($colorMapping, $groupLabel, $colorIndex, 1),
+            'data' => [],
+            ];
+            $colorIndex++;
+            foreach ($timeRange as $timeUnit) {
+                $output[$groupLabel]['data'][$timeUnit] = $defaultValue;
+            }
+        }
+
+        
+
+        foreach ($input as $item) {
+            foreach ($valueColumns as $labelColumn) {
+                $timePeriod = data_get($item, $timeColumn, null);
+                $value = data_get($item, $labelColumn, null);
+  
+            // dd($value);
+                if ($timePeriod && $value) {
+                    if (isset($output[$labelColumn]['data'][$timePeriod])) {
+                        // dd('yes');
+                        $output[$labelColumn]['data'][$timePeriod] = $value;
+                    }
+                }
+            }
+        }
 
       // Remove the indexes for compatibility with Chart.js's datasets object:
         foreach ($output as $label => &$values) {
@@ -784,11 +948,6 @@ COUNT("id") filter (where gen_is_amendment::integer = 1) as total_amendments
         }
         $output = self::deIndexArrayTopLevel($output);
 
-        return self::generateChartJsTemplate($id, $axisLabels, $output, 'year-stacked');
-      // dd($output);
-
-      // foreach($timeRange as $timeUnit) {
-      //   $output[$timeUnit] = [];
-      // }
+        return self::generateChartJsTemplate($id, $axisLabels, $output, 'year-stacked', $chartOptions);
     }
 }

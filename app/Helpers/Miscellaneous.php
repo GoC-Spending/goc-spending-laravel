@@ -78,108 +78,103 @@ class Miscellaneous
         $colorMap = array (
             0 =>
             array (
-              'color' => 'rgba(234, 255, 212, 0.7)',
-              'borderColor' => 'rgb(191, 255, 122)',
+              'color' => 'rgb(63, 76, 159)',
+              'borderColor' => 'rgb(51, 61, 128)',
             ),
             1 =>
             array (
-              'color' => 'rgba(232, 254, 209, 0.7)',
-              'borderColor' => 'rgb(188, 252, 120)',
+              'color' => 'rgb(120, 28, 129)',
+              'borderColor' => 'rgb(98, 23, 105)',
             ),
             2 =>
             array (
-              'color' => 'rgba(227, 252, 203, 0.7)',
-              'borderColor' => 'rgb(179, 247, 115)',
+              'color' => 'rgb(225, 68, 39)',
+              'borderColor' => 'rgb(188, 50, 26)',
             ),
             3 =>
             array (
-              'color' => 'rgba(219, 249, 194, 0.7)',
-              'borderColor' => 'rgb(172, 241, 116)',
+              'color' => 'rgb(230, 103, 45)',
+              'borderColor' => 'rgb(196, 78, 23)',
             ),
             4 =>
             array (
-              'color' => 'rgba(207, 246, 182, 0.7)',
-              'borderColor' => 'rgb(156, 236, 105)',
+              'color' => 'rgb(183, 189, 75)',
+              'borderColor' => 'rgb(151, 156, 58)',
             ),
             5 =>
             array (
-              'color' => 'rgba(190, 240, 167, 0.7)',
-              'borderColor' => 'rgb(139, 228, 98)',
+              'color' => 'rgb(226, 158, 55)',
+              'borderColor' => 'rgb(196, 129, 28)',
             ),
             6 =>
             array (
-              'color' => 'rgba(168, 234, 149, 0.7)',
-              'borderColor' => 'rgb(114, 221, 85)',
+              'color' => 'rgb(216, 174, 61)',
+              'borderColor' => 'rgb(183, 144, 36)',
             ),
             7 =>
             array (
-              'color' => 'rgba(140, 226, 129, 0.7)',
-              'borderColor' => 'rgb(89, 213, 72)',
+              'color' => 'rgb(141, 188, 100)',
+              'borderColor' => 'rgb(112, 161, 69)',
             ),
             8 =>
             array (
-              'color' => 'rgba(108, 217, 109, 0.7)',
-              'borderColor' => 'rgb(56, 204, 59)',
+              'color' => 'rgb(104, 176, 144)',
+              'borderColor' => 'rgb(77, 147, 116)',
             ),
             9 =>
             array (
-              'color' => 'rgba(86, 208, 105, 0.7)',
-              'borderColor' => 'rgb(52, 183, 71)',
+              'color' => 'rgb(217, 33, 32)',
+              'borderColor' => 'rgb(173, 26, 26)',
             ),
             10 =>
             array (
-              'color' => 'rgba(64, 197, 107, 0.7)',
-              'borderColor' => 'rgb(49, 160, 84)',
+              'color' => 'rgb(90, 166, 169)',
+              'borderColor' => 'rgb(72, 135, 137)',
             ),
             11 =>
             array (
-              'color' => 'rgba(45, 186, 116, 0.7)',
-              'borderColor' => 'rgb(36, 148, 92)',
+              'color' => 'rgb(201, 184, 67)',
+              'borderColor' => 'rgb(166, 150, 48)',
             ),
             12 =>
             array (
-              'color' => 'rgba(28, 176, 130, 0.7)',
-              'borderColor' => 'rgb(22, 141, 103)',
+              'color' => 'rgb(69, 130, 193)',
+              'borderColor' => 'rgb(52, 105, 157)',
             ),
             13 =>
             array (
-              'color' => 'rgba(14, 166, 150, 0.7)',
-              'borderColor' => 'rgb(11, 131, 119)',
+              'color' => 'rgb(82, 27, 128)',
+              'borderColor' => 'rgb(65, 21, 101)',
             ),
             14 =>
             array (
-              'color' => 'rgba(3, 140, 158, 0.7)',
-              'borderColor' => 'rgb(3, 115, 130)',
+              'color' => 'rgb(162, 190, 86)',
+              'borderColor' => 'rgb(132, 158, 61)',
             ),
             15 =>
             array (
-              'color' => 'rgba(0, 100, 151, 0.7)',
-              'borderColor' => 'rgb(0, 82, 122)',
+              'color' => 'rgb(68, 47, 139)',
+              'borderColor' => 'rgb(55, 38, 110)',
             ),
             16 =>
             array (
-              'color' => 'rgba(0, 64, 145, 0.7)',
-              'borderColor' => 'rgb(0, 49, 112)',
+              'color' => 'rgb(64, 105, 180)',
+              'borderColor' => 'rgb(50, 83, 143)',
             ),
             17 =>
             array (
-              'color' => 'rgba(0, 31, 141, 0.7)',
-              'borderColor' => 'rgb(0, 24, 112)',
+              'color' => 'rgb(78, 150, 189)',
+              'borderColor' => 'rgb(58, 122, 156)',
             ),
             18 =>
             array (
-              'color' => 'rgba(0, 1, 138, 0.7)',
-              'borderColor' => 'rgb(0, 0, 112)',
+              'color' => 'rgb(231, 134, 50)',
+              'borderColor' => 'rgb(201, 106, 24)',
             ),
             19 =>
             array (
-              'color' => 'rgba(26, 0, 136, 0.7)',
-              'borderColor' => 'rgb(21, 0, 112)',
-            ),
-            20 =>
-            array (
-              'color' => 'rgba(50, 0, 135, 0.7)',
-              'borderColor' => 'rgb(39, 0, 107)',
+              'color' => 'rgb(122, 184, 120)',
+              'borderColor' => 'rgb(87, 160, 84)',
             ),
         );
 
