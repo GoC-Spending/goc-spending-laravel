@@ -78,105 +78,105 @@ class Miscellaneous
         $colorMap = array (
             0 =>
             array (
-              'color' => 'rgb(63, 76, 159)',
-              'borderColor' => 'rgb(51, 61, 128)',
+              'color' => 'rgb(51, 0, 255)',
+              'borderColor' => 'rgb(41, 0, 204)',
             ),
             1 =>
             array (
-              'color' => 'rgb(120, 28, 129)',
-              'borderColor' => 'rgb(98, 23, 105)',
+              'color' => 'rgb(255, 0, 229)',
+              'borderColor' => 'rgb(204, 0, 184)',
             ),
             2 =>
             array (
-              'color' => 'rgb(225, 68, 39)',
-              'borderColor' => 'rgb(188, 50, 26)',
+              'color' => 'rgb(0, 255, 102)',
+              'borderColor' => 'rgb(0, 204, 82)',
             ),
             3 =>
             array (
-              'color' => 'rgb(230, 103, 45)',
-              'borderColor' => 'rgb(196, 78, 23)',
+              'color' => 'rgb(0, 255, 255)',
+              'borderColor' => 'rgb(0, 204, 204)',
             ),
             4 =>
             array (
-              'color' => 'rgb(183, 189, 75)',
-              'borderColor' => 'rgb(151, 156, 58)',
+              'color' => 'rgb(204, 255, 0)',
+              'borderColor' => 'rgb(163, 204, 0)',
             ),
             5 =>
             array (
-              'color' => 'rgb(226, 158, 55)',
-              'borderColor' => 'rgb(196, 129, 28)',
+              'color' => 'rgb(128, 255, 0)',
+              'borderColor' => 'rgb(102, 204, 0)',
             ),
             6 =>
             array (
-              'color' => 'rgb(216, 174, 61)',
-              'borderColor' => 'rgb(183, 144, 36)',
+              'color' => 'rgb(255, 0, 76)',
+              'borderColor' => 'rgb(204, 0, 61)',
             ),
             7 =>
             array (
-              'color' => 'rgb(141, 188, 100)',
-              'borderColor' => 'rgb(112, 161, 69)',
+              'color' => 'rgb(51, 255, 0)',
+              'borderColor' => 'rgb(41, 204, 0)',
             ),
             8 =>
             array (
-              'color' => 'rgb(104, 176, 144)',
-              'borderColor' => 'rgb(77, 147, 116)',
+              'color' => 'rgb(0, 25, 255)',
+              'borderColor' => 'rgb(0, 20, 204)',
             ),
             9 =>
             array (
-              'color' => 'rgb(217, 33, 32)',
-              'borderColor' => 'rgb(173, 26, 26)',
+              'color' => 'rgb(0, 179, 255)',
+              'borderColor' => 'rgb(0, 143, 204)',
             ),
             10 =>
             array (
-              'color' => 'rgb(90, 166, 169)',
-              'borderColor' => 'rgb(72, 135, 137)',
+              'color' => 'rgb(255, 230, 0)',
+              'borderColor' => 'rgb(204, 184, 0)',
             ),
             11 =>
             array (
-              'color' => 'rgb(201, 184, 67)',
-              'borderColor' => 'rgb(166, 150, 48)',
+              'color' => 'rgb(255, 77, 0)',
+              'borderColor' => 'rgb(204, 61, 0)',
             ),
             12 =>
             array (
-              'color' => 'rgb(69, 130, 193)',
-              'borderColor' => 'rgb(52, 105, 157)',
+              'color' => 'rgb(255, 153, 0)',
+              'borderColor' => 'rgb(204, 122, 0)',
             ),
             13 =>
             array (
-              'color' => 'rgb(82, 27, 128)',
-              'borderColor' => 'rgb(65, 21, 101)',
+              'color' => 'rgb(204, 0, 255)',
+              'borderColor' => 'rgb(163, 0, 204)',
             ),
             14 =>
             array (
-              'color' => 'rgb(162, 190, 86)',
-              'borderColor' => 'rgb(132, 158, 61)',
+              'color' => 'rgb(255, 0, 153)',
+              'borderColor' => 'rgb(204, 0, 122)',
             ),
             15 =>
             array (
-              'color' => 'rgb(68, 47, 139)',
-              'borderColor' => 'rgb(55, 38, 110)',
+              'color' => 'rgb(0, 255, 25)',
+              'borderColor' => 'rgb(0, 204, 20)',
             ),
             16 =>
             array (
-              'color' => 'rgb(64, 105, 180)',
-              'borderColor' => 'rgb(50, 83, 143)',
+              'color' => 'rgb(0, 102, 255)',
+              'borderColor' => 'rgb(0, 82, 204)',
             ),
             17 =>
             array (
-              'color' => 'rgb(78, 150, 189)',
-              'borderColor' => 'rgb(58, 122, 156)',
+              'color' => 'rgb(255, 0, 0)',
+              'borderColor' => 'rgb(204, 0, 0)',
             ),
             18 =>
             array (
-              'color' => 'rgb(231, 134, 50)',
-              'borderColor' => 'rgb(201, 106, 24)',
+              'color' => 'rgb(0, 255, 178)',
+              'borderColor' => 'rgb(0, 204, 143)',
             ),
             19 =>
             array (
-              'color' => 'rgb(122, 184, 120)',
-              'borderColor' => 'rgb(87, 160, 84)',
+              'color' => 'rgb(128, 0, 255)',
+              'borderColor' => 'rgb(102, 0, 204)',
             ),
-        );
+          );
 
         // If the index is higher than the number of entries, then loop back around using modulo:
         $effectiveIndex = $index % count($colorMap);
