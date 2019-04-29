@@ -6,8 +6,8 @@ use App\Helpers\ContractDataProcessors;
 use App\Helpers\Parsers;
 use App\Helpers\Paths;
 use App\Helpers\Miscellaneous;
-use App\VendorData;
 use GuzzleHttp\Client;
+use App\AnalysisOps;
 use XPathSelector\Selector;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Arr;
@@ -15,6 +15,37 @@ use Illuminate\Support\Str;
 
 class ChartOps
 {
+
+    public static function buildAnalysisTemplate()
+    {
+        return view('charts/_analysis', ['name' => 'James'])->render();
+    }
+
+    public static function saveAnalysisTemplate()
+    {
+        $html = self::buildAnalysisTemplate();
+        $filepath = storage_path() . '/' . env('STORAGE_RELATIVE_WEBSITE_ANALYSIS_CONTENT', '../../goc-spending-website-v1/site/content/analysis.html');
+        file_put_contents($filepath, $html);
+    }
+
+
+    public static function run($id, $dataMethod, $dataMethodParams = [], $chartMethod = '', $chartMethodParams = [])
+    {
+
+        $id = self::cleanHtmlId($id);
+
+        if ($dataMethodParams) {
+          // So far, all the analysis functions take one parameter at most (e.g. department or vendor)
+          // May need to revisit this for multiple parameters (as is the case for chart functions)
+            $data = AnalysisOps::$dataMethod($dataMethodParams);
+        } else {
+            $data = AnalysisOps::$dataMethod();
+        }
+
+        $html = ChartOps::$chartMethod($id, $data, $chartMethodParams);
+        return $html;
+    }
+
 
   // Todo - integrate this with Laravel views, and save output to a specific location
     public static function saveChartHtml($id, $html)
