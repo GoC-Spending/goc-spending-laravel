@@ -250,6 +250,12 @@ class Cleaners
                 'wd' => 'Western Economic Diversification Canada',
             ]
         ];
-        return data_get($sets, "$set.$abbreviation");
+        // If there's no option available, send back the original input:
+        $output = data_get($sets, "$set.$abbreviation");
+        if ($output) {
+            return $output;
+        } else {
+            return $abbreviation;
+        }
     }
 }

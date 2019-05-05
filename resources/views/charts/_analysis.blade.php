@@ -37,7 +37,14 @@ draft: false
 
 <p>This chart represents the total effective value of government contracts included in the combined dataset, by calendar year, for the government as a whole:</p>
 
-<p>[effective-overall-total-by-year-2008-to-2017.csv]</p>
+{!! \App\ChartOps::run('general/effective-overall-total-by-year-' . $config['startYear'] . '-to-' . $config['endYear'], 'effectiveOverallTotalByYear', [], 'arrayToChartJsStacked', [
+  'useConfigYears' => 1,
+  'timeColumn' => 'effective_year',
+  'valueColumn' => 'sum_yearly_value',
+  'isSingleEntry' => 1,
+  'singleEntryLabel' => 'Total value',
+  'chartOptions' => 'timeStackedCurrency',
+]) !!}
 
 <h3 id="total-contract-spending-by-department">Total contract spending by department</h3>
 

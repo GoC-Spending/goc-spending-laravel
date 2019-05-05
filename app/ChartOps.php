@@ -18,7 +18,7 @@ class ChartOps
 
     public static function buildAnalysisTemplate()
     {
-        return view('charts/_analysis', ['name' => 'James'])->render();
+        return view('charts/_analysis', ['config' => AnalysisOps::$config])->render();
     }
 
     public static function saveAnalysisTemplate()
@@ -111,37 +111,14 @@ class ChartOps
         }
     }
 
-    public static function arrayToChartJsSingle($id, $input, $params)
-    {
-        $valueColumn = '';
-
-      // dd($params);
-
-        $timeColumn = data_get($params, 'timeColumn');
-        $stackGroupColumn = data_get($params, 'stackGroupColumn');
-
-        $columns = AnalysisOps::createCsvHeaderKeys($input);
-      // dd($timeColumn);
-        foreach ($columns as $column) {
-            if ($column != $timeColumn && $column != $stackGroupColumn) {
-                $valueColumn = $column;
-                break;
-            }
-        }
-
-      // dd($valueColumn);
-        $output = [];
-        foreach ($input as $item) {
-            $output[$item->$timeColumn] = $item->$valueColumn;
-        }
-
-        return self::generateChartJsTemplate($id, array_keys($output), array_values($output));
-    }
-
     public static function arrayToChartJsStacked($id, $input, $params)
     {
       // Which column forms the "group", e.g. owner department
         $labelColumn = data_get($params, 'labelColumn');
+        
+        // In the case of a "single-entry stacked chart", AKA a regular bar chart:
+        $isSingleEntry = data_get($params, 'isSingleEntry', 0);
+        $singleEntryLabel = data_get($params, 'singleEntryLabel', 'Values');
 
         $timeColumn = data_get($params, 'timeColumn');
         $valueColumn = data_get($params, 'valueColumn');
@@ -161,12 +138,20 @@ class ChartOps
         if ($useConfigFiscal) {
             $timeRange = self::generateConfigFiscalRange();
         }
+        // TODO - else, retrieve the timeRange from the timeColumn entries
 
       // General labels
         $axisLabels = $timeRange;
 
       // Get label groups
-        $groupLabels = array_unique(data_get($input, "*.$labelColumn"));
+        if ($isSingleEntry) {
+            $groupLabels = [
+            $singleEntryLabel,
+            ];
+        } else {
+            $groupLabels = array_unique(data_get($input, "*.$labelColumn"));
+        }
+        
 
         $colorIndex = 0;
         foreach ($groupLabels as $groupLabel) {
@@ -183,11 +168,16 @@ class ChartOps
         }
 
         foreach ($input as $item) {
-            $label = data_get($item, $labelColumn, null);
+            if ($isSingleEntry) {
+                $label = $singleEntryLabel;
+            } else {
+                $label = data_get($item, $labelColumn, null);
+            }
+            
             $timePeriod = data_get($item, $timeColumn, null);
             $value = data_get($item, $valueColumn, null);
 
-          // dd($value);
+          
             if ($label && $timePeriod && $value) {
                 if (isset($output[$label]['data'][$timePeriod])) {
                     // dd('yes');
@@ -196,11 +186,15 @@ class ChartOps
             }
         }
 
+        
+
       // Remove the indexes for compatibility with Chart.js's datasets object:
         foreach ($output as $label => &$values) {
             $values['data'] = self::deIndexArrayTopLevel($values['data']);
         }
         $output = self::deIndexArrayTopLevel($output);
+
+        // dd($output);
 
         return self::generateChartJsTemplate($id, $axisLabels, $output, 'year-stacked', $chartOptions);
     }
