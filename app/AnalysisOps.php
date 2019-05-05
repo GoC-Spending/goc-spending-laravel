@@ -136,7 +136,10 @@ class AnalysisOps
 
         // Entries by fiscal quarter, overall
         self::run('general/entries-by-fiscal', 'entriesByFiscalOverall', []);
-
+        
+        // Entries by year, overall, noting the source (scraper or CSV), errors, and duplicates
+        self::run('general/entries-errors-duplicates-by-year', 'entriesErrorsDuplicatesByYear', []);
+        
         // Total spending by year, overall
         self::run('general/effective-overall-total-by-year-' . self::$config['startYear'] . '-to-' . self::$config['endYear'], 'effectiveOverallTotalByYear', [], [
           'currencyColumns' => [
@@ -336,6 +339,26 @@ COUNT("id") filter (where gen_is_amendment::integer = 1) as total_amendments
             'endYear' => self::$config['endYear'],
             ]
         );
+
+        return $results;
+    }
+
+    public static function entriesErrorsDuplicatesByYear()
+    {
+        $results = DB::select(DB::raw('
+        SELECT owner_acronym, source_year, COUNT("id") as total_entries,
+        COUNT("id") filter (where source_origin = 1) as total_source_scraper,
+        COUNT("id") filter (where source_origin = 2) as total_source_csv,
+        COUNT("id") filter (where gen_is_error::integer = 1) as error_entries,
+        COUNT("id") filter (where source_origin = 1 and gen_is_error::integer = 1) as error_source_scraper,
+        COUNT("id") filter (where source_origin = 2 and gen_is_error::integer = 1) as error_source_csv,
+        COUNT("id") filter (where gen_is_duplicate::integer = 0) as total_non_duplicate_entries,
+        COUNT("id") filter (where gen_is_duplicate::integer = 1) as total_duplicate_entries
+            FROM "l_contracts"
+            GROUP BY owner_acronym, source_year
+            ORDER BY owner_acronym, source_year
+            LIMIT 50000
+    '));
 
         return $results;
     }
