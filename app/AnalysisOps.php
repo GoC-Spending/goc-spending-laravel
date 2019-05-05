@@ -26,7 +26,7 @@ class AnalysisOps
 
 
 
-    public static function run($filename, $dataMethod, $dataMethodParams = [], $chartMethod = '', $chartMethodParams = [])
+    public static function run($filename, $dataMethod, $dataMethodParams = [], $postProcessingParams = [])
     {
 
         if ($dataMethodParams) {
@@ -36,13 +36,33 @@ class AnalysisOps
         } else {
             $data = self::$dataMethod();
         }
+
+        if ($postProcessingParams) {
+            $data = self::postProcessData($data, $postProcessingParams);
+        }
+        
       
         self::saveAnalysisCsvFile($filename, $data);
+    }
 
-        if ($chartMethod) {
-            $html = ChartOps::$chartMethod($filename, $data, $chartMethodParams);
-            ChartOps::saveChartHtml($filename, $html);
+    public static function postProcessData($data, $postProcessingParams)
+    {
+
+        if ($currencyColumns = data_get($postProcessingParams, 'currencyColumns', [])) {
+            foreach ($currencyColumns as $currencyColumn) {
+                foreach ($data as &$item) {
+                    $item->$currencyColumn = self::formatAsCurrency($item->$currencyColumn);
+                }
+            }
         }
+
+        return $data;
+    }
+
+    public static function formatAsCurrency($input)
+    {
+      // Two decimal places, no thousands separator.
+        return number_format($input, 2, '.', '');
     }
 
     public static function saveAnalysisCsvFile($filename, $csv)
@@ -109,63 +129,63 @@ class AnalysisOps
     {
 
         // Entries by department, by year
-        self::run('general/entries-by-department-by-year', 'entriesByYear', [], 'arrayToChartJsStacked', [
-          'useConfigYears' => 1,
-          'valueColumn' => 'total_entries',
-          'labelColumn' => 'owner_acronym',
-          'timeColumn' => 'source_year',
-          ]);
+        self::run('general/entries-by-department-by-year', 'entriesByYear', []);
         
         // Entries by year, overall (government-wide)
-        self::run('general/entries-by-year', 'entriesByYearOverall', [], 'arrayToChartJsStackedTranspose', [
-          'useConfigYears' => 1,
-          'valueColumns' => ['total_contracts', 'total_amendments'],
-          'timeColumn' => 'source_year',
-          'colorMapping' => 'keyword',
-          ]);
+        self::run('general/entries-by-year', 'entriesByYearOverall', []);
 
         // Entries by fiscal quarter, overall
-        self::run('general/entries-by-fiscal', 'entriesByFiscalOverall', [], 'arrayToChartJsStackedTranspose', [
-          'useConfigFiscal' => 1,
-          'valueColumns' => ['total_contracts', 'total_amendments'],
-          'timeColumn' => 'source_fiscal',
-          'colorMapping' => 'keyword',
-          ]);
+        self::run('general/entries-by-fiscal', 'entriesByFiscalOverall', []);
 
         // Total spending by year, overall
-        self::run('general/effective-overall-total-by-year-' . self::$config['startYear'] . '-to-' . self::$config['endYear'], 'effectiveOverallTotalByYear', [], 'arrayToChartJsSingle', ['timeColumn' => 'effective_year']);
+        self::run('general/effective-overall-total-by-year-' . self::$config['startYear'] . '-to-' . self::$config['endYear'], 'effectiveOverallTotalByYear', [], [
+          'currencyColumns' => [
+            'sum_yearly_value',
+          ]
+        ]);
 
         // (Deferred for now - entries by fiscal quarter, by department)
         // self::run('general/entries-by-fiscal', 'entriesByFiscal');
     
-        self::run('general/effective-total-by-year-' . self::$config['startYear'] . '-to-' . self::$config['endYear'], 'effectiveTotalByYear', [], 'arrayToChartJsStacked', [
-          'useConfigYears' => 1,
-          'valueColumn' => 'sum_yearly_value',
-          'labelColumn' => 'owner_acronym',
-          'timeColumn' => 'effective_year',
-          'chartOptions' => 'timeStackedCurrency',
-          ]);
-        
-          dd('y');
-        
-        self::run('general/effective-overall-total-by-year-' . self::$config['startYear'] . '-to-' . self::$config['endYear'], 'effectiveOverallTotalByYear');
+        self::run('general/effective-total-by-year-' . self::$config['startYear'] . '-to-' . self::$config['endYear'], 'effectiveTotalByYear', [], [
+          'currencyColumns' => [
+            'sum_yearly_value',
+          ]
+        ]);
 
-        self::run('general/largest-companies-by-effective-value-total-' . self::$config['startYear'] . '-to-' . self::$config['endYear'], 'largestCompaniesByEffectiveValue');
+        // Largest companies (at a government wide-level)
+        // (next four CSVs)
+
+        self::run('general/largest-companies-by-effective-value-total-' . self::$config['startYear'] . '-to-' . self::$config['endYear'], 'largestCompaniesByEffectiveValue', [], [
+          'currencyColumns' => [
+            'sum_effective_value',
+          ]
+        ]);
     
-        self::run('general/largest-companies-by-effective-value-by-year-' . self::$config['startYear'] . '-to-' . self::$config['endYear'], 'largestCompaniesByEffectiveValueByYear');
+        self::run('general/largest-companies-by-effective-value-by-year-' . self::$config['startYear'] . '-to-' . self::$config['endYear'], 'largestCompaniesByEffectiveValueByYear', [], [
+          'currencyColumns' => [
+            'sum_yearly_value',
+          ]
+        ]);
     
         self::run('general/largest-companies-by-entries-total-' . self::$config['startYear'] . '-to-' . self::$config['endYear'], 'largestCompaniesByEntries');
 
         self::run('general/largest-companies-by-entries-by-year-' . self::$config['startYear'] . '-to-' . self::$config['endYear'], 'largestCompaniesByEntriesByYear');
 
-        dd('here');
-
         $ownerAcronyms = self::allOwnerAcronyms();
 
         foreach ($ownerAcronyms as $ownerAcronym) {
-            self::run("departments/$ownerAcronym/largest-companies-by-effective-value-total-" . self::$config['startYear'] . '-to-' . self::$config['endYear'], 'largestCompaniesByEffectiveValue', $ownerAcronym);
+            self::run("departments/$ownerAcronym/largest-companies-by-effective-value-total-" . self::$config['startYear'] . '-to-' . self::$config['endYear'], 'largestCompaniesByEffectiveValue', $ownerAcronym, [
+              'currencyColumns' => [
+                'sum_effective_value',
+              ]
+            ]);
     
-            self::run("departments/$ownerAcronym/largest-companies-by-effective-value-by-year-" . self::$config['startYear'] . '-to-' . self::$config['endYear'], 'largestCompaniesByEffectiveValue', $ownerAcronym);
+            self::run("departments/$ownerAcronym/largest-companies-by-effective-value-by-year-" . self::$config['startYear'] . '-to-' . self::$config['endYear'], 'largestCompaniesByEffectiveValueByYear', $ownerAcronym, [
+              'currencyColumns' => [
+                'sum_yearly_value',
+              ]
+            ]);
       
             self::run("departments/$ownerAcronym/largest-companies-by-entries-total-" . self::$config['startYear'] . '-to-' . self::$config['endYear'], 'largestCompaniesByEntries', $ownerAcronym);
 
@@ -177,9 +197,17 @@ class AnalysisOps
         foreach ($vendors as $vendor) {
             $vendorSlug = Str::slug($vendor);
 
-            self::run("vendors/$vendorSlug/largest-departments-by-effective-value-total-" . self::$config['startYear'] . '-to-' . self::$config['endYear'], 'largestDepartmentsByEffectiveValue', $vendor);
+            self::run("vendors/$vendorSlug/largest-departments-by-effective-value-total-" . self::$config['startYear'] . '-to-' . self::$config['endYear'], 'largestDepartmentsByEffectiveValue', $vendor, [
+              'currencyColumns' => [
+                'sum_effective_value',
+              ]
+            ]);
     
-            self::run("vendors/$vendorSlug/largest-departments-by-effective-value-by-year-" . self::$config['startYear'] . '-to-' . self::$config['endYear'], 'largestDepartmentsByEffectiveValueByYear', $vendor);
+            self::run("vendors/$vendorSlug/largest-departments-by-effective-value-by-year-" . self::$config['startYear'] . '-to-' . self::$config['endYear'], 'largestDepartmentsByEffectiveValueByYear', $vendor, [
+              'currencyColumns' => [
+                'sum_yearly_value',
+              ]
+            ]);
       
             self::run("vendors/$vendorSlug/largest-departments-by-entries-total-" . self::$config['startYear'] . '-to-' . self::$config['endYear'], 'largestDepartmentsByEntries', $vendor);
 
