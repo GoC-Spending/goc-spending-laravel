@@ -139,6 +139,22 @@ class AnalysisOps
         
         // Entries by year, overall, noting the source (scraper or CSV), errors, and duplicates
         self::run('general/entries-errors-duplicates-by-year', 'entriesErrorsDuplicatesByYear', []);
+
+        // Entries by year, overall, noting the source (scraper or CSV), errors, and duplicates
+        self::run('general/entries-above-and-below-25k-by-year', 'entriesAboveAndBelow25kByYear', [], [
+          'currencyColumns' => [
+            'original_sum_below_25k',
+            'original_sum_above_25k',
+            ]
+        ]);
+
+        // Entries by year, overall, noting original versus amendment entries and their sum (note that this is not the effective value and ends up summing multiple amendments in the same year, etc.)
+        self::run('general/entries-contracts-and-amendments-by-year', 'entriesByOriginalContractAndAmendment', [], [
+          'currencyColumns' => [
+            'original_entries_sum',
+            'most_recent_entries_sum',
+            ]
+        ]);
         
         // Total spending by year, overall
         self::run('general/effective-overall-total-by-year-' . self::$config['startYear'] . '-to-' . self::$config['endYear'], 'effectiveOverallTotalByYear', [], [
@@ -178,6 +194,21 @@ class AnalysisOps
         $ownerAcronyms = self::allOwnerAcronyms();
 
         foreach ($ownerAcronyms as $ownerAcronym) {
+            self::run("departments/$ownerAcronym/entries-above-and-below-25k-by-year-" . self::$config['startYear'] . '-to-' . self::$config['endYear'], 'entriesAboveAndBelow25kByYearByOwner', $ownerAcronym, [
+              'currencyColumns' => [
+                'original_sum_below_25k',
+                'original_sum_above_25k',
+              ]
+            ]);
+
+            self::run("departments/$ownerAcronym/entries-in-25k-range-by-year-" . self::$config['startYear'] . '-to-' . self::$config['endYear'], 'entriesIn25kRangeByYearByOwner', $ownerAcronym, [
+              'currencyColumns' => [
+                'original_sum_below_24k',
+                'original_sum_between_24k_and_26k',
+                'original_sum_above_26k',
+              ]
+            ]);
+
             self::run("departments/$ownerAcronym/largest-companies-by-effective-value-total-" . self::$config['startYear'] . '-to-' . self::$config['endYear'], 'largestCompaniesByEffectiveValue', $ownerAcronym, [
               'currencyColumns' => [
                 'sum_effective_value',
@@ -359,6 +390,134 @@ COUNT("id") filter (where gen_is_amendment::integer = 1) as total_amendments
             ORDER BY owner_acronym, source_year
             LIMIT 50000
     '));
+
+        return $results;
+    }
+
+    // Note that this only looks at initial contract entries, and excludes amendments:
+    public static function entriesAboveAndBelow25kByYear()
+    {
+        $results = DB::select(DB::raw('
+      SELECT owner_acronym, source_year, COUNT("id") as total_original_entries,
+      COUNT("id") filter (where contract_value < 25000) as entries_below_25k,
+      COUNT("id") filter (where contract_value >= 25000) as entries_above_25k,
+      SUM("contract_value") filter (where contract_value < 25000) as original_sum_below_25k,
+      SUM("contract_value") filter (where contract_value >= 25000) as original_sum_above_25k
+      
+          FROM "l_contracts"
+          WHERE source_fiscal IS NOT NULL
+          AND gen_is_duplicate::integer = 0
+          AND gen_is_error::integer = 0
+          AND gen_is_amendment::integer = 0
+          GROUP BY owner_acronym, source_year
+          ORDER BY owner_acronym, source_year
+          LIMIT 50000
+  '));
+
+        return $results;
+    }
+
+    // Note that this doesn't factor in effective values, and multiple amendments will artificially inflate the sum values here:
+    public static function entriesByOriginalContractAndAmendment()
+    {
+        $results = DB::select(DB::raw('
+      SELECT owner_acronym, source_year, COUNT("id") as total_entries,
+COUNT("id") filter (where gen_is_amendment::integer = 0) as original_contract_entries,
+COUNT("id") filter (where gen_is_amendment::integer = 1) as amendment_entries,
+COUNT("id") filter (where gen_is_most_recent_value::integer = 1) as most_recent_entries,
+
+SUM("contract_value") filter (where gen_is_amendment::integer = 0) as original_entries_sum,
+SUM("contract_value") filter (where gen_is_most_recent_value::integer = 1) as most_recent_entries_sum
+
+    FROM "l_contracts"
+    WHERE source_fiscal IS NOT NULL
+    AND gen_is_duplicate::integer = 0
+    AND gen_is_error::integer = 0
+    GROUP BY owner_acronym, source_year
+    ORDER BY owner_acronym, source_year
+    LIMIT 50000
+  '));
+
+        return $results;
+    }
+
+    public static function entriesAboveAndBelow25kByYearByOwner($ownerAcronym)
+    {
+        $query = '
+        SELECT source_year, COUNT("id") as total_original_entries,
+        COUNT("id") filter (where contract_value < 25000) as entries_below_25k,
+        COUNT("id") filter (where contract_value >= 25000) as entries_above_25k,
+        SUM("contract_value") filter (where contract_value < 25000) as original_sum_below_25k,
+        SUM("contract_value") filter (where contract_value >= 25000) as original_sum_above_25k
+        
+            FROM "l_contracts"
+            WHERE source_year IS NOT NULL
+        AND source_year <= :endYear
+        AND source_year >= :startYear
+            AND gen_is_duplicate::integer = 0
+            AND gen_is_error::integer = 0
+            AND gen_is_amendment::integer = 0
+      ';
+
+        $params = [
+        'startYear' => self::$config['startYear'],
+        'endYear' => self::$config['endYear'],
+        ];
+
+        if ($ownerAcronym) {
+            $query .= 'AND owner_acronym = :ownerAcronym';
+            $params['ownerAcronym'] = $ownerAcronym;
+        }
+
+        $query .= '
+        GROUP BY source_year
+        ORDER BY source_year
+        LIMIT 50000
+      ';
+
+        $results = DB::select(DB::raw($query), $params);
+
+        return $results;
+    }
+
+    public static function entriesIn25kRangeByYearByOwner($ownerAcronym)
+    {
+        $query = '
+        SELECT source_year, COUNT("id") as total_original_entries,
+        COUNT("id") filter (where contract_value < 24000) as entries_below_24k,
+        COUNT("id") filter (where contract_value >= 24000 AND contract_value < 26000) as entries_between_24k_and_26k,
+        COUNT("id") filter (where contract_value >= 26000) as entries_above_26k,
+
+        SUM("contract_value") filter (where contract_value < 24000) as original_sum_below_24k,
+        SUM("contract_value") filter (where contract_value >= 24000 AND contract_value < 26000) as original_sum_between_24k_and_26k,
+        SUM("contract_value") filter (where contract_value >= 26000) as original_sum_above_26k
+        
+            FROM "l_contracts"
+            WHERE source_year IS NOT NULL
+        AND source_year <= :endYear
+        AND source_year >= :startYear
+            AND gen_is_duplicate::integer = 0
+            AND gen_is_error::integer = 0
+            AND gen_is_amendment::integer = 0
+      ';
+
+        $params = [
+        'startYear' => self::$config['startYear'],
+        'endYear' => self::$config['endYear'],
+        ];
+
+        if ($ownerAcronym) {
+            $query .= 'AND owner_acronym = :ownerAcronym';
+            $params['ownerAcronym'] = $ownerAcronym;
+        }
+
+        $query .= '
+        GROUP BY source_year
+        ORDER BY source_year
+        LIMIT 50000
+      ';
+
+        $results = DB::select(DB::raw($query), $params);
 
         return $results;
     }
