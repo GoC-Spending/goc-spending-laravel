@@ -24,7 +24,7 @@ class ChartOps
     public static function saveAnalysisTemplate()
     {
         $html = self::buildAnalysisTemplate();
-        $filepath = storage_path() . '/' . env('STORAGE_RELATIVE_WEBSITE_ANALYSIS_CONTENT', '../../goc-spending-website-v1/site/content/analysis.html');
+        $filepath = storage_path() . '/' . env('STORAGE_RELATIVE_WEBSITE_ANALYSIS_CONTENT');
         file_put_contents($filepath, $html);
     }
 
