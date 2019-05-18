@@ -162,6 +162,10 @@ class Cleaners
                 // Category labels
                 'total_contracts' => 'Total contracts',
                 'total_amendments' => 'Total amendments',
+                
+                // Entries
+                'entries_below_25k' => 'Entries below $25k',
+                'entries_above_25k' => 'Entries above $25k',
 
                 // Departmental name labels
                 'acoa' => 'Atlantic Canada Opportunities Agency',

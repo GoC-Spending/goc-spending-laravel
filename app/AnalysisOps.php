@@ -631,6 +631,7 @@ SUM("contract_value") filter (where gen_is_most_recent_value::integer = 1) as mo
     {
         $ownerAcronyms = DB::table('exports_v2')
         ->distinct()
+        ->orderBy('owner_acronym', 'asc')
         ->pluck('owner_acronym');
         return $ownerAcronyms->toArray();
     }

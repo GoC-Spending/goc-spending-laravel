@@ -19,7 +19,7 @@ draft: false
 
 <p>This chart lists the total number of contract and amendment entries included in the combined dataset, by fiscal year, for the government as a whole:</p>
 
-{!! \App\ChartOps::run('general/entries-by-year', 'entriesByYearOverall', [], 'arrayToChartJsStackedTranspose', [
+{!! \App\ChartOps::run('general/entries-by-year', 'entriesByYearOverall', [], [], 'arrayToChartJsStackedTranspose', [
   'useConfigYears' => 1,
   'valueColumns' => ['total_contracts', 'total_amendments'],
   'timeColumn' => 'source_year',
@@ -28,7 +28,7 @@ draft: false
 
 <p>This chart lists the same data as above, but by fiscal quarter:</p>
 
-{!! \App\ChartOps::run('general/entries-by-fiscal', 'entriesByFiscalOverall', [], 'arrayToChartJsStackedTranspose', [
+{!! \App\ChartOps::run('general/entries-by-fiscal', 'entriesByFiscalOverall', [], [], 'arrayToChartJsStackedTranspose', [
   'useConfigFiscal' => 1,
   'valueColumns' => ['total_contracts', 'total_amendments'],
   'timeColumn' => 'source_fiscal',
@@ -37,7 +37,7 @@ draft: false
 
 <p>This chart represents the total effective value of government contracts included in the combined dataset, by calendar year, for the government as a whole:</p>
 
-{!! \App\ChartOps::run('general/effective-overall-total-by-year-' . $config['startYear'] . '-to-' . $config['endYear'], 'effectiveOverallTotalByYear', [], 'arrayToChartJsStacked', [
+{!! \App\ChartOps::run('general/effective-overall-total-by-year-' . $config['startYear'] . '-to-' . $config['endYear'], 'effectiveOverallTotalByYear', [], [], 'arrayToChartJsStacked', [
   'useConfigYears' => 1,
   'timeColumn' => 'effective_year',
   'valueColumn' => 'sum_yearly_value',
@@ -46,7 +46,7 @@ draft: false
   'chartOptions' => 'timeStackedCurrency',
 ]) !!}
 
-<h3 id="total-contract-spending-by-department">Total contract spending by department</h3>
+<h3 id="total-contract-and-amendment-entries-by-department">Total contract and amendment entries by department</h3>
 
 <p>This chart lists the total number of contract and amendment entries included in the combined dataset, by department, by fiscal year:</p>
 
@@ -55,6 +55,8 @@ draft: false
 <p>This chart lists the same data as above, but by fiscal quarter:</p>
 
 <p>[entries-by-fiscal.csv]</p>
+
+<h3 id="total-contract-spending-by-department">Total contract spending by department</h3>
 
 <p>This chart lists the total effective value of each department’s contracts, by year:</p>
 
@@ -80,23 +82,81 @@ draft: false
 
 <h2 id="aggregate-data-by-department">Aggregate data by department</h2>
 
-<p>[Select a department]</p>
+<label for="owner-select">Select a department</label>
+<select id="owner-select" name="owner-select" class="custom-select mb-3">
+@foreach (\App\AnalysisOps::allOwnerAcronyms() as $ownerAcronym)
 
-<p>This table lists the largest companies by total number of contract and amendment entries from [department name], from 2008 to 2017:</p>
+<option value="{{ $ownerAcronym }}" data-chart-array="{{ json_encode(\App\ChartOps::multiRun([
+  [
+    'id' => 'department-largest-companies-by-entries-by-year',
+    'dataMethod' => 'largestCompaniesByEntriesByYear',
+    'dataMethodParams' => $ownerAcronym,
+    'postProcessingParams' => [],
+    'chartMethod' => 'arrayToChartJsStacked',
+    'chartMethodParams' => [
+      'useConfigYears' => 1,
+      'timeColumn' => 'source_year',
+      'labelColumn' => 'gen_vendor_normalized',
+      'valueColumn' => 'total_entries',
+      'generatorMethod' => 'generatePlainArray',
+    ],
+  ],
 
-<p>[largest-companies-by-entries-total-2008-to-2017.csv]</p>
+  [
+    'id' => 'department-entries-above-and-below-25k-by-year',
+    'dataMethod' => 'entriesAboveAndBelow25kByYearByOwner',
+    'dataMethodParams' => $ownerAcronym,
+    'postProcessingParams' => [
+      'currencyColumns' => [
+        'original_sum_below_25k',
+        'original_sum_above_25k',
+      ]
+    ],
+    'chartMethod' => 'arrayToChartJsStackedTranspose',
+    'chartMethodParams' => [
+      'useConfigYears' => 1,
+      'timeColumn' => 'source_year',
+      'valueColumns' => ['entries_below_25k', 'entries_above_25k'],
+      'generatorMethod' => 'generatePlainArray',
+    ],
+  ],
 
-<p>This chart lists the top 10 companies by total number of contract and amendment entries from [department name], by year:</p>
+  [
+    'id' => 'department-largest-companies-by-effective-value-by-year',
+    'dataMethod' => 'largestCompaniesByEffectiveValueByYear',
+    'dataMethodParams' => $ownerAcronym,
+    'postProcessingParams' => [
+      'currencyColumns' => [
+        'sum_yearly_value',
+      ]
+    ],
+    'chartMethod' => 'arrayToChartJsStacked',
+    'chartMethodParams' => [
+      'useConfigYears' => 1,
+      'timeColumn' => 'effective_year',
+      'labelColumn' => 'vendor_normalized',
+      'valueColumn' => 'sum_yearly_value',
+      'chartOptions' => 'timeStackedCurrency',
+      'generatorMethod' => 'generatePlainArray',
+    ],
+  ],
 
-<p>[largest-companies-by-entries-by-year-2008-to-2017.csv]</p>
+])) }}">{{ \App\Helpers\Cleaners::generateLabelText($ownerAcronym) }}</option>
 
-<p>This table lists the largest companies by total effective contract value from [department name], from 2008 to 2017:</p>
+@endforeach
+</select>
 
-<p>[largest-companies-by-effective-value-total-2008-to-2017.csv]</p>
+<p>This chart lists the number of initial contract entries that are below or above $25k, by year:</p>
 
-<p>This chart lists the top 10 companies by total effective contract value from [department name], by year:</p>
+<canvas id="department-entries-above-and-below-25k-by-year" width="400" height="200" class="owner-select-canvas"></canvas>
 
-<p>[largest-companies-by-effective-value-by-year-2008-to-2017.csv]</p>
+<p>This chart lists the top 10 companies by total number of contract and amendment entries from <span class="update-owner">[department name]</span>, by year:</p>
+
+<canvas id="department-largest-companies-by-entries-by-year" width="400" height="200" class="owner-select-canvas"></canvas>
+
+<p>This chart lists the top 10 companies by total effective contract value from <span class="update-owner">[department name]</span>, by year:</p>
+
+<canvas id="department-largest-companies-by-effective-value-by-year" width="400" height="200" class="owner-select-canvas"></canvas>
 
 <h2 id="aggregate-data-by-company-10-largest-companies">Aggregate data by company (10 largest companies)</h2>
 

@@ -29,7 +29,7 @@ class ChartOps
     }
 
 
-    public static function run($id, $dataMethod, $dataMethodParams = [], $chartMethod = '', $chartMethodParams = [])
+    public static function run($id, $dataMethod, $dataMethodParams = [], $postProcessingParams = [], $chartMethod = '', $chartMethodParams = [])
     {
 
         $id = self::cleanHtmlId($id);
@@ -42,8 +42,27 @@ class ChartOps
             $data = AnalysisOps::$dataMethod();
         }
 
+        if ($postProcessingParams) {
+            $data = AnalysisOps::postProcessData($data, $postProcessingParams);
+        }
+
         $html = ChartOps::$chartMethod($id, $data, $chartMethodParams);
         return $html;
+    }
+
+    public static function multiRun($inputArray)
+    {
+        $output = [];
+
+        // Input array needs to include
+        // $id, $dataMethod, $dataMethodParams, $chartMethod, $chartMethodParams
+        // for each entry.
+
+        foreach ($inputArray as $chart) {
+            $output[] = self::run($chart['id'], $chart['dataMethod'], $chart['dataMethodParams'], $chart['postProcessingParams'], $chart['chartMethod'], $chart['chartMethodParams']);
+        }
+
+        return $output;
     }
 
 
@@ -102,6 +121,18 @@ class ChartOps
         return '<canvas id="' . self::cleanHtmlId($id) . '" width="400" height="200" data-chart-type="' . $type .'" data-chart-options="' . $options . '" data-chart-range="' . e(json_encode($labelsArray)) . '" data-chart-values="' . e(json_encode($valuesArray)) . '"></canvas>' . "\n";
     }
 
+    public static function generatePlainArray($id, $labelsArray, $valuesArray, $type = 'year-single', $options = '')
+    {
+        $output = [
+            'id' => self::cleanHtmlId($id),
+            'range' => $labelsArray,
+            'values' => $valuesArray,
+            'type' => $type,
+            'options' => $options,
+        ];
+        return $output;
+    }
+
     public static function getColor($colorMapping, $keyword, $index, $border = 0)
     {
         if ($colorMapping == 'keyword') {
@@ -127,6 +158,8 @@ class ChartOps
         $defaultValue = data_get($params, 'defaultValue', 0);
         $chartOptions = data_get($params, 'chartOptions', '');
         $colorMapping = data_get($params, 'colorMapping', 'index');
+        
+        $generatorMethod = data_get($params, 'generatorMethod', 'generateChartJsTemplate');
 
         $timeRange = [];
         $output = [];
@@ -196,7 +229,7 @@ class ChartOps
 
         // dd($output);
 
-        return self::generateChartJsTemplate($id, $axisLabels, $output, 'year-stacked', $chartOptions);
+        return self::$generatorMethod($id, $axisLabels, $output, 'year-stacked', $chartOptions);
     }
 
   // Stacked chart but, instead of using "group by" for stacking, take entries from different FILTER columns for a given time period
@@ -218,6 +251,8 @@ class ChartOps
         $defaultValue = data_get($params, 'defaultValue', 0);
         $chartOptions = data_get($params, 'chartOptions', '');
         $colorMapping = data_get($params, 'colorMapping', 'index');
+
+        $generatorMethod = data_get($params, 'generatorMethod', 'generateChartJsTemplate');
 
         $timeRange = [];
         $output = [];
@@ -273,6 +308,6 @@ class ChartOps
         }
         $output = self::deIndexArrayTopLevel($output);
 
-        return self::generateChartJsTemplate($id, $axisLabels, $output, 'year-stacked', $chartOptions);
+        return self::$generatorMethod($id, $axisLabels, $output, 'year-stacked', $chartOptions);
     }
 }
