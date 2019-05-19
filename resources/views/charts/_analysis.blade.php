@@ -362,6 +362,6 @@ $i = 0
 
 <h2 id="other-analyses">Other analyses</h2>
 
-<p>You can use the <a href="/data">combined dataset</a> to conduct your own analyses of Government of Canada contracting data. See <a href="/methodology#future-improvements">future improvements</a> for reflections on potential next steps to improve this dataset and generate more detailed insights.</p>
+<p>You can use the <a href="/download/">combined dataset</a> to conduct your own analyses of Government of Canada contracting data. See <a href="/methodology/#future-improvements">future improvements</a> for reflections on potential next steps to improve this dataset and generate more detailed insights.</p>
 
-<p>If you publish your own analyses using this data, please <a href="/contact">let us know</a>!</p>
+<p>If you publish your own analyses using this data, please <a href="/about/#get-in-touch">let us know</a>!</p>
