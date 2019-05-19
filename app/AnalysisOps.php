@@ -796,14 +796,12 @@ SUM("contract_value") filter (where gen_is_most_recent_value::integer = 1) as mo
         AND vendor_normalized = :vendorName
         GROUP BY owner_acronym
         ORDER BY sum_effective_value DESC
-        LIMIT :vendorLimitTimebound
       ';
 
         $params = [
         'startYear' => self::$config['startYear'],
         'endYear' => self::$config['endYear'],
         'vendorName' => $vendorName,
-        'vendorLimitTimebound' => self::$config['vendorLimitTimebound'],
         ];
 
 
@@ -824,7 +822,7 @@ SUM("contract_value") filter (where gen_is_most_recent_value::integer = 1) as mo
         AND vendor_normalized = :vendorName
         GROUP BY owner_acronym, effective_year
         ORDER BY owner_acronym, effective_year ASC
-        LIMIT 10000;
+        LIMIT 20000;
         ';
 
         $params = [
@@ -885,14 +883,12 @@ SUM("contract_value") filter (where gen_is_most_recent_value::integer = 1) as mo
         AND gen_vendor_normalized = :vendorName
         GROUP BY owner_acronym
         ORDER BY total_entries DESC
-        LIMIT :vendorLimitTimebound
       ';
 
         $params = [
         'startYear' => self::$config['startYear'],
         'endYear' => self::$config['endYear'],
         'vendorName' => $vendorName,
-        'vendorLimitTimebound' => self::$config['vendorLimitTimebound'],
         ];
 
 
@@ -917,7 +913,7 @@ SUM("contract_value") filter (where gen_is_most_recent_value::integer = 1) as mo
           AND gen_is_error::integer = 0
           GROUP BY owner_acronym, source_year
           ORDER BY owner_acronym, source_year ASC
-          LIMIT 10000
+          LIMIT 20000
       ';
 
         $params = [
