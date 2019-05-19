@@ -130,6 +130,9 @@ class AnalysisOps
 
         // Entries by department, by year
         self::run('general/entries-by-department-by-year', 'entriesByYear', []);
+
+        // Entries by department, by fiscal
+        self::run('general/entries-by-department-by-fiscal', 'entriesByFiscal', []);
         
         // Entries by year, overall (government-wide)
         self::run('general/entries-by-year', 'entriesByYearOverall', []);
