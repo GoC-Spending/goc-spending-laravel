@@ -53,13 +53,20 @@ class Miscellaneous
         // Chart.helpers.color("#11A579").alpha(0.7).rgbString()
         $colorMap = [
             'total_contracts' => [
-                // #B1FA83
-                'color' => 'rgba(124, 245, 90, 0.7)',
-                'borderColor' => 'rgb(75, 242, 28)',
+                'color' => 'rgb(102, 204, 0)',
+                'borderColor' => 'rgb(82, 163, 0)',
             ],
             'total_amendments' => [
-                'color' => 'rgba(0, 176, 199, 0.7)',
-                'borderColor' => 'rgb(0, 140, 158)',
+                'color' => 'rgb(51, 51, 204)',
+                'borderColor' => 'rgb(41, 41, 163)',
+            ],
+            'entries_below_25k' => [
+              'color' => 'rgb(204, 204, 255)',
+              'borderColor' => 'rgb(112, 112, 255)',
+            ],
+            'entries_above_25k' => [
+              'color' => 'rgb(102, 51, 204)',
+              'borderColor' => 'rgb(82, 41, 163)',
             ],
         ];
 
