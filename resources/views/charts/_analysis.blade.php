@@ -163,7 +163,7 @@ $i = 0
 <select id="owner-select" name="owner-select" class="custom-select mb-3">
 @foreach (\App\AnalysisOps::allOwnerAcronyms() as $ownerAcronym)
 
-<option value="{{ $ownerAcronym }}" data-chart-array="{{ json_encode(\App\ChartOps::multiRun([
+<option value="{{ $ownerAcronym }}" data-url-target="{{ $ownerAcronym }}" data-chart-array="{{ json_encode(\App\ChartOps::multiRun([
   [
     'id' => 'department-largest-companies-by-entries-by-year',
     'dataMethod' => 'largestCompaniesByEntriesByYear',
@@ -228,13 +228,52 @@ $i = 0
 
 <canvas id="department-entries-above-and-below-25k-by-year" width="400" height="200" class="owner-select-canvas"></canvas>
 
+@include('charts.includes.githubupdatesource', ['class' => 'owner-select-link', 'links' => [
+  [
+    'urlPrefix' => 'https://github.com/GoC-Spending/goc-spending-analysis/blob/master/departments/',
+    'urlSuffix' => '/entries-above-and-below-25k-by-year-2008-to-2017.csv',
+    'labelPrefix' => 'Entries above and below $25k for ',
+    'labelSuffix' => '',
+  ]
+]])
+
 <p>@include('charts.includes.target', ['i' => ++$i])This chart lists the top 10 companies by total number of contract and amendment entries from <span class="update-owner">[department name]</span>, by year:</p>
 
 <canvas id="department-largest-companies-by-entries-by-year" width="400" height="200" class="owner-select-canvas"></canvas>
 
+@include('charts.includes.githubupdatesource', ['class' => 'owner-select-link', 'links' => [
+  [
+    'urlPrefix' => 'https://github.com/GoC-Spending/goc-spending-analysis/blob/master/departments/',
+    'urlSuffix' => '/largest-companies-by-effective-value-total-2008-to-2017.csv',
+    'labelPrefix' => '',
+    'labelSuffix' => '’s top 100 companies by number of contract and amendment entries',
+  ],
+  [
+    'urlPrefix' => 'https://github.com/GoC-Spending/goc-spending-analysis/blob/master/departments/',
+    'urlSuffix' => '/largest-companies-by-effective-value-by-year-2008-to-2017.csv',
+    'labelPrefix' => '',
+    'labelSuffix' => '’s top 10 companies by number of contract and amendment entries, by year',
+  ],
+]])
+
 <p>@include('charts.includes.target', ['i' => ++$i])This chart lists the top 10 companies by total effective contract value from <span class="update-owner">[department name]</span>, by year:</p>
 
 <canvas id="department-largest-companies-by-effective-value-by-year" width="400" height="200" class="owner-select-canvas"></canvas>
+
+@include('charts.includes.githubupdatesource', ['class' => 'owner-select-link', 'links' => [
+  [
+    'urlPrefix' => 'https://github.com/GoC-Spending/goc-spending-analysis/blob/master/departments/',
+    'urlSuffix' => '/largest-companies-by-effective-value-total-2008-to-2017.csv',
+    'labelPrefix' => '',
+    'labelSuffix' => '’s top 100 companies by effective value',
+  ],
+  [
+    'urlPrefix' => 'https://github.com/GoC-Spending/goc-spending-analysis/blob/master/departments/',
+    'urlSuffix' => '/largest-companies-by-effective-value-by-year-2008-to-2017.csv',
+    'labelPrefix' => '',
+    'labelSuffix' => '’s top 10 companies by effective value, by year',
+  ],
+]])
 
 <h2 id="aggregate-data-by-company-10-largest-companies">Aggregate data by company (10 largest companies)</h2>
 
@@ -242,7 +281,7 @@ $i = 0
 <select id="vendor-select" name="vendor-select" class="custom-select mb-3">
 @foreach (\App\AnalysisOps::largestVendorNamesByEffectiveValue() as $vendor)
 
-<option value="{{ $vendor }}" data-chart-array="{{ json_encode(\App\ChartOps::multiRun([
+<option value="{{ $vendor }}" data-url-target="{{ \Illuminate\Support\Str::slug($vendor) }}" data-chart-array="{{ json_encode(\App\ChartOps::multiRun([
   [
     'id' => 'vendor-largest-departments-by-entries-by-year',
     'dataMethod' => 'largestDepartmentsByEntriesByYear',
@@ -287,9 +326,39 @@ $i = 0
 
 <canvas id="vendor-largest-departments-by-entries-by-year" width="400" height="200" class="vendor-select-canvas"></canvas>
 
+@include('charts.includes.githubupdatesource', ['class' => 'vendor-select-link', 'links' => [
+  [
+    'urlPrefix' => 'https://github.com/GoC-Spending/goc-spending-analysis/blob/master/vendors/',
+    'urlSuffix' => '/largest-departments-by-entries-total-2008-to-2017.csv',
+    'labelPrefix' => 'Top departments for ',
+    'labelSuffix' => ' by number of contract and amendment entries',
+  ],
+  [
+    'urlPrefix' => 'https://github.com/GoC-Spending/goc-spending-analysis/blob/master/vendors/',
+    'urlSuffix' => '/largest-departments-by-entries-by-year-2008-to-2017.csv',
+    'labelPrefix' => 'Top 10 departments for ',
+    'labelSuffix' => ' by number of contract and amendment entries, by year',
+  ],
+]])
+
 <p>@include('charts.includes.target', ['i' => ++$i])This chart lists departments by total effective contract value with <span class="update-vendor">[company name]</span>, from 2008 to 2017:</p>
 
 <canvas id="vendor-largest-departments-by-effective-value-by-year" width="400" height="200" class="vendor-select-canvas"></canvas>
+
+@include('charts.includes.githubupdatesource', ['class' => 'vendor-select-link', 'links' => [
+  [
+    'urlPrefix' => 'https://github.com/GoC-Spending/goc-spending-analysis/blob/master/vendors/',
+    'urlSuffix' => '/largest-departments-by-effective-value-total-2008-to-2017.csv',
+    'labelPrefix' => 'Top departments for ',
+    'labelSuffix' => ' by effective contract value',
+  ],
+  [
+    'urlPrefix' => 'https://github.com/GoC-Spending/goc-spending-analysis/blob/master/vendors/',
+    'urlSuffix' => '/largest-departments-by-effective-value-by-year-2008-to-2017.csv',
+    'labelPrefix' => 'Top 10 departments for ',
+    'labelSuffix' => ' by effective contract value, by year',
+  ],
+]])
 
 <h2 id="other-analyses">Other analyses</h2>
 
