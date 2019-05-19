@@ -1,5 +1,6 @@
 ---
 title: 'Analysis'
+description: "Aggregate statistical analyses of Government of Canada contract spending at a government-wide level."
 date: 2019-05-04
 draft: false
 menu: 
