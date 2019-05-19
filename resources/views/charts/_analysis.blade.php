@@ -275,11 +275,11 @@ $i = 0
   ],
 ]])
 
-<h2 id="aggregate-data-by-company-10-largest-companies">Aggregate data by company (10 largest companies)</h2>
+<h2 id="aggregate-data-by-company-10-largest-companies">Aggregate data by company (100 largest companies)</h2>
 
 <label for="vendor-select">Select a company</label>
 <select id="vendor-select" name="vendor-select" class="custom-select mb-3">
-@foreach (\App\AnalysisOps::largestVendorNamesByEffectiveValue() as $vendor)
+@foreach (\App\AnalysisOps::largestVendorNamesByEffectiveValue(100, 1) as $vendor)
 
 <option value="{{ $vendor }}" data-url-target="{{ \Illuminate\Support\Str::slug($vendor) }}" data-chart-array="{{ json_encode(\App\ChartOps::multiRun([
   [
