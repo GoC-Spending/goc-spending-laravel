@@ -1,10 +1,15 @@
 ---
-title: 'Analysis NEW'
-date: 2018-11-14T19:02:50-07:00
+title: 'Analysis'
+date: 2019-05-04
 draft: false
+menu: 
+  main:
+    parent: 'analysis'
 ---
 
-
+@php  
+$i = 0 
+@endphp
 <h1 id="analysis">Analysis</h1>
 
 <p>The charts below are simple aggregate analyses of Government of Canada contract spending data. They are generated from the <a href="/data">combined dataset</a> of scraped Proactive Disclosure websites and Open Government CSV data. See the <a href="/methodology">Methodology</a> page to learn more about how this data was aggregated and analyzed.</p>
@@ -15,29 +20,39 @@ draft: false
 
 <h2 id="government-wide-aggregate-data">Government-wide aggregate data</h2>
 
-<h3 id="total-government-wide-contract-spending">Total government-wide contract spending</h3>
+<h3 id="total-government-wide-contract-and-amendment-entries">Total government-wide contract and amendment entries</h3>
 
-<p>This chart lists the total number of contract and amendment entries included in the combined dataset, by fiscal year, for the government as a whole:</p>
+<p>@include('charts.includes.target', ['i' => ++$i])This chart lists the total number of contract and amendment entries included in the combined dataset, by fiscal year, for the government as a whole:</p>
 
-{!! \App\ChartOps::run('general/entries-by-year', 'entriesByYearOverall', [], [], 'arrayToChartJsStackedTranspose', [
+{!! \App\ChartOps::run('entries-by-year', 'entriesByYearOverall', [], [], 'arrayToChartJsStackedTranspose', [
   'useConfigYears' => 1,
   'valueColumns' => ['total_contracts', 'total_amendments'],
   'timeColumn' => 'source_year',
   'colorMapping' => 'keyword',
 ]) !!}
 
-<p>This chart lists the same data as above, but by fiscal quarter:</p>
+@include('charts.includes.githubsource', ['links' => [
+  'https://github.com/GoC-Spending/goc-spending-analysis/blob/master/general/entries-by-year.csv' => 'Overall contract and amendment entries, by year'
+]])
 
-{!! \App\ChartOps::run('general/entries-by-fiscal', 'entriesByFiscalOverall', [], [], 'arrayToChartJsStackedTranspose', [
+<p>@include('charts.includes.target', ['i' => ++$i])This chart lists the same data as above, but by fiscal quarter:</p>
+
+{!! \App\ChartOps::run('entries-by-fiscal', 'entriesByFiscalOverall', [], [], 'arrayToChartJsStackedTranspose', [
   'useConfigFiscal' => 1,
   'valueColumns' => ['total_contracts', 'total_amendments'],
   'timeColumn' => 'source_fiscal',
   'colorMapping' => 'keyword',
 ]) !!}
 
-<p>This chart represents the total effective value of government contracts included in the combined dataset, by calendar year, for the government as a whole:</p>
+@include('charts.includes.githubsource', ['links' => [
+  'https://github.com/GoC-Spending/goc-spending-analysis/blob/master/general/entries-by-fiscal.csv' => 'Overall contract and amendment entries, by fiscal quarter'
+]])
 
-{!! \App\ChartOps::run('general/effective-overall-total-by-year-' . $config['startYear'] . '-to-' . $config['endYear'], 'effectiveOverallTotalByYear', [], [
+<h3 id="total-government-wide-contract-spending">Total government-wide contract spending</h3>
+
+<p>@include('charts.includes.target', ['i' => ++$i])This chart represents the total effective value of government contracts included in the combined dataset, by calendar year, for the government as a whole:</p>
+
+{!! \App\ChartOps::run('effective-overall-total-by-year', 'effectiveOverallTotalByYear', [], [
     'currencyColumns' => [
       'sum_yearly_value',
     ]
@@ -50,39 +65,97 @@ draft: false
   'chartOptions' => 'timeStackedCurrency',
 ]) !!}
 
+@include('charts.includes.githubsource', ['links' => [
+  'https://github.com/GoC-Spending/goc-spending-analysis/blob/master/general/effective-overall-total-by-year-2008-to-2017.csv' => 'Overall effective government-wide contract spending'
+]])
+
 <h3 id="total-contract-and-amendment-entries-by-department">Total contract and amendment entries by department</h3>
 
-<p>This chart lists the total number of contract and amendment entries included in the combined dataset, by department, by fiscal year:</p>
+<p>@include('charts.includes.target', ['i' => ++$i])This chart lists the total number of contract and amendment entries included in the combined dataset, by department, by fiscal year:</p>
 
-<p>[entries-by-year.csv]</p>
+{!! \App\ChartOps::run('entries-by-department-by-year', 'entriesByYear', [], [], 'arrayToChartJsStacked', [
+  'useConfigYears' => 1,
+  'valueColumn' => 'total_entries',
+  'labelColumn' => 'owner_acronym',
+  'timeColumn' => 'source_year',
+  
+]) !!}
 
-<p>This chart lists the same data as above, but by fiscal quarter:</p>
+@include('charts.includes.githubsource', ['links' => [
+  'https://github.com/GoC-Spending/goc-spending-analysis/blob/master/general/entries-by-department-by-year.csv' => 'Contract and amendment entries by department, by fiscal year'
+]])
 
-<p>[entries-by-fiscal.csv]</p>
+<p>@include('charts.includes.target', ['i' => ++$i])This chart lists the same data as above, but by fiscal quarter:</p>
+
+{!! \App\ChartOps::run('entries-by-department-by-fiscal', 'entriesByFiscal', [], [], 'arrayToChartJsStacked', [
+  'useConfigFiscal' => 1,
+  'valueColumn' => 'total_entries',
+  'labelColumn' => 'owner_acronym',
+  'timeColumn' => 'source_fiscal',
+  
+]) !!}
+
+@include('charts.includes.githubsource', ['links' => [
+  'https://github.com/GoC-Spending/goc-spending-analysis/blob/master/general/entries-by-department-by-fiscal.csv' => 'Contract and amendment entries by department, by fiscal quarter'
+]])
 
 <h3 id="total-contract-spending-by-department">Total contract spending by department</h3>
 
-<p>This chart lists the total effective value of each department’s contracts, by year:</p>
+<p>@include('charts.includes.target', ['i' => ++$i])This chart lists the total effective value of each department’s contracts, by year:</p>
 
-<p>[effective-total-by-year-2008-to-2017.csv]</p>
+{!! \App\ChartOps::run('effective-total-by-year', 'effectiveTotalByYear', [], [
+    'currencyColumns' => [
+      'sum_yearly_value',
+    ]
+  ], 'arrayToChartJsStacked', [
+  'useConfigYears' => 1,
+  'timeColumn' => 'effective_year',
+  'labelColumn' => 'owner_acronym',
+  'valueColumn' => 'sum_yearly_value',
+  'chartOptions' => 'timeStackedCurrency',
+]) !!}
+
+@include('charts.includes.githubsource', ['links' => [
+  'https://github.com/GoC-Spending/goc-spending-analysis/blob/master/general/effective-total-by-year-2008-to-2017.csv' => 'Effective total contract spending by department, by year'
+]])
 
 <h3 id="largest-companies-by-government-wide-contract-spending">Largest companies by government-wide contract spending</h3>
 
-<p>This table lists the largest companies by total number of contract and amendment entries in the combined dataset, from 2008 to 2017:</p>
+<p>The following charts include the top 10 companies by total effective contract value, government-wide.</p>
 
-<p>[largest-companies-by-entries-total-2008-to-2017.csv]</p>
+<p>This chart lists these companies by total number of contract and amendment entries, by year:</p>
 
-<p>This chart lists the top 10 companies by total number of contract and amendment entries, by year:</p>
+{!! \App\ChartOps::run('largest-companies-by-entries-by-year', 'largestCompaniesByEntriesByYear', [], [], 'arrayToChartJsStacked', [
+  'useConfigYears' => 1,
+  'valueColumn' => 'total_entries',
+  'labelColumn' => 'gen_vendor_normalized',
+  'timeColumn' => 'source_year',
+  
+]) !!}
 
-<p>[largest-companies-by-entries-by-year-2008-to-2017.csv]</p>
-
-<p>This table lists the largest companies by total effective contract value, government-wide, from 2008 to 2017:</p>
-
-<p>[largest-companies-by-effective-value-total-2008-to-2017.csv]</p>
+@include('charts.includes.githubsource', ['links' => [
+  'https://github.com/GoC-Spending/goc-spending-analysis/blob/master/general/largest-companies-by-entries-total-2008-to-2017.csv' => 'Top 100 companies by number of contract and amendment entries',
+  'https://github.com/GoC-Spending/goc-spending-analysis/blob/master/general/largest-companies-by-entries-by-year-2008-to-2017.csv' => 'Top 10 companies by number of contract and amendment entries, by year'
+]])
 
 <p>This chart lists the top 10 companies by total effective contract value, government-wide, by year:</p>
 
-<p>[largest-companies-by-effective-value-by-year-2008-to-2017.csv]</p>
+{!! \App\ChartOps::run('largest-companies-by-effective-value-by-year', 'largestCompaniesByEffectiveValueByYear', [], [
+    'currencyColumns' => [
+      'sum_yearly_value',
+    ]
+  ], 'arrayToChartJsStacked', [
+  'useConfigYears' => 1,
+  'timeColumn' => 'effective_year',
+  'labelColumn' => 'vendor_normalized',
+  'valueColumn' => 'sum_yearly_value',
+  'chartOptions' => 'timeStackedCurrency',
+]) !!}
+
+@include('charts.includes.githubsource', ['links' => [
+  'https://github.com/GoC-Spending/goc-spending-analysis/blob/master/general/largest-companies-by-effective-value-total-2008-to-2017.csv' => 'Top 100 companies by effective contract value',
+  'https://github.com/GoC-Spending/goc-spending-analysis/blob/master/general/largest-companies-by-effective-value-by-year-2008-to-2017.csv' => 'Top 10 companies by effective contract value, by year'
+]])
 
 <h2 id="aggregate-data-by-department">Aggregate data by department</h2>
 
@@ -121,6 +194,7 @@ draft: false
       'useConfigYears' => 1,
       'timeColumn' => 'source_year',
       'valueColumns' => ['entries_below_25k', 'entries_above_25k'],
+      'colorMapping' => 'keyword',
       'generatorMethod' => 'generatePlainArray',
     ],
   ],
@@ -150,15 +224,15 @@ draft: false
 @endforeach
 </select>
 
-<p>This chart lists the number of initial contract entries from <span class="update-owner">[department name]</span> that are below or above $25k, by year:</p>
+<p>@include('charts.includes.target', ['i' => ++$i])This chart lists the number of initial contract entries from <span class="update-owner">[department name]</span> that are below or above $25k, by year:</p>
 
 <canvas id="department-entries-above-and-below-25k-by-year" width="400" height="200" class="owner-select-canvas"></canvas>
 
-<p>This chart lists the top 10 companies by total number of contract and amendment entries from <span class="update-owner">[department name]</span>, by year:</p>
+<p>@include('charts.includes.target', ['i' => ++$i])This chart lists the top 10 companies by total number of contract and amendment entries from <span class="update-owner">[department name]</span>, by year:</p>
 
 <canvas id="department-largest-companies-by-entries-by-year" width="400" height="200" class="owner-select-canvas"></canvas>
 
-<p>This chart lists the top 10 companies by total effective contract value from <span class="update-owner">[department name]</span>, by year:</p>
+<p>@include('charts.includes.target', ['i' => ++$i])This chart lists the top 10 companies by total effective contract value from <span class="update-owner">[department name]</span>, by year:</p>
 
 <canvas id="department-largest-companies-by-effective-value-by-year" width="400" height="200" class="owner-select-canvas"></canvas>
 
@@ -209,11 +283,11 @@ draft: false
 @endforeach
 </select>
 
-<p>This chart lists departments by total number of contract and amendment entries with <span class="update-vendor">[company name]</span>, by year:</p>
+<p>@include('charts.includes.target', ['i' => ++$i])This chart lists departments by total number of contract and amendment entries with <span class="update-vendor">[company name]</span>, by year:</p>
 
 <canvas id="vendor-largest-departments-by-entries-by-year" width="400" height="200" class="vendor-select-canvas"></canvas>
 
-<p>This table lists departments by total effective contract value with <span class="update-vendor">[company name]</span>, from 2008 to 2017:</p>
+<p>@include('charts.includes.target', ['i' => ++$i])This chart lists departments by total effective contract value with <span class="update-vendor">[company name]</span>, from 2008 to 2017:</p>
 
 <canvas id="vendor-largest-departments-by-effective-value-by-year" width="400" height="200" class="vendor-select-canvas"></canvas>
 
