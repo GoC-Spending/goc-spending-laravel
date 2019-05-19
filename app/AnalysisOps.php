@@ -229,7 +229,7 @@ class AnalysisOps
             self::run("departments/$ownerAcronym/largest-companies-by-entries-by-year-" . self::$config['startYear'] . '-to-' . self::$config['endYear'], 'largestCompaniesByEntriesByYear', $ownerAcronym);
         }
 
-        $vendors = self::largestVendorNamesByEffectiveValue();
+        $vendors = self::largestVendorNamesByEffectiveValue(100);
 
         foreach ($vendors as $vendor) {
             $vendorSlug = Str::slug($vendor);
@@ -639,11 +639,15 @@ SUM("contract_value") filter (where gen_is_most_recent_value::integer = 1) as mo
         return $ownerAcronyms->toArray();
     }
 
-    public static function largestVendorNamesByEffectiveValue($length = 10)
+    public static function largestVendorNamesByEffectiveValue($length = 10, $sortByName = 0)
     {
         $results = self::largestCompaniesByEffectiveValue();
 
         $vendors = array_slice(Arr::pluck($results, 'vendor_normalized'), 0, $length);
+
+        if ($sortByName) {
+            sort($vendors, SORT_STRING);
+        }
       
         return $vendors;
     }
