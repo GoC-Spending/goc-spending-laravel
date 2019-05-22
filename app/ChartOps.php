@@ -310,4 +310,25 @@ class ChartOps
 
         return self::$generatorMethod($id, $axisLabels, $output, 'year-stacked', $chartOptions);
     }
+
+
+    public static function arrayToTable($id, $input, $params)
+    {
+
+        $currencyColumns = data_get($params, 'currencyColumns', []);
+        $limitRows = data_get($params, 'limitRows', []);
+
+        $keys = array_keys(get_object_vars($input[0]));
+        $labels = [];
+        foreach ($keys as $key) {
+            $labels[] = Cleaners::generateLabelText($key);
+        }
+
+        return view('charts/includes/simpletable', [
+            // 'labels' => $labels,
+            'input' => $input,
+            'currencyColumns' => $currencyColumns,
+            'limitRows' => $limitRows,
+        ])->render();
+    }
 }

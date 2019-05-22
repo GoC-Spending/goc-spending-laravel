@@ -128,9 +128,17 @@ $i = 0
 
 <h3 id="largest-companies-by-government-wide-contract-spending">Largest companies by government-wide contract spending</h3>
 
-<p>The following charts include the top 10 companies by total effective contract value, government-wide.</p>
+<p>This table lists the largest companies by total number of contract and amendment entries in the combined dataset, from 2008 to 2017:</p>
 
-<p>This chart lists these companies by total number of contract and amendment entries, by year:</p>
+{!! \App\ChartOps::run('largest-companies-by-effective-value-total', 'largestCompaniesByEntries', [], [], 'arrayToTable', [
+  'limitRows' => 10,
+]) !!}
+
+@include('charts.includes.githubsource', ['links' => [
+  'https://github.com/GoC-Spending/goc-spending-analysis/blob/master/general/largest-companies-by-entries-total-2008-to-2017.csv' => 'Top 100 companies by number of contract and amendment entries'
+]])
+
+<p>This chart lists the top 10 companies by total number of contract and amendment entries, government-wide, by year:</p>
 
 {!! \App\ChartOps::run('largest-companies-by-entries-by-year', 'largestCompaniesByEntriesByYear', [], [], 'arrayToChartJsStacked', [
   'useConfigYears' => 1,
@@ -141,8 +149,22 @@ $i = 0
 ]) !!}
 
 @include('charts.includes.githubsource', ['links' => [
-  'https://github.com/GoC-Spending/goc-spending-analysis/blob/master/general/largest-companies-by-entries-total-2008-to-2017.csv' => 'Top 100 companies by number of contract and amendment entries',
   'https://github.com/GoC-Spending/goc-spending-analysis/blob/master/general/largest-companies-by-entries-by-year-2008-to-2017.csv' => 'Top 10 companies by number of contract and amendment entries, by year'
+]])
+
+<p>This table lists the largest companies by total effective contract value, government-wide, from 2008 to 2017:</p>
+
+{!! \App\ChartOps::run('largest-companies-by-effective-value-total', 'largestCompaniesByEffectiveValue', [], [
+    'currencyColumns' => [
+      'sum_effective_value',
+    ]
+  ], 'arrayToTable', [
+  'currencyColumns' => ['sum_effective_value'],
+  'limitRows' => 10,
+]) !!}
+
+@include('charts.includes.githubsource', ['links' => [
+  'https://github.com/GoC-Spending/goc-spending-analysis/blob/master/general/largest-companies-by-effective-value-total-2008-to-2017.csv' => 'Top 100 companies by effective contract value'
 ]])
 
 <p>This chart lists the top 10 companies by total effective contract value, government-wide, by year:</p>
@@ -160,7 +182,6 @@ $i = 0
 ]) !!}
 
 @include('charts.includes.githubsource', ['links' => [
-  'https://github.com/GoC-Spending/goc-spending-analysis/blob/master/general/largest-companies-by-effective-value-total-2008-to-2017.csv' => 'Top 100 companies by effective contract value',
   'https://github.com/GoC-Spending/goc-spending-analysis/blob/master/general/largest-companies-by-effective-value-by-year-2008-to-2017.csv' => 'Top 10 companies by effective contract value, by year'
 ]])
 
