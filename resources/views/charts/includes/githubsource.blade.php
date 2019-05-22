@@ -1,4 +1,9 @@
-<p class="text-right mb-5 ml-5">View source data: 
+@php 
+if(! isset($marginBottomClass)) {
+  $marginBottomClass = 'mb-5';
+}
+@endphp 
+<p class="text-right {{ $marginBottomClass }} ml-5">View source data: 
 @php 
 $index = 0;
 @endphp

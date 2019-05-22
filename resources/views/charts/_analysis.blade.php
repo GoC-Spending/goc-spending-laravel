@@ -68,9 +68,9 @@ $i = 0
 
 @include('charts.includes.githubsource', ['links' => [
   'https://github.com/GoC-Spending/goc-spending-analysis/blob/master/general/effective-overall-total-by-year-2008-to-2017.csv' => 'Overall effective government-wide contract spending'
-]])
+], 'marginBottomClass' => 'mb-2'])
 
-<div class="alert alert-warning">
+<div class="alert alert-warning mb-5">
   <p>This chart appears to show that total contracting spending increases year over year. But this might be <a href="/methodology/#producing-aggregate-analysis-trends">due to issues with the historical data</a>, rather than an actual trend. Be careful in interpreting any year-over-year trends displayed on this page.</p>
 
   <p class="mb-0"><a href="https://www.canada.ca/en/treasury-board-secretariat/corporate/reports/contracting-data.html">Check the Purchasing Activity Reports</a> for historical whole-of-government data on contracting totals until 2016. For example, <a href="https://www.canada.ca/en/treasury-board-secretariat/corporate/reports/contracting-data/2013-purchasing-activity-report.html">the 2013 report</a> shows total spending of $14.6 billion (including contracts below our $10,000 proactive disclosure threshold).</p>
@@ -183,7 +183,11 @@ $i = 0
 
 @include('charts.includes.githubsource', ['links' => [
   'https://github.com/GoC-Spending/goc-spending-analysis/blob/master/general/largest-companies-by-effective-value-by-year-2008-to-2017.csv' => 'Top 10 companies by effective contract value, by year'
-]])
+], 'marginBottomClass' => 'mb-2'])
+
+<div class="alert alert-warning mb-5">
+  <p class="mb-0">This chart may show negative values for a given year, in cases where later amendments reduced the overall value of a large contract compared to earlier entries. See the <a href="/methodology/#normalizing-by-year">Normalizing by year</a> methodology section for more details.</p>
+</div>
 
 <h2 id="aggregate-data-by-department">Aggregate data by department</h2>
 
