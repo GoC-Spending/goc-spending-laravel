@@ -70,6 +70,12 @@ $i = 0
   'https://github.com/GoC-Spending/goc-spending-analysis/blob/master/general/effective-overall-total-by-year-2008-to-2017.csv' => 'Overall effective government-wide contract spending'
 ]])
 
+<div class="alert alert-warning">
+  <p>This chart appears to show that total contracting spending increases year over year. But this might be <a href="/methodology/#producing-aggregate-analysis-trends">due to issues with the historical data</a>, rather than an actual trend. Be careful in interpreting any year-over-year trends displayed on this page.</p>
+
+  <p class="mb-0"><a href="https://www.canada.ca/en/treasury-board-secretariat/corporate/reports/contracting-data.html">Check the Purchasing Activity Reports</a> for historical whole-of-government data on contracting totals until 2016. For example, <a href="https://www.canada.ca/en/treasury-board-secretariat/corporate/reports/contracting-data/2013-purchasing-activity-report.html">the 2013 report</a> shows total spending of $14.6 billion (including contracts below our $10,000 proactive disclosure threshold).</p>
+</div>
+
 <h3 id="total-contract-and-amendment-entries-by-department">Total contract and amendment entries by department</h3>
 
 <p>@include('charts.includes.target', ['i' => ++$i])This chart lists the total number of contract and amendment entries included in the combined dataset, by department, by fiscal year:</p>
