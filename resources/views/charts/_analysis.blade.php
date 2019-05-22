@@ -13,11 +13,11 @@ $i = 0
 @endphp
 <h1 id="analysis">Analysis</h1>
 
-<p>The charts below are simple aggregate analyses of Government of Canada contract spending data. They are generated from the <a href="/data">combined dataset</a> of scraped Proactive Disclosure websites and Open Government CSV data. See the <a href="/methodology">Methodology</a> page to learn more about how this data was aggregated and analyzed.</p>
+<p>The charts below are simple aggregate analyses of Government of Canada contract spending data. They are generated from the <a href="/download">combined dataset</a> of scraped Proactive Disclosure websites and Open Government CSV data. See the <a href="/methodology">Methodology</a> page to learn more about how this data was aggregated and analyzed.</p>
 
 <p>Because the spending data represented here was normalized year-by-year (to the closest calendar year), given the <a href="/methodology#limitations">limitations of the source data</a>, the numbers below should be considered as estimated rather than actual values. Total spending amounts on a per-company and per-year basis are not published at a government-wide level by the Government of Canada.</p>
 
-<p>This is a volunteer-led effort, and no guarantees are made for the accuracy of the data or the processes used to aggregate and analyze it. You can <a href="/data">download the full dataset</a> yourself to conduct more advanced analyses of it.</p>
+<p>This is a volunteer-led effort, and no guarantees are made for the accuracy of the data or the processes used to aggregate and analyze it. You can <a href="/download">download the full dataset</a> yourself to conduct more advanced analyses of it.</p>
 
 <h2 id="government-wide-aggregate-data">Government-wide aggregate data</h2>
 
