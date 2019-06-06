@@ -20,7 +20,7 @@ class AnalysisOps
     public static $config = [
     'startYear' => 2008,
     'endYear' => 2017,
-    'vendorLimit' => 100,
+    'vendorLimit' => 200,
     'vendorLimitTimebound' => 10,
     ];
 
@@ -229,7 +229,7 @@ class AnalysisOps
             self::run("departments/$ownerAcronym/largest-companies-by-entries-by-year-" . self::$config['startYear'] . '-to-' . self::$config['endYear'], 'largestCompaniesByEntriesByYear', $ownerAcronym);
         }
 
-        $vendors = self::largestVendorNamesByEffectiveValue(100);
+        $vendors = self::largestVendorNamesByEffectiveValue(200);
 
         foreach ($vendors as $vendor) {
             $vendorSlug = Str::slug($vendor);

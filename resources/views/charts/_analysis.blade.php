@@ -128,7 +128,7 @@ $i = 0
 
 <h3 id="largest-companies-by-government-wide-contract-spending">Largest companies by government-wide contract spending</h3>
 
-<p>This table lists the largest companies by total number of contract and amendment entries in the combined dataset, from 2008 to 2017:</p>
+<p>@include('charts.includes.target', ['i' => ++$i])This table lists the largest companies by total number of contract and amendment entries in the combined dataset, from 2008 to 2017:</p>
 
 {!! \App\ChartOps::run('largest-companies-by-effective-value-total', 'largestCompaniesByEntries', [], [], 'arrayToTable', [
   'limitRows' => 10,
@@ -138,7 +138,7 @@ $i = 0
   'https://github.com/GoC-Spending/goc-spending-analysis/blob/master/general/largest-companies-by-entries-total-2008-to-2017.csv' => 'Top 100 companies by number of contract and amendment entries'
 ]])
 
-<p>This chart lists the top 10 companies by total number of contract and amendment entries, government-wide, by year:</p>
+<p>@include('charts.includes.target', ['i' => ++$i])This chart lists the top 10 companies by total number of contract and amendment entries, government-wide, by year:</p>
 
 {!! \App\ChartOps::run('largest-companies-by-entries-by-year', 'largestCompaniesByEntriesByYear', [], [], 'arrayToChartJsStacked', [
   'useConfigYears' => 1,
@@ -152,7 +152,7 @@ $i = 0
   'https://github.com/GoC-Spending/goc-spending-analysis/blob/master/general/largest-companies-by-entries-by-year-2008-to-2017.csv' => 'Top 10 companies by number of contract and amendment entries, by year'
 ]])
 
-<p>This table lists the largest companies by total effective contract value, government-wide, from 2008 to 2017:</p>
+<p>@include('charts.includes.target', ['i' => ++$i])This table lists the largest companies by total effective contract value, government-wide, from 2008 to 2017:</p>
 
 {!! \App\ChartOps::run('largest-companies-by-effective-value-total', 'largestCompaniesByEffectiveValue', [], [
     'currencyColumns' => [
@@ -167,7 +167,7 @@ $i = 0
   'https://github.com/GoC-Spending/goc-spending-analysis/blob/master/general/largest-companies-by-effective-value-total-2008-to-2017.csv' => 'Top 100 companies by effective contract value'
 ]])
 
-<p>This chart lists the top 10 companies by total effective contract value, government-wide, by year:</p>
+<p>@include('charts.includes.target', ['i' => ++$i])This chart lists the top 10 companies by total effective contract value, government-wide, by year:</p>
 
 {!! \App\ChartOps::run('largest-companies-by-effective-value-by-year', 'largestCompaniesByEffectiveValueByYear', [], [
     'currencyColumns' => [
@@ -307,11 +307,11 @@ $i = 0
   ],
 ]])
 
-<h2 id="aggregate-data-by-company-10-largest-companies">Aggregate data by company (100 largest companies)</h2>
+<h2 id="aggregate-data-by-company">Aggregate data by company (200 largest companies)</h2>
 
 <label for="vendor-select">Select a company</label>
 <select id="vendor-select" name="vendor-select" class="custom-select mb-3">
-@foreach (\App\AnalysisOps::largestVendorNamesByEffectiveValue(100, 1) as $vendor)
+@foreach (\App\AnalysisOps::largestVendorNamesByEffectiveValue(200, 1) as $vendor)
 
 <option value="{{ $vendor }}" data-url-target="{{ \Illuminate\Support\Str::slug($vendor) }}" data-chart-array="{{ json_encode(\App\ChartOps::multiRun([
   [
