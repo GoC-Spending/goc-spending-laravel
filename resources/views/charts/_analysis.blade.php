@@ -135,7 +135,7 @@ $i = 0
 ]) !!}
 
 @include('charts.includes.githubsource', ['links' => [
-  'https://github.com/GoC-Spending/goc-spending-analysis/blob/master/general/largest-companies-by-entries-total-2008-to-2017.csv' => 'Top 100 companies by number of contract and amendment entries'
+  'https://github.com/GoC-Spending/goc-spending-analysis/blob/master/general/largest-companies-by-entries-total-2008-to-2017.csv' => 'Top 200 companies by number of contract and amendment entries'
 ]])
 
 <p>@include('charts.includes.target', ['i' => ++$i])This chart lists the top 10 companies by total number of contract and amendment entries, government-wide, by year:</p>
@@ -164,7 +164,7 @@ $i = 0
 ]) !!}
 
 @include('charts.includes.githubsource', ['links' => [
-  'https://github.com/GoC-Spending/goc-spending-analysis/blob/master/general/largest-companies-by-effective-value-total-2008-to-2017.csv' => 'Top 100 companies by effective contract value'
+  'https://github.com/GoC-Spending/goc-spending-analysis/blob/master/general/largest-companies-by-effective-value-total-2008-to-2017.csv' => 'Top 200 companies by effective contract value'
 ]])
 
 <p>@include('charts.includes.target', ['i' => ++$i])This chart lists the top 10 companies by total effective contract value, government-wide, by year:</p>
@@ -278,7 +278,7 @@ $i = 0
     'urlPrefix' => 'https://github.com/GoC-Spending/goc-spending-analysis/blob/master/departments/',
     'urlSuffix' => '/largest-companies-by-effective-value-total-2008-to-2017.csv',
     'labelPrefix' => '',
-    'labelSuffix' => '’s top 100 companies by number of contract and amendment entries',
+    'labelSuffix' => '’s top 200 companies by number of contract and amendment entries',
   ],
   [
     'urlPrefix' => 'https://github.com/GoC-Spending/goc-spending-analysis/blob/master/departments/',
@@ -297,7 +297,7 @@ $i = 0
     'urlPrefix' => 'https://github.com/GoC-Spending/goc-spending-analysis/blob/master/departments/',
     'urlSuffix' => '/largest-companies-by-effective-value-total-2008-to-2017.csv',
     'labelPrefix' => '',
-    'labelSuffix' => '’s top 100 companies by effective value',
+    'labelSuffix' => '’s top 200 companies by effective value',
   ],
   [
     'urlPrefix' => 'https://github.com/GoC-Spending/goc-spending-analysis/blob/master/departments/',
