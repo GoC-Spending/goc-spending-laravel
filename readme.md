@@ -33,6 +33,8 @@ git clone git@github.com:GoC-Spending/goc-spending-data.git
 
 Install the Laravel project dependencies using [Composer](https://getcomposer.org/).
 
+_Note, because this project uses an older version of the Laravel framework, [you should use version 1 of Composer](https://github.com/composer/composer/issues/9340#issuecomment-716210369)._
+
 ```
 cd goc-spending-laravel
 composer install
