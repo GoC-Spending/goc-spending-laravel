@@ -33,7 +33,7 @@ $i = 0
 ]) !!}
 
 @include('charts.includes.githubsource', ['links' => [
-  'https://github.com/GoC-Spending/goc-spending-analysis/blob/master/general/entries-by-year.csv' => 'Overall contract and amendment entries, by year'
+  'https://github.com/GoC-Spending/goc-spending-analysis-2019/blob/master/general/entries-by-year.csv' => 'Overall contract and amendment entries, by year'
 ]])
 
 <p>@include('charts.includes.target', ['i' => ++$i])This chart lists the same data as above, but by fiscal quarter:</p>
@@ -46,7 +46,7 @@ $i = 0
 ]) !!}
 
 @include('charts.includes.githubsource', ['links' => [
-  'https://github.com/GoC-Spending/goc-spending-analysis/blob/master/general/entries-by-fiscal.csv' => 'Overall contract and amendment entries, by fiscal quarter'
+  'https://github.com/GoC-Spending/goc-spending-analysis-2019/blob/master/general/entries-by-fiscal.csv' => 'Overall contract and amendment entries, by fiscal quarter'
 ]])
 
 <h3 id="total-government-wide-contract-spending">Total government-wide contract spending</h3>
@@ -67,7 +67,7 @@ $i = 0
 ]) !!}
 
 @include('charts.includes.githubsource', ['links' => [
-  'https://github.com/GoC-Spending/goc-spending-analysis/blob/master/general/effective-overall-total-by-year-2008-to-2017.csv' => 'Overall effective government-wide contract spending'
+  'https://github.com/GoC-Spending/goc-spending-analysis-2019/blob/master/general/effective-overall-total-by-year-2010-to-2019.csv' => 'Overall effective government-wide contract spending'
 ], 'marginBottomClass' => 'mb-2'])
 
 <div class="alert alert-warning mb-5">
@@ -89,7 +89,7 @@ $i = 0
 ]) !!}
 
 @include('charts.includes.githubsource', ['links' => [
-  'https://github.com/GoC-Spending/goc-spending-analysis/blob/master/general/entries-by-department-by-year.csv' => 'Contract and amendment entries by department, by fiscal year'
+  'https://github.com/GoC-Spending/goc-spending-analysis-2019/blob/master/general/entries-by-department-by-year.csv' => 'Contract and amendment entries by department, by fiscal year'
 ]])
 
 <p>@include('charts.includes.target', ['i' => ++$i])This chart lists the same data as above, but by fiscal quarter:</p>
@@ -103,7 +103,7 @@ $i = 0
 ]) !!}
 
 @include('charts.includes.githubsource', ['links' => [
-  'https://github.com/GoC-Spending/goc-spending-analysis/blob/master/general/entries-by-department-by-fiscal.csv' => 'Contract and amendment entries by department, by fiscal quarter'
+  'https://github.com/GoC-Spending/goc-spending-analysis-2019/blob/master/general/entries-by-department-by-fiscal.csv' => 'Contract and amendment entries by department, by fiscal quarter'
 ]])
 
 <h3 id="total-contract-spending-by-department">Total contract spending by department</h3>
@@ -123,19 +123,19 @@ $i = 0
 ]) !!}
 
 @include('charts.includes.githubsource', ['links' => [
-  'https://github.com/GoC-Spending/goc-spending-analysis/blob/master/general/effective-total-by-year-2008-to-2017.csv' => 'Effective total contract spending by department, by year'
+  'https://github.com/GoC-Spending/goc-spending-analysis-2019/blob/master/general/effective-total-by-year-2010-to-2019.csv' => 'Effective total contract spending by department, by year'
 ]])
 
 <h3 id="largest-companies-by-government-wide-contract-spending">Largest companies by government-wide contract spending</h3>
 
-<p>@include('charts.includes.target', ['i' => ++$i])This table lists the largest companies by total number of contract and amendment entries in the combined dataset, from 2008 to 2017:</p>
+<p>@include('charts.includes.target', ['i' => ++$i])This table lists the largest companies by total number of contract and amendment entries in the combined dataset, from 2010 to 2019:</p>
 
 {!! \App\ChartOps::run('largest-companies-by-effective-value-total', 'largestCompaniesByEntries', [], [], 'arrayToTable', [
   'limitRows' => 10,
 ]) !!}
 
 @include('charts.includes.githubsource', ['links' => [
-  'https://github.com/GoC-Spending/goc-spending-analysis/blob/master/general/largest-companies-by-entries-total-2008-to-2017.csv' => 'Top 200 companies by number of contract and amendment entries'
+  'https://github.com/GoC-Spending/goc-spending-analysis-2019/blob/master/general/largest-companies-by-entries-total-2010-to-2019.csv' => 'Top 200 companies by number of contract and amendment entries'
 ]])
 
 <p>@include('charts.includes.target', ['i' => ++$i])This chart lists the top 10 companies by total number of contract and amendment entries, government-wide, by year:</p>
@@ -149,10 +149,10 @@ $i = 0
 ]) !!}
 
 @include('charts.includes.githubsource', ['links' => [
-  'https://github.com/GoC-Spending/goc-spending-analysis/blob/master/general/largest-companies-by-entries-by-year-2008-to-2017.csv' => 'Top 10 companies by number of contract and amendment entries, by year'
+  'https://github.com/GoC-Spending/goc-spending-analysis-2019/blob/master/general/largest-companies-by-entries-by-year-2010-to-2019.csv' => 'Top 10 companies by number of contract and amendment entries, by year'
 ]])
 
-<p>@include('charts.includes.target', ['i' => ++$i])This table lists the largest companies by total effective contract value, government-wide, from 2008 to 2017:</p>
+<p>@include('charts.includes.target', ['i' => ++$i])This table lists the largest companies by total effective contract value, government-wide, from 2010 to 2019:</p>
 
 {!! \App\ChartOps::run('largest-companies-by-effective-value-total', 'largestCompaniesByEffectiveValue', [], [
     'currencyColumns' => [
@@ -164,7 +164,7 @@ $i = 0
 ]) !!}
 
 @include('charts.includes.githubsource', ['links' => [
-  'https://github.com/GoC-Spending/goc-spending-analysis/blob/master/general/largest-companies-by-effective-value-total-2008-to-2017.csv' => 'Top 200 companies by effective contract value'
+  'https://github.com/GoC-Spending/goc-spending-analysis-2019/blob/master/general/largest-companies-by-effective-value-total-2010-to-2019.csv' => 'Top 200 companies by effective contract value'
 ]])
 
 <p>@include('charts.includes.target', ['i' => ++$i])This chart lists the top 10 companies by total effective contract value, government-wide, by year:</p>
@@ -182,7 +182,7 @@ $i = 0
 ]) !!}
 
 @include('charts.includes.githubsource', ['links' => [
-  'https://github.com/GoC-Spending/goc-spending-analysis/blob/master/general/largest-companies-by-effective-value-by-year-2008-to-2017.csv' => 'Top 10 companies by effective contract value, by year'
+  'https://github.com/GoC-Spending/goc-spending-analysis-2019/blob/master/general/largest-companies-by-effective-value-by-year-2010-to-2019.csv' => 'Top 10 companies by effective contract value, by year'
 ], 'marginBottomClass' => 'mb-2'])
 
 <div class="alert alert-warning mb-5">
@@ -262,8 +262,8 @@ $i = 0
 
 @include('charts.includes.githubupdatesource', ['class' => 'owner-select-link', 'links' => [
   [
-    'urlPrefix' => 'https://github.com/GoC-Spending/goc-spending-analysis/blob/master/departments/',
-    'urlSuffix' => '/entries-above-and-below-25k-by-year-2008-to-2017.csv',
+    'urlPrefix' => 'https://github.com/GoC-Spending/goc-spending-analysis-2019/blob/master/departments/',
+    'urlSuffix' => '/entries-above-and-below-25k-by-year-2010-to-2019.csv',
     'labelPrefix' => 'Entries above and below $25k for ',
     'labelSuffix' => '',
   ]
@@ -275,14 +275,14 @@ $i = 0
 
 @include('charts.includes.githubupdatesource', ['class' => 'owner-select-link', 'links' => [
   [
-    'urlPrefix' => 'https://github.com/GoC-Spending/goc-spending-analysis/blob/master/departments/',
-    'urlSuffix' => '/largest-companies-by-effective-value-total-2008-to-2017.csv',
+    'urlPrefix' => 'https://github.com/GoC-Spending/goc-spending-analysis-2019/blob/master/departments/',
+    'urlSuffix' => '/largest-companies-by-effective-value-total-2010-to-2019.csv',
     'labelPrefix' => '',
     'labelSuffix' => '’s top 200 companies by number of contract and amendment entries',
   ],
   [
-    'urlPrefix' => 'https://github.com/GoC-Spending/goc-spending-analysis/blob/master/departments/',
-    'urlSuffix' => '/largest-companies-by-effective-value-by-year-2008-to-2017.csv',
+    'urlPrefix' => 'https://github.com/GoC-Spending/goc-spending-analysis-2019/blob/master/departments/',
+    'urlSuffix' => '/largest-companies-by-effective-value-by-year-2010-to-2019.csv',
     'labelPrefix' => '',
     'labelSuffix' => '’s top 10 companies by number of contract and amendment entries, by year',
   ],
@@ -294,14 +294,14 @@ $i = 0
 
 @include('charts.includes.githubupdatesource', ['class' => 'owner-select-link', 'links' => [
   [
-    'urlPrefix' => 'https://github.com/GoC-Spending/goc-spending-analysis/blob/master/departments/',
-    'urlSuffix' => '/largest-companies-by-effective-value-total-2008-to-2017.csv',
+    'urlPrefix' => 'https://github.com/GoC-Spending/goc-spending-analysis-2019/blob/master/departments/',
+    'urlSuffix' => '/largest-companies-by-effective-value-total-2010-to-2019.csv',
     'labelPrefix' => '',
     'labelSuffix' => '’s top 200 companies by effective value',
   ],
   [
-    'urlPrefix' => 'https://github.com/GoC-Spending/goc-spending-analysis/blob/master/departments/',
-    'urlSuffix' => '/largest-companies-by-effective-value-by-year-2008-to-2017.csv',
+    'urlPrefix' => 'https://github.com/GoC-Spending/goc-spending-analysis-2019/blob/master/departments/',
+    'urlSuffix' => '/largest-companies-by-effective-value-by-year-2010-to-2019.csv',
     'labelPrefix' => '',
     'labelSuffix' => '’s top 10 companies by effective value, by year',
   ],
@@ -360,33 +360,33 @@ $i = 0
 
 @include('charts.includes.githubupdatesource', ['class' => 'vendor-select-link', 'links' => [
   [
-    'urlPrefix' => 'https://github.com/GoC-Spending/goc-spending-analysis/blob/master/vendors/',
-    'urlSuffix' => '/largest-departments-by-entries-total-2008-to-2017.csv',
+    'urlPrefix' => 'https://github.com/GoC-Spending/goc-spending-analysis-2019/blob/master/vendors/',
+    'urlSuffix' => '/largest-departments-by-entries-total-2010-to-2019.csv',
     'labelPrefix' => 'Top departments for ',
     'labelSuffix' => ' by number of contract and amendment entries',
   ],
   [
-    'urlPrefix' => 'https://github.com/GoC-Spending/goc-spending-analysis/blob/master/vendors/',
-    'urlSuffix' => '/largest-departments-by-entries-by-year-2008-to-2017.csv',
+    'urlPrefix' => 'https://github.com/GoC-Spending/goc-spending-analysis-2019/blob/master/vendors/',
+    'urlSuffix' => '/largest-departments-by-entries-by-year-2010-to-2019.csv',
     'labelPrefix' => 'Top 10 departments for ',
     'labelSuffix' => ' by number of contract and amendment entries, by year',
   ],
 ]])
 
-<p>@include('charts.includes.target', ['i' => ++$i])This chart lists departments by total effective contract value with <span class="update-vendor">[company name]</span>, from 2008 to 2017:</p>
+<p>@include('charts.includes.target', ['i' => ++$i])This chart lists departments by total effective contract value with <span class="update-vendor">[company name]</span>, from 2010 to 2019:</p>
 
 <canvas id="vendor-largest-departments-by-effective-value-by-year" width="400" height="200" class="vendor-select-canvas"></canvas>
 
 @include('charts.includes.githubupdatesource', ['class' => 'vendor-select-link', 'links' => [
   [
-    'urlPrefix' => 'https://github.com/GoC-Spending/goc-spending-analysis/blob/master/vendors/',
-    'urlSuffix' => '/largest-departments-by-effective-value-total-2008-to-2017.csv',
+    'urlPrefix' => 'https://github.com/GoC-Spending/goc-spending-analysis-2019/blob/master/vendors/',
+    'urlSuffix' => '/largest-departments-by-effective-value-total-2010-to-2019.csv',
     'labelPrefix' => 'Top departments for ',
     'labelSuffix' => ' by effective contract value',
   ],
   [
-    'urlPrefix' => 'https://github.com/GoC-Spending/goc-spending-analysis/blob/master/vendors/',
-    'urlSuffix' => '/largest-departments-by-effective-value-by-year-2008-to-2017.csv',
+    'urlPrefix' => 'https://github.com/GoC-Spending/goc-spending-analysis-2019/blob/master/vendors/',
+    'urlSuffix' => '/largest-departments-by-effective-value-by-year-2010-to-2019.csv',
     'labelPrefix' => 'Top 10 departments for ',
     'labelSuffix' => ' by effective contract value, by year',
   ],
