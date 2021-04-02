@@ -18,8 +18,8 @@ class AnalysisOps
 {
 
     public static $config = [
-    'startYear' => 2008,
-    'endYear' => 2017,
+    'startYear' => 2010,
+    'endYear' => 2019,
     'vendorLimit' => 200,
     'vendorLimitTimebound' => 10,
     ];
