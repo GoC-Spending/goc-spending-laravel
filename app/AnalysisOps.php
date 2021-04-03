@@ -333,26 +333,33 @@ COUNT("id") filter (where gen_is_amendment::integer = 1) as total_amendments
     }
 
   // Gets the total effective contract value by year and by department.
-    public static function effectiveTotalByYear()
+    public static function effectiveTotalByYear($ownerAcronym = '')
     {
 
-        $results = DB::select(
-            DB::raw('
-    SELECT owner_acronym, effective_year, SUM("yearly_value") as sum_yearly_value
+      $query = '
+      SELECT owner_acronym, effective_year, SUM("yearly_value") as sum_yearly_value
     FROM "exports_v2"
     WHERE effective_year <= :endYear
-    AND effective_year >= :startYear
-    GROUP BY owner_acronym, effective_year
-    ORDER BY owner_acronym, effective_year ASC
-    LIMIT 10000
-    '),
-            [
-            'startYear' => self::$config['startYear'],
-            'endYear' => self::$config['endYear'],
-            ]
-        );
+    AND effective_year >= :startYear';
+      
+      $params = [
+        'startYear' => self::$config['startYear'],
+        'endYear' => self::$config['endYear'],
+      ];
 
-        return $results;
+      if ($ownerAcronym) {
+        $query .= 'AND owner_acronym = :ownerAcronym';
+        $params['ownerAcronym'] = $ownerAcronym;
+      }
+
+      $query .= '
+      GROUP BY owner_acronym, effective_year
+      ORDER BY owner_acronym, effective_year ASC
+      LIMIT 10000';
+
+      $results = DB::select(DB::raw($query), $params);
+
+      return $results;
     }
 
     public static function effectiveOverallTotalByYear()
