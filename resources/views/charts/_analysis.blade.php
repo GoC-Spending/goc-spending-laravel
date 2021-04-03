@@ -1,17 +1,15 @@
 ---
-title: 'Analysis'
+title: '2019 Analysis'
 description: "Aggregate statistical analyses of Government of Canada contract spending at a government-wide level."
-date: 2019-05-04
+url: "analysis/2019"
+date: 2021-04-02
 draft: false
-menu: 
-  main:
-    parent: 'analysis'
 ---
 
 @php  
 $i = 0 
 @endphp
-<h1 id="analysis">Analysis</h1>
+<h1 id="2019-analysis">2019 Analysis</h1>
 
 <p>The charts below are simple aggregate analyses of Government of Canada contract spending data. They are generated from the <a href="/download/">combined dataset</a> of scraped Proactive Disclosure websites and Open Government CSV data. See the <a href="/methodology/">Methodology</a> page to learn more about how this data was aggregated and analyzed.</p>
 
