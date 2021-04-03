@@ -253,6 +253,26 @@ $i = 0
     ],
   ],
 
+  [
+    'id' => 'department-total-effective-value-by-year',
+    'dataMethod' => 'effectiveTotalByYear',
+    'dataMethodParams' => $ownerAcronym,
+    'postProcessingParams' => [
+      'currencyColumns' => [
+        'sum_yearly_value',
+      ]
+    ],
+    'chartMethod' => 'arrayToChartJsStacked',
+    'chartMethodParams' => [
+      'useConfigYears' => 1,
+      'timeColumn' => 'effective_year',
+      'labelColumn' => 'owner_acronym',
+      'valueColumn' => 'sum_yearly_value',
+      'chartOptions' => 'timeStackedCurrency',
+      'generatorMethod' => 'generatePlainArray',
+    ],
+  ],
+
 ])) }}">{{ \App\Helpers\Cleaners::generateLabelText($ownerAcronym) }}</option>
 
 @endforeach
@@ -269,6 +289,14 @@ $i = 0
     'labelPrefix' => 'Entries above and below $25k for ',
     'labelSuffix' => '',
   ]
+]])
+
+<p>@include('charts.includes.target', ['i' => ++$i])This chart lists the total effective value of <span class="update-owner">[department name]</span>’s contracts, by year:</p>
+
+<canvas id="department-total-effective-value-by-year" width="400" height="200" class="owner-select-canvas"></canvas>
+
+@include('charts.includes.githubsource', ['links' => [
+  'https://github.com/GoC-Spending/goc-spending-analysis-2019/blob/master/general/effective-total-by-year-2010-to-2019.csv' => 'Total effective contract value, by department, by year'
 ]])
 
 <p>@include('charts.includes.target', ['i' => ++$i])This chart lists the top 10 companies by total number of contract and amendment entries from <span class="update-owner">[department name]</span>, by year:</p>
