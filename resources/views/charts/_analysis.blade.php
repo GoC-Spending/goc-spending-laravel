@@ -11,6 +11,10 @@ $i = 0
 @endphp
 <h1 id="2019-analysis">2019 Analysis</h1>
 
+<div class="alert alert-dark" role="alert">
+  The page below includes <b>updated data from 2010-2019</b>, sourced from <a href="/methodology/#open-government-dataset" class="alert-link">more recent Open Government CSV data</a> (downloaded 2021-03-21). <a href="/analysis" class="alert-link">See the original 2008-2010 data analysis</a>. 
+</div>
+
 <p>The charts below are simple aggregate analyses of Government of Canada contract spending data. They are generated from the <a href="/download/">combined dataset</a> of scraped Proactive Disclosure websites and Open Government CSV data. See the <a href="/methodology/">Methodology</a> page to learn more about how this data was aggregated and analyzed.</p>
 
 <p>Because the spending data represented here was normalized year-by-year (to the closest calendar year), given the <a href="/methodology/#limitations">limitations of the source data</a>, the numbers below should be considered as estimated rather than actual values. Total spending amounts on a per-company and per-year basis are not published at a government-wide level by the Government of Canada.</p>
