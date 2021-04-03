@@ -340,7 +340,8 @@ COUNT("id") filter (where gen_is_amendment::integer = 1) as total_amendments
       SELECT owner_acronym, effective_year, SUM("yearly_value") as sum_yearly_value
     FROM "exports_v2"
     WHERE effective_year <= :endYear
-    AND effective_year >= :startYear';
+    AND effective_year >= :startYear
+    ';
       
       $params = [
         'startYear' => self::$config['startYear'],
