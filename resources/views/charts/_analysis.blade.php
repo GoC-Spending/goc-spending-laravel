@@ -306,13 +306,13 @@ $i = 0
 @include('charts.includes.githubupdatesource', ['class' => 'owner-select-link', 'links' => [
   [
     'urlPrefix' => 'https://github.com/GoC-Spending/goc-spending-analysis-2019/blob/master/departments/',
-    'urlSuffix' => '/largest-companies-by-effective-value-total-2010-to-2019.csv',
+    'urlSuffix' => '/largest-companies-by-entries-total-2010-to-2019.csv',
     'labelPrefix' => '',
     'labelSuffix' => '’s top 200 companies by number of contract and amendment entries',
   ],
   [
     'urlPrefix' => 'https://github.com/GoC-Spending/goc-spending-analysis-2019/blob/master/departments/',
-    'urlSuffix' => '/largest-companies-by-effective-value-by-year-2010-to-2019.csv',
+    'urlSuffix' => '/largest-companies-by-entries-by-year-2010-to-2019.csv',
     'labelPrefix' => '',
     'labelSuffix' => '’s top 10 companies by number of contract and amendment entries, by year',
   ],
