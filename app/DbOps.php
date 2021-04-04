@@ -560,13 +560,14 @@ class DbOps
             if ($firstRow) {
                 $theoreticalYearlyValue = $row->contract_value / ($row->gen_end_year - $row->gen_start_year + 1);
             } else {
-                $theoreticalYearlyValue = $row->contract_value / ($row->gen_end_year - $row->source_year + 1);
+                // Update 2021-04-03: Subtract the cumulative total from the latest contract value here, before averaging across the years between the row's end year and source year
+                $theoreticalYearlyValue = ($row->contract_value - $cumulativeTotal)  / ($row->gen_end_year - $row->source_year + 1);
             }
             
 
             // dd($effectiveEndYear);
 
-            $row->gen_effective_total_value = $theoreticalYearlyValue * ($effectiveEndYear - $effectiveStartYear + 1) - $cumulativeTotal;
+            $row->gen_effective_total_value = $theoreticalYearlyValue * ($effectiveEndYear - $effectiveStartYear + 1);
             $row->gen_effective_yearly_value = $row->gen_effective_total_value / ($effectiveEndYear - $effectiveStartYear + 1);
 
             $cumulativeTotal += $row->gen_effective_total_value;
