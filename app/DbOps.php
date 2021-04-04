@@ -859,6 +859,32 @@ class DbOps
                 'gen_error_via' => 3,
                 ]);
         
+        self::manuallyFlagErrorRows();
+
         echo "Done error checking.\n";
     }
+
+    public static function manuallyFlagErrorRows() {
+
+        $errorContractIds = [
+            'pspc-0000101859',
+        ];
+
+        $count = 0;
+        foreach($errorContractIds as $errorContractId) {
+            DB::table('l_contracts')
+            ->where('gen_contract_id', '=', $errorContractId)
+            ->update([
+                'gen_is_error' => 1,
+                'gen_error_via' => 4,
+                ]);
+            
+                $count++;
+        }
+
+        echo "Flagged $count manual error rows.\n";
+
+    }
+
+
 }
